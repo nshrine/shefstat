@@ -1,0 +1,31 @@
+\chapter{Introduction}
+\section*{Background}
+Malaria is a serious and often fatal disease caused by the malarial parasite. It is estimated that there are 300-500 million malaria cases annually, directly causing over 1 million deaths and contributing to a further 1.7 million. A major problem is the development of drug-resistance by malaria parasites. The quicker parasites can be eradicated from the blood, the less chance there is of resistance developing and the quicker a patient's clinical symptoms (e.g. fever) will be alleviated. Combining antimalarial drugs with different modes of action can help achieve this. 
+
+A clinical trial was conducted by Glaxo Smithkline comparing parasite clearance times for an existing antimalarial drug against those for this drug when administered in combination with different dose levels of another antimalarial. The endpoint of primary importance was PC90, the time to achieve a reduction of the parasitaemia by 90\% of baseline level.
+
+In order to estimate PC90, parasite counts per microlitre were recorded from blood samples taken prior to first dose (baseline) and then at multiple time points (1, 2, 3, 4, 6, 8, 12, 18, 24, 30, 36, 42, 48 hours) after first dose. Whilst it may have been possible to plot the points for an individual patient on a graph in order to estimate PC90, this would not be practical for a large number of patients in a clinical trial setting. PC90 was estimated by fitting a logistic curve to the log-transformed parasite counts ($y$) over time. The simple logistic curve used has the following form: 
+$$
+y=\alpha+\frac{\lambda}{1+e^{-\beta(x-\mu)}}
+$$
+where $\alpha$ is the lower asymptote, $\alpha+\lambda$ is the upper asymptote, $\mu$ is the time of maximum rate of reduction (i.e. point of inflexion) and $x$ is time from first dose (in hours), $\beta$ is the fitted coefficient for time; $y = log(1 + P_{(time=x)})$ (P is parasite count), hence $P = e^{y}-1$. Model fit and so consequent validity of derived PC90 estimates were then reviewed. Analyses of covariance were used to analyse valid PC90 values, adjusting for gender and centre.
+\section*{Project Aims} 
+This project will take forward the analysis described in the background with the following aims:
+\begin{enumerate} 
+\item Investigate modelling individual patient parasite count data by fitting a logistic curve to determine PC90. 
+\item Analyse PC90 estimates in order to determine the level of evidence that the drug combination speeds up the eradication of malaria parasites from the blood.
+\end{enumerate} 
+Possible questions to consider are: 
+\begin{itemize}
+\item Should the parasite count data be transformed prior to modelling? What are the reasons for doing so and what are the advantages and disadvantages? 
+\item How to implement logistic modelling (e.g. SAS macro using PROC NLIN)?  
+\item How to define sensible starting values of parameters for logistic modelling? 
+\item How should goodness of fit of a model and validity of the resulting PC90 estimate be assessed (e.g. plotting / comparison of model estimates to interpolated estimates / other diagnostics?). 
+\item How to handle outlying / influential data points? 
+\item What other approaches to estimating PC90 are possible? 
+\item Should we use parametric modelling (e.g. ANCOVA) or non-parametric? 
+\item How to handle in the analysis patients where reliable PC90 estimates couldn't be estimated by modelling? 
+\item Are baseline factors (gender and centre) important when estimating treatment effect? 
+\end{itemize}
+\section*{Data} 
+Parasite counts, time of blood sample and relevant covariates from the clinical trial will be provided for two treatment groups: the existing antimalarial administered alone and when in combination with another antimalarial at one of the dose levels studied. Glaxo Smithkline will provide the data as a SAS dataset. 
