@@ -60,3 +60,7 @@ plotPC90 <- function(range) {
     }
 }
 
+# Initial raw plot of data take 2
+rawplot <- function(centre, sex, trt) {
+	xyplot(parct ~ acttm | SUBJID, data=malaria.df, subset=CENTREID==centre & SEX==sex & trt==trt)
+}
