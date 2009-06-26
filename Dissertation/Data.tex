@@ -25,6 +25,20 @@ The columns are:
 \item\texttt{trt} - An indicator of which treatment was used 'A' or 'B'.
 \item\texttt{trttxt} - A description of treatments 'A' and 'B', namely 'alone', meaning that a single drug was used or 'combi' meaning that a combination treatment was used.
 \end{itemize}
+
+\begin{figure}
+\centering
+\includegraphics[width=6.1in,bb=0 0 881 624]{raw1F.eps}
+ % raw1F.eps: 1179666x1179666 pixel, 300dpi, 9987.84x9987.84 cm, bb=0 0 881 624
+\caption{}
+\end{figure} 
+\begin{figure}
+\centering
+\includegraphics[width=6.1in,bb=0 0 881 624]{raw1M.eps}
+ % raw1F.eps: 1179666x1179666 pixel, 300dpi, 9987.84x9987.84 cm, bb=0 0 881 624
+\caption{}
+\end{figure} 
+
 \subsection{The Parasite Count}
 One of the first questions addressed was whether the parasite count is a true count, and thus Poission statistics would be applicable, or whether it is a derived measurement. Our contact informed us that the method used to arrive at the \texttt{parct} values was that a microscopist would count a chosen area of a slide of blood, counting parasites ($N_p$) and white blood cells ($N_w$). The number of white blood cells in a $\mu L$ of blood ($\rho_w$) is automatically counted by a machine. Accordingly the number of parasites in a $\mu L$ of blood (\texttt{parct}) is given by:
 $$\mathtt{parct}=\frac{N_p}{N_w}\rho_w$$
