@@ -60,7 +60,9 @@ plotPC90 <- function(range) {
     }
 }
 
+
 # Initial raw plot of data take 2
-rawplot <- function(centre, sex, trt) {
-	xyplot(parct ~ acttm | SUBJID, data=malaria.df, subset=CENTREID==centre & SEX==sex & trt==trt)
+rawggplot <- function(data, title) {
+	p <- qplot(acttm, parct, data=data, aes(acttm, parct), xlab="Time (hours)", ylab="Parasite Count (1000s)", main=title)
+	p + geom_point(aes(colour=trttxt)) + geom_line(aes(colour=trttxt))  + scale_colour_discrete("Treatment") + facet_wrap(~SUBJID, scales='free_y') + scale_y_continuous(formatter=function(x) return(x/1000)) 
 }
