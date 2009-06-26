@@ -62,7 +62,10 @@ plotPC90 <- function(range) {
 
 
 # Initial raw plot of data take 2
-rawggplot <- function(data, title) {
+rawggplot <- function(data, title="") {
+	# Reorder the patient factor so that "alone" treatment patients are first
+	data$SUBJID <- relevel(data$SUBJID, as.character(unique(data$SUBJID[data$trt=='A'])))
+
 	p <- qplot(acttm, parct, data=data, aes(acttm, parct), xlab="Time (hours)", ylab="Parasite Count (1000s)", main=title)
-	p + geom_point(aes(colour=trttxt)) + geom_line(aes(colour=trttxt))  + scale_colour_discrete("Treatment") + facet_wrap(~SUBJID, scales='free_y') + scale_y_continuous(formatter=function(x) return(x/1000)) 
+	p + geom_point(aes(colour=trttxt, shape=trttxt)) + geom_line(aes(colour=trttxt)) + scale_colour_discrete("Treatment") + scale_shape_discrete("Treatment") + facet_wrap(~SUBJID, scales='free_y') + scale_y_continuous(formatter=function(x) return(x/1000)) 
 }
