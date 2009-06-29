@@ -30,27 +30,28 @@ The columns are:
 Figures \ref{raw1F} to \ref{raw2M} show the parasite counts plotted against time in hours. The data is as received from GSK. The number above each plot is the patient identifier. Note that the vertical scales vary for each plot in order to show the main features of the data and hence the parasite counts are not directly comparable.
 \begin{figure}[h]
 \centering
-\includegraphics[width=6.1in]{raw1F.eps}
+\includegraphics[width=6.1in]{raw1f.eps}
 \caption{Parasite count for centre 1 females}\label{raw1F}
 \end{figure} 
 \begin{figure}[h]
 \centering
-\includegraphics[width=6.1in]{raw1M.eps}
+\includegraphics[width=6.1in]{raw1m.eps}
 \caption{Parasite count for centre 1 males}\label{raw1M}
 \end{figure} 
 \begin{figure}[h]
 \centering
-\includegraphics[width=6.1in]{raw2F.eps}
+\includegraphics[width=6.1in]{raw2f.eps}
 \caption{Parasite count for centre 2 females}\label{raw2F}
 \end{figure} 
 \begin{figure}[h]
 \centering
-\includegraphics[width=6.1in]{raw2M.eps}
+\includegraphics[width=6.1in]{raw2m.eps}
 \caption{Parasite count for centre 2 males}\label{raw2M}
 \end{figure} 
 \subsection{Main features of the data}
 Generally, there appears to be a drop in the parasite count from an initial high level to zero or near zero within about 20 to 30 hours from first treatment. In some cases there is a rapid monotonic drop off within 10 hours. In other cases the \textit{recorded} parasite count fluctuates up and down before dropping to zero over a longer period.
 
+\pagebreak
 To briefly summarise, the main behaviours observed are:
 \begin{itemize}
 \item A relatively steep monotonic drop in the count e.g. centre 1 female subjects 182 and 264 (Figure \ref{raw1F}), centre 1 male subjects 187, 162, 54, 176 and 185 (Figure \ref{raw1M}), centre 2 female subjects 462, 523 and 525 (Figure \ref{raw2F}) and centre 2 male subjects 509, 469 and 511 (Figure \ref{raw2M}).
@@ -59,9 +60,13 @@ A variation of this type comprises has the parasite count increasing after the f
 \item A more erratic and slower drop in the parasite count e.g. centre 1 female subjects 285 and 96 (Figure \ref{raw1F}), centre 1 male subjects 295 and 140 (Figure \ref{raw1M}) and centre 2 female subjects 521, 502 and 505 (Figure \ref{raw2F}). 
 \item The parasite count seems to fluctuate about a constant level before falling e.g. centre 1 female subjects 150 and 101 (Figure \ref{raw1F}) and centre 1 male subjects 224, 98, 80 and 218 (Figure \ref{raw1M}). 
 \end{itemize}
-There are some profiles that we might suspect contain anomalous data such as subject 500 in Figure \ref{raw2M} where there are two unusually high values compared to the main trend. We might suspect that some inconsistency in the counting procedure explains these values rather than the patient's parasite count jumping by a large amount on these occasions. Therefore, we should start by looking at how the parasite count was obtained to give an insight into any potential sources of inconsistency.
+There are some profiles that we might suspect contain anomalous data such as subject 500 in Figure \ref{raw2M} where there are two unusually high values compared to the main trend. We might suspect that some inconsistency in the counting procedure explains these values rather than the patient's parasite count jumping by a large amount on these occasions. Looking at how the parasite count was obtained should give an insight into potential sources of inconsistency.
 \subsection{The Parasite Count}
-One of the first questions addressed was whether the parasite count is a true count, and thus Poission statistics would be applicable, or whether it is a derived measurement. Our contact informed us that the method used to arrive at the \texttt{parct} values was that a microscopist would count a chosen area of a slide of blood, counting parasites ($N_p$) and white blood cells ($N_w$). The number of white blood cells in a $\mu L$ of blood ($\rho_w$) is automatically counted by a machine. Accordingly the number of parasites in a $\mu L$ of blood (\texttt{parct}) is given by:
+One of the first questions addressed was whether the parasite count is a true count, and thus Poission statistics would be applicable, or whether it is a derived measurement. Our contact informed us that the method used to arrive at the parasite count values given was broadly as follows.
+\begin{enumerate}
+ \item A microscopist would count a chosen area of a slide of blood, counting parasites ($N_p$) and white blood cells ($N_w$).
+\end{enumerate}
+ The number of white blood cells in a $\mu L$ of blood ($\rho_w$) is automatically counted by a machine. Accordingly the number of parasites in a $\mu L$ of blood (\texttt{parct}) is given by:
 $$\mathtt{parct}=\frac{N_p}{N_w}\rho_w$$
 and thus we cannot treat this derived measurement as a count for modeling purposes.
 
