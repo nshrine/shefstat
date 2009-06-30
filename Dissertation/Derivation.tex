@@ -1,10 +1,63 @@
 \chapter{Derivation of Parasite Clearance Times}
-\section{Introduction}
-In the previous progress report submitted in July 2008 the data given to us by GlaxoSmithkline was described and an explanation of how the parasite count is calculated was given. The parasite count is our dependent variable and it was determined that it cannot be treated as a true ``count" for statistical purposes (e.g. Poisson modelling) as it is a value derived from other measurements.
+\section{Preliminary Analysis}
+\subsection{Deriving PC90}
+The project specification says that the endpoint of primary importance is PC90, the time to achieve a reduction of the parasitaemia by 90\% of baseline level. As a first attempt at deriving estimates of PC90 from the data, simple linear polynomial fits to the logarithm of the parasite count with time from first dose were investigated (actually log(1+parct)).
 
-A method for estimating the time to reduce the parasitaemia to 90\% of baseline (PC90) using a cubic fit to the data was presented. These PC90 estimates were then used in 3-way ANOVA, which showed that of the 3 factors \emph{Centre}, \emph{Sex} and \emph{Treatment} that only \emph{Treatment} affected PC90 ($P<0.05$).
+It was found that a cubic was the most suitable model if we include the data only up to the first 0 parasite count. For some patients where the parasite count drops quickly to 0. A fit that includes the subsequent run of 0s would pull the cubic fit away from the most sensible estimate of PC90. It is more suitable for the purpose of estimating PC90 to only model the drop in the count to 0 using a simple cubic model. 
 
-This report compares different methods of estimating PC90, such as logistic fitting and linear interpolation, and tries to evaluate which is the best one to use for routine estimation of PC90 for this type of data.
+Figure \ref{cubics} shows the cubic fits to the log parasite count for the 43 subjects treated. The horizontal dotted line on the plots shows the PC90 level i.e. where the parasite count has fallen to 10\% of its initial value. The value of PC90 i.e. the time t at which the parasite count has fallen to 10\% was found by least-squares i.e. using the \texttt{optimize} function in R to minimise:
+$$[log(1+0.1P_0)-\beta_0-\beta_1t-\beta_2t^2-\beta_3t^3]^2$$
+where $P_0$ is the pre-treatment parasite count, $t$ is the time from first dose and $\beta_i$ are the fitted coefficients for the models for each of the 43 patients. Table \ref{pc90} shows the values of PC90 derived from the cubic fit to the parasite count by centre, sex and treatment.
+\begin{sidewaysfigure}[p]
+\includegraphics[scale=0.8]{cubics.eps} 
+\caption{Cubic fits to log parasite count vs. time from first dose for 43 subjects treated}\label{cubics}
+\end{sidewaysfigure}
+\begin{table}[h]
+\centering
+\caption{Derived PC90 values}\label{pc90}
+\begin{tabular}{|cc|c|c|}
+\hline
+&&\multicolumn{2}{c|}{Treatment}\\
+Centre&Sex&A&B\\\hline
+\multirow{2}{*}{001}&M&$\begin{array}{c}3.8,\ 27.9,\ 34.3,\  9.8,\\5.0,\  0.8,\ 28.9,\  4.7\end{array}$&$\begin{array}{c}9.5,\  5.3,\  7.7,\\23.5,\  9.4,\  8.1\end{array}$\\\cline{2-4}
+&F&$\begin{array}{c}21.1,\ 23.2,\\22.5,\ 47.2\end{array}$&$\begin{array}{c}4.2,\ 8.6 ,\ 9.4,\\0.9,\ 8.6,\ 12.9\end{array}$\\\hline
+\multirow{2}{*}{002}&M&$\begin{array}{c}4.5,\ 2.1,\\20.6,\ 29.1\end{array}$&$\begin{array}{c}19.3,\ 10.0,\\15.6,\ 8.9\end{array}$\\\cline{2-4}
+&F&$\begin{array}{c}20.1,\ 2.2,\ 24.0,\ 28.7,\\5.0,\ 22.2,\ 23.7\end{array}$&$\begin{array}{c}15.4,\  8.4,\\5.9,\ 6.3\end{array}$\\\hline
+\end{tabular}
+\end{table}
+\subsection{PC90 ANOVA} 
+3-way ANOVA with interactions was performed on the PC90 data over centre, sex and treatment. The results are shown in Table \ref{anova}. It can be seen that the only significant effect on PC90 is the treatment used (\texttt{trt}), with perhaps some effect of the interaction between sex and treatment. This is a result we might expect. If we fit a model with treatment as the only factor we find that treatment B reduces the PC90 time compared to treatment A by 8.0 hours with a 95\% confidence interval of (1.9, 14.1) hours.
+\begin{table}[h]
+\centering
+\caption{3-way ANOVA with interactions for PC90}\label{anova}
+\begin{boxedverbatim}
+Response: PC90
+                                         Df Sum Sq Mean Sq F value  Pr(>F)  
+factor(SEX)                               1   49.4    49.4  0.5218 0.47488  
+factor(CENTREID)                          1    0.1     0.1  0.0008 0.97816  
+factor(trt)                               1  697.5   697.5  7.3708 0.01022 *
+factor(SEX):factor(CENTREID)              1   57.4    57.4  0.6062 0.44146  
+factor(SEX):factor(trt)                   1  389.4   389.4  4.1151 0.05016 .
+factor(CENTREID):factor(trt)              1  143.4   143.4  1.5150 0.22658  
+factor(SEX):factor(CENTREID):factor(trt)  1   49.3    49.3  0.5214 0.47505  
+Residuals                                35 3312.0    94.6
+\end{boxedverbatim}
+\end{table}
+
+Diagnostic plots of the residuals of the ANOVA model are shown in Figure \ref{resid}. There does not seem to be any significant departure from normality in the distribution of residuals which suggests that we may not need a transformation for modelling the PC90 data. However, there is perhaps some evidence of heteroskedasticity in that the variance of the residuals appears to increase with increasing fitted PC90 value, hence we may need a variance-stabalising transformation.
+\begin{sidewaysfigure}[p]
+\centering
+\includegraphics[scale=0.8]{PC90diag.eps}
+\caption{Residuals for ANOVA on PC90}\label{resid}
+\end{sidewaysfigure}
+\section{Work Plan}
+The next stages of the analysis are:
+\begin{itemize}
+\item Look in more detail at deriving the PC90 estimates. Logistic regression has been suggested in the project outline which would require non-linear regression techniques.
+\item Look at how to identify and deal with suspicious outliers in the parasite count data and how they influence our estimates of PC90.
+\item Incorporate the error in PC90 estimates into the modelling of treatment effect.
+\end{itemize}
+
 \section{Estimating PC90 for a patient}
 \subsection{Cubic regression}
 As described in the previous progress report a cubic model was fitted to the log-transformed parasite count $parct$ with time from first dose $t$ as the explanatory variable
@@ -88,11 +141,3 @@ ID&ID&Sex&Treatment&cubic&linear&loglinear&logistic\\
 \hline
 \end{tabular}
 \end{table}
-\section{Ongoing work plan}
-\begin{itemize}
-\item Look at ways to pick sensible starting values for the logistic regression and check that the logistic form is valid.
-\item Investigate the effects of outliers on the estimation of PC90 and determine how to detect and deal with them.
-\item Incorporate the uncertainty in PC90 estimates into the modelling of treatment effect. 
-\item Compare parametric and non-parametric approaches to determining which factors affect PC90.
-\item Look at non-parametric inference for determining confidence of PC90 estimates e.g. randomisation.
-\end{itemize}
