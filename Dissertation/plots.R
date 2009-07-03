@@ -63,17 +63,25 @@ plotPC90 <- function(range) {
 
 # Initial raw plot of data take 2
 rawggplot <- function(data, title="") {
+    # Reorder the patient factor so that "alone" treatment patients are first
+    for(subj in as.character(unique(data$SUBJID[data$trt=='A']))) {
+        data$SUBJID <- relevel(data$SUBJID, subj)
+    }
 
-	# Reorder the patient factor so that "alone" treatment patients are first
-	for(subj in as.character(unique(data$SUBJID[data$trt=='A']))) {
-		data$SUBJID <- relevel(data$SUBJID, subj)
-	}
-	
-	q <- qplot(acttm, parct, data=data, aes(acttm, parct), xlab="Time (hours)", ylab="Parasite Count (1000s)", main=title)
-	p <- geom_point(aes(shape=trttxt, colour=trttxt))
-	q <- q + p + scale_shape(name="Treatment")
-	l <- geom_line(aes(colour=trttxt))
-	q <- q + l + scale_colour_discrete("Treatment")
-	q <- q + scale_y_continuous(formatter=function(x) return(x/1000))
-	q + facet_wrap(~SUBJID, scales='free_y', ncol=3)
+    q <- qplot(acttm, parct, data=data, aes(acttm, parct), xlab="Time (hours)", ylab="Parasite Count (1000s)", main=title)
+    p <- geom_point(aes(shape=trttxt, colour=trttxt))
+    q <- q + p + scale_shape(name="Treatment") + scale_colour_discrete("Treatment")
+    q <- q + scale_y_continuous(formatter=function(x) return(x/1000))
+    q <- q + facet_wrap(~SUBJID, scales='free_y', ncol=3)
+	q + geom_line(aes(colour=trttxt))
+}
+
+rawgglog90 <- function(data, title="") {
+	data$parct <- data$parct + 1
+	rawggplot90(data, title) + scale_y_log("Log parasite count")
+}
+
+rawggplot90 <- function(data, title="") {
+	q <- rawggplot(data, title)
+	q + geom_hline(aes(yintercept=0.1*parct[1]), linetype=2)
 }

@@ -1,7 +1,8 @@
 \chapter{Derivation of Parasite Clearance Times}
-\section{Preliminary Analysis}
-\subsection{Deriving PC90}
-The project specification says that the endpoint of primary importance is PC90, the time to achieve a reduction of the parasitaemia by 90\% of baseline level. As a first attempt at deriving estimates of PC90 from the data, simple linear polynomial fits to the logarithm of the parasite count with time from first dose were investigated (actually log(1+parct)).
+\section{Overview}
+The client specified that the endpoint of primary importance is PC90, the time to achieve a reduction of the parasitaemia by 90\% of baseline level. 
+
+As a first attempt at deriving estimates of PC90 from the data, simple linear polynomial fits to the logarithm of the parasite count with time from first dose were investigated (actually log(1+parct)).
 
 It was found that a cubic was the most suitable model if we include the data only up to the first 0 parasite count. For some patients where the parasite count drops quickly to 0. A fit that includes the subsequent run of 0s would pull the cubic fit away from the most sensible estimate of PC90. It is more suitable for the purpose of estimating PC90 to only model the drop in the count to 0 using a simple cubic model. 
 
