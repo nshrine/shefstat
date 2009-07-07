@@ -72,16 +72,50 @@ rawggplot <- function(data, title="") {
     p <- geom_point(aes(shape=trttxt, colour=trttxt))
     q <- q + p + scale_shape(name="Treatment") + scale_colour_discrete("Treatment")
     q <- q + scale_y_continuous(formatter=function(x) return(x/1000))
-    q <- q + facet_wrap(~SUBJID, scales='free_y', ncol=3)
+    l <- length(unique(data$SUBJID))
+    ncol <- ifelse(l < 3, l, 3)
+    q <- q + facet_wrap(~SUBJID, scales='free_y', ncol=ncol)
 	q + geom_line(aes(colour=trttxt))
 }
 
-rawgglog90 <- function(data, title="") {
-	data$parct <- data$parct + 1
-	rawggplot90(data, title) + scale_y_log("Log parasite count")
+ggplot90 <- function(data, title="", pc90lines=NA, xpos=45, am=1, vjust=0) {
+	q <- rawggplot(data, title)
+	if (is.null(dim(pc90lines))) {
+		pc90lines <- getPC90lines(data)
+	}
+	pc90lines <- data.frame(pc90lines, xpos=xpos, vjust=vjust)
+	l <- length(unique(data$SUBJID))
+    ncol <- ifelse(l < 3, l, 3)
+	q + geom_hline(aes(yintercept=pc90), data=pc90lines, linetype=2) + facet_wrap(~SUBJID, ncol=ncol) + geom_text(aes(x=xpos, y=pc90, label="PC90", vjust=vjust), data=pc90lines[am,])
 }
 
-rawggplot90 <- function(data, title="") {
-	q <- rawggplot(data, title)
-	q + geom_hline(aes(yintercept=0.1*parct[1]), linetype=2)
+gglog90 <- function(data, title="", xpos=45, am=1, vjust=0) {
+	data$parct <- data$parct + 1
+	pc90lines <- getPC90lines(data)
+	data$parct <- log(data$parct)
+	pc90lines$pc90 <- log(pc90lines$pc90)
+	q <- ggplot90(data, title, pc90lines, xpos, am, vjust)
+	q + scale_y_continuous("log(1 + parasite count)") 
+}
+
+getPC90lines <- function(data) {
+	predose <- subset(data, select=c(SUBJID, parct), subset=plantm=='PRE-DOSE')
+	pc90 <-data.frame(predose, pc90=predose$parct * 0.1)
+	return(pc90)
+}
+
+predoseaov <- function(data, title="") {
+	q <- qplot(trttxt, parct, data=data, xlab="", ylab="Parasite Count (1000s)", main=title, geom="blank")
+	q <- q + geom_point(aes(colour=trttxt), position=position_jitter(w=0.05)) + scale_colour_discrete("Treatment")
+	q <- q + scale_y_continuous(formatter=function(x) return(x/1000))
+	q <- q + stat_summary(fun.data="mean_cl_boot", size=3, geom="point", solid=T)
+	q + facet_grid(CENTREID~SEX, margins=T)
+}
+
+allaov <- function(data, title="") {
+	q <- qplot(pt, parct, data=data, xlab="", ylab="Parasite Count (1000s)", main=title, geom="blank")
+	q <- q + geom_point(aes(colour=trttxt), position="dodge") + scale_colour_discrete("Treatment")
+	q <- q + scale_y_continuous(formatter=function(x) return(x/1000)) #+ opts(axis.text.x = theme_text(angle=90))
+	q <- q + stat_summary(fun.y="mean", geom="point", colour="black", size=3)
+	q + facet_grid(SEX~CENTREID, scales="free") 
 }
