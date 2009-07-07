@@ -113,9 +113,9 @@ predoseaov <- function(data, title="") {
 }
 
 allaov <- function(data, title="") {
-	q <- qplot(pt, parct, data=data, xlab="", ylab="Parasite Count (1000s)", main=title, geom="blank")
+	q <- qplot(pt, log((1 + parct)/pre), data=data, xlab="Planned time from first dose", ylab="Log multiple of pre-dose count", main=title, geom="blank")
 	q <- q + geom_point(aes(colour=trttxt), position="dodge") + scale_colour_discrete("Treatment")
-	q <- q + scale_y_continuous(formatter=function(x) return(x/1000)) #+ opts(axis.text.x = theme_text(angle=90))
-	q <- q + stat_summary(fun.y="mean", geom="point", colour="black", size=3)
-	q + facet_grid(SEX~CENTREID, scales="free") 
+#	q <- q + scale_y_continuous(formatter=function(x) return(x/1000)) #+ opts(axis.text.x = theme_text(angle=90))
+	q <- q + stat_summary(fun.y="mean", geom="line", aes(colour=trttxt))
+	q + facet_grid(SEX~CENTREID, margins=T)
 }
