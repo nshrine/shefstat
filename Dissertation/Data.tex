@@ -61,7 +61,7 @@ A variation of this type comprises has the parasite count increasing after the f
 \item The parasite count seems to fluctuate about a constant level before falling e.g. centre 1 female subjects 150 and 101 (Figure \ref{raw1F}) and centre 1 male subjects 224, 98, 80 and 218 (Figure \ref{raw1M}). 
 \end{itemize}
 There are some profiles that we might suspect contain anomalous data such as subject 500 in Figure \ref{raw2M} where there are two unusually high values compared to the main trend. We might suspect that some inconsistency in the counting procedure explains these values rather than the patient's parasite count jumping by a large amount on these occasions. Looking at how the parasite count was obtained should give an insight into potential sources of inconsistency.
-\subsection{The Parasite Count}
+\section{Derivation of the Parasite Count}
 One of the first questions addressed was whether the parasite count is a true count, and thus Poission statistics would be applicable, or whether it is a derived measurement. Our contact informed us that the method used to arrive at the parasite count values given is broadly as follows.
 \begin{enumerate}
  \item A microscopist would choose ``suitable area'' of a slide of blood and work from left to right counting parasites ($N_p$) and white blood cells ($N_w$).
@@ -71,8 +71,10 @@ One of the first questions addressed was whether the parasite count is a true co
 Accordingly the number of parasites in a $\mu L$ of blood (\texttt{parct}) is given by:
 $$\mathtt{parct}=\frac{N_p}{N_w}\rho_w$$
 and thus we cannot treat this derived measurement as a count for modeling purposes.
+\subsection{The Pre-dose parasite count}
+We were also informed that the white blood cell count is right skewed and so we might expect that the parasite count per $\mu L$ will be also. Table \ref{predose} shows the pre-treatment parasite counts in the subjects from each test centre and of each sex. It can be seen that for 3 cases the mean is larger than the median meaning that the distributions are right skewed. This is to be expected for non-negative data such as this. When model fitting to this data we may have to choose some transformation of the parasite count such as taking logarithms.
 
-We were also informed that the white blood cell count is right skewed and so we might expect that the parasite count per $\mu L$ will be also. Table \ref{predose} shows the pre-treatment parasite counts in the subjects from each test centre and of each sex. The $M^*$ row for centre 002 is where one large outlying value of 196029 has been removed. It can be seen that for 3 cases the mean is larger than the median meaning that the distributions are right skewed. This is to be expected for non-negative data such as this. When model fitting to this data we may have to choose some transformation of the parasite count such as taking logarithms.
+If we perform 3-way ANOVA of the parasite count with sex, centre and treatment as factors we find that there is no evidence of a difference due to these factors.
 \begin{table}[h]
 \centering
 \caption{Pre-dose parasite counts}\label{predose}
@@ -82,7 +84,7 @@ Centre&Sex&N&Mean&Median&SD&1st Qu.&3rd Qu.\\\hline
 \multirow{2}{*}{001}&M&14&27060&20960&17820.9&16750&24830\\
 &F&10&29410&25170&16221.2&19700&30700\\\hline
 \multirow{3}{*}{002}&M&8&50540&23290&63679.9&12240&58290\\
-&$M^*$&\textit{7}&\textit{29750}&\textit{20610}&\textit{26436.6}&\textit{11180}&\textit{38580}\\
+%&$M^*$&\textit{7}&\textit{29750}&\textit{20610}&\textit{26436.6}&\textit{11180}&\textit{38580}\\
 &F&11&26110&27360&17262.4&11860&30400\\\hline
 \end{tabular}
 \end{table}
