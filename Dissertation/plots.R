@@ -113,21 +113,21 @@ predoseaov <- function(data, title="") {
 }
 
 allaov <- function(data, title="") {
-	q <- qplot(pt, log((1 + parct)/pre), data=data, xlab="Planned time from first dose", ylab="Log multiple of pre-dose count", main=title, geom="blank")
+	q <- qplot(pt, log((1 + parct)/pre), data=data, xlab="Time from first dose (hours)", ylab="Log fraction of pre-dose count", main=title, geom="blank")
 	q <- q + geom_point(aes(colour=trttxt, shape=trttxt)) + scale_colour_discrete("Treatment") + scale_shape("Treatment")
 #	q <- q + scale_y_continuous(formatter=function(x) return(x/1000)) #+ opts(axis.text.x = theme_text(angle=90))
 	q <- q + stat_summary(fun.y="mean", geom="line", aes(colour=trttxt))
-	q + facet_grid(SEX~CENTREID, margins=T)
+	q + facet_grid(CENTREID~SEX, margins=T)
 }
 
-predose.resid <- function(residuals, b=20000, limits=NULL) {
-	plot1 <- qplot(residuals, main="Residuals from pre-dose ANOVA", xlab="Residual", geom="blank")
+predose.resid <- function(residuals, title="Residuals from pre-dose count ANOVA", b=20000, limits=NULL) {
+	plot1 <- qplot(residuals, main=title, xlab="Residual", geom="blank")
 	plot1 <- plot1 + geom_histogram(fill='white', colour='black', binwidth=b)
 	if (!is.null(limits)) {
 		plot1 <- plot1 + scale_x_continuous(limits=limits)
 	}
 	print(plot1)
 	subplot1 <- qplot(sample=residuals, stat="qq")
-	vp2 <- viewport(x=1, y=0.95, width=0.5, height=0.5, just=c("right", "top"))
+	vp2 <- viewport(x=1, y=0.90, width=0.5, height=0.5, just=c("right", "top"))
 	print(subplot1, vp=vp2)
 }
