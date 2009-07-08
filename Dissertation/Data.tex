@@ -75,30 +75,59 @@ and thus we cannot treat this derived measurement as a count for modeling purpos
 We were also informed that the white blood cell count is right skewed and so we might expect that the parasite count per $\mu L$ will be also.
 %Table \ref{predose} shows the pre-treatment parasite counts in the subjects from each test centre and of each sex. It can be seen that for 3 cases the mean is larger than the median meaning that the distributions are right skewed. This is to be expected for non-negative data such as this. When model fitting to this data we may have to choose some transformation of the parasite count such as taking logarithms.
 Figure \ref{preaov} shows the pre-dose parasite counts grouped by sex, centre and treatment. There does not seem to be an obvious dependence of the level of the pre-dose parasite count on sex, centre or treatment. However, it does seem as if female pre-dose parasite count shows a higher dispersion than for males.
-
-If we perform 3-way ANOVA of the pre-dose parasite count with sex, centre and treatment we find that there is no evidence of a dependence on these factors. The Kruskal-Wallis non-parametric equivalent test also does not reveal any evidence of a dependence. 
-\begin{table}[h]
-\centering
-\caption{Pre-dose parasite counts}\label{predose}
-\begin{tabular}{|cc|cccccc|}
-\hline
-Centre&Sex&N&Mean&Median&SD&1st Qu.&3rd Qu.\\\hline
-\multirow{2}{*}{001}&M&14&27060&20960&17820.9&16750&24830\\
-&F&10&29410&25170&16221.2&19700&30700\\\hline
-\multirow{3}{*}{002}&M&8&50540&23290&63679.9&12240&58290\\
-%&$M^*$&\textit{7}&\textit{29750}&\textit{20610}&\textit{26436.6}&\textit{11180}&\textit{38580}\\
-&F&11&26110&27360&17262.4&11860&30400\\\hline
-\end{tabular}
-\end{table}
-\begin{figure}
+\begin{figure}[h]
 \begin{center}
 \includegraphics[width=6.1in]{preaov.eps}
 \caption{Pre-dose parasite counts by sex, centre and treatment with mean shown. The right-hand column of panels shows both sexes combined grouped by centre; the bottom row shows both centres combined, grouped by sex and the bottom-right corner panel shows both sexes and centres combined.}
 \label{preaov}
 \end{center}
 \end{figure}
+
+If we perform 3-way ANOVA of the pre-dose parasite count by sex, centre and treatment we find that there is no evidence of a dependence on these factors. The Kruskal-Wallis non-parametric equivalent test also does not reveal any evidence of a dependence.
+
+Figure \ref{aovres} shows that the residuals from the ANOVA are right-skewed. If we repeat the ANOVA but with the logarithm of the pre-dose parasite count we find that the residuals are approximately normally distributed as shown in Figure \ref{logaovres}. Using the square-root of the count does not produce as good a normalising transformation: Shapiro-Wilk normality test returns $P<0.0001$ compared to $0.1<P<0.05$ for the logarithmic transformation. 
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=6.1in]{aovres.eps}
+\end{center}
+\caption{Residuals from 3-way ANOVA of pre-dose parasite counts}
+\label{aovres}
+\end{figure} 
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=6.1in]{logaovres.eps}
+\end{center}
+\caption{Residuals from 3-way ANOVA of log pre-dose parasite counts}
+\label{logaovres}
+\end{figure} 
+% \begin{table}[h]
+% \centering
+% \caption{Pre-dose parasite counts}\label{predose}
+% \begin{tabular}{|cc|cccccc|}
+% \hline
+% Centre&Sex&N&Mean&Median&SD&1st Qu.&3rd Qu.\\\hline
+% \multirow{2}{*}{001}&M&14&27060&20960&17820.9&16750&24830\\
+% &F&10&29410&25170&16221.2&19700&30700\\\hline
+% \multirow{3}{*}{002}&M&8&50540&23290&63679.9&12240&58290\\
+% %&$M^*$&\textit{7}&\textit{29750}&\textit{20610}&\textit{26436.6}&\textit{11180}&\textit{38580}\\
+% &F&11&26110&27360&17262.4&11860&30400\\\hline
+% \end{tabular}
+% \end{table}
+\subsection{Development of the parasite count with time from first dose}
+Figure \ref{allaov} shows the progression of the parasite count for all patients with time from first dose, grouped by sex, centre and treatment, with the ``marginal plots'' in the right column and bottom row as before. The vertical axis is the logarithm of the fraction of the pre-dose parasite count:
+$$y=log\left(\frac{1+P_t}{P_0}\right)$$
+where $t$ is the time from first dose and $P_0$ is the pre-dose count. $1+P_t$ is used to avoid problems with taking the logarithm when the parasite count goes to 0.
+
+With regard to Figure \ref{allaov}, the behaviour as indicated by the average response lines can be summarised as follows:
+\begin{itemize}
+ \item For female patients on the single-drug (``alone'') treatment the parasite count remains close to the initial level up to about 8 hours from first dose before beginning to fall off.
+ \item For male patients on the single-drug treatment the parasite count falls off at a fairly constant rate from first dose, perhaps increasing in fall-off rate after 8 hours.
+\item There doesn't seem to be as remarkable a difference between male and female subjects on the combined-drug treatment with parasite counts starting to show an appreciable fall off after about 6 hours in both cases.
+\item There is not a readily noticeable difference between centres.
+\end{itemize}
+In summary it appears from this first rough comparison that the combined treatment is more effective in terms of clearance times than the single treatment. This improvement over the single treatment seems more marked for female patients, but primarily because the single treatment seems to be less effective for female patients with the combined treatment fall-off profile being similar for both sexes.
 \begin{sidewaysfigure}[p]
 \includegraphics[width=9.2in]{allaov.eps}
-\caption{ }
-\label{ }
+\caption{Parasite count as proportion of pre-dose count with time from first dose with mean levels shown}
+\label{allaov}
 \end{sidewaysfigure}

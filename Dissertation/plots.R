@@ -119,3 +119,15 @@ allaov <- function(data, title="") {
 	q <- q + stat_summary(fun.y="mean", geom="line", aes(colour=trttxt))
 	q + facet_grid(SEX~CENTREID, margins=T)
 }
+
+predose.resid <- function(residuals, b=20000, limits=NULL) {
+	plot1 <- qplot(residuals, main="Residuals from pre-dose ANOVA", xlab="Residual", geom="blank")
+	plot1 <- plot1 + geom_histogram(fill='white', colour='black', binwidth=b)
+	if (!is.null(limits)) {
+		plot1 <- plot1 + scale_x_continuous(limits=limits)
+	}
+	print(plot1)
+	subplot1 <- qplot(sample=residuals, stat="qq")
+	vp2 <- viewport(x=1, y=0.95, width=0.5, height=0.5, just=c("right", "top"))
+	print(subplot1, vp=vp2)
+}
