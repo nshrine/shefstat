@@ -72,9 +72,11 @@ Accordingly the number of parasites in a $\mu L$ of blood (\texttt{parct}) is gi
 $$\mathtt{parct}=\frac{N_p}{N_w}\rho_w$$
 and thus we cannot treat this derived measurement as a count for modeling purposes.
 \subsection{The Pre-dose parasite count}
-We were also informed that the white blood cell count is right skewed and so we might expect that the parasite count per $\mu L$ will be also. Table \ref{predose} shows the pre-treatment parasite counts in the subjects from each test centre and of each sex. It can be seen that for 3 cases the mean is larger than the median meaning that the distributions are right skewed. This is to be expected for non-negative data such as this. When model fitting to this data we may have to choose some transformation of the parasite count such as taking logarithms.
+We were also informed that the white blood cell count is right skewed and so we might expect that the parasite count per $\mu L$ will be also.
+%Table \ref{predose} shows the pre-treatment parasite counts in the subjects from each test centre and of each sex. It can be seen that for 3 cases the mean is larger than the median meaning that the distributions are right skewed. This is to be expected for non-negative data such as this. When model fitting to this data we may have to choose some transformation of the parasite count such as taking logarithms.
+Figure \ref{preaov} shows the pre-dose parasite counts grouped by sex, centre and treatment. There does not seem to be an obvious dependence of the level of the pre-dose parasite count on sex, centre or treatment. However, it does seem as if female pre-dose parasite count shows a higher dispersion than for males.
 
-If we perform 3-way ANOVA of the parasite count with sex, centre and treatment as factors we find that there is no evidence of a difference due to these factors.
+If we perform 3-way ANOVA of the pre-dose parasite count with sex, centre and treatment we find that there is no evidence of a dependence on these factors. The Kruskal-Wallis non-parametric equivalent test also does not reveal any evidence of a dependence. 
 \begin{table}[h]
 \centering
 \caption{Pre-dose parasite counts}\label{predose}
@@ -88,3 +90,15 @@ Centre&Sex&N&Mean&Median&SD&1st Qu.&3rd Qu.\\\hline
 &F&11&26110&27360&17262.4&11860&30400\\\hline
 \end{tabular}
 \end{table}
+\begin{figure}
+\begin{center}
+\includegraphics[width=6.1in]{preaov.eps}
+\caption{Pre-dose parasite counts by sex, centre and treatment with mean shown. The right-hand column of panels shows both sexes combined grouped by centre; the bottom row shows both centres combined, grouped by sex and the bottom-right corner panel shows both sexes and centres combined.}
+\label{preaov}
+\end{center}
+\end{figure}
+\begin{sidewaysfigure}[p]
+\includegraphics[width=9.2in]{allaov.eps}
+\caption{ }
+\label{ }
+\end{sidewaysfigure}
