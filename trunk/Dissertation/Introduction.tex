@@ -27,5 +27,32 @@ Possible questions to consider are:
 \item How to handle in the analysis patients where reliable PC90 estimates couldn't be estimated by modelling? 
 \item Are baseline factors (gender and centre) important when estimating treatment effect? 
 \end{itemize}
-\section*{Data} 
-Parasite counts, time of blood sample and relevant covariates from the clinical trial will be provided for two treatment groups: the existing antimalarial administered alone and when in combination with another antimalarial at one of the dose levels studied. Glaxo Smithkline will provide the data as a SAS dataset. 
+%\section*{Data} 
+%Parasite counts, time of blood sample and relevant covariates from the clinical trial will be provided for two treatment groups: the existing antimalarial administered alone and when in combination with another antimalarial at one of the dose levels studied. Glaxo Smithkline will provide the data as a SAS dataset.
+\section{Data description}
+The data were received as an email attachment from our contact at Glaxo Smithkline. The attachment was a SAS data set which was able to be read into R by first exporting from SAS in dbf format and then read into R using the \texttt{read.dbf} function.
+Table \ref{rdata} shows the data as an R data frame. 
+\begin{table}[h]
+\caption{Data as an R data frame}\label{rdata}
+\begin{boxedverbatim}
+    CENTREID SUBJID SEX                    plantm   acttm  parct trt trttxt
+1        001     54   M                  PRE-DOSE -2.8333  14092   A  alone
+2        001     54   M  2 HOURS AFTER FIRST DOSE  2.0333   7592   A  alone
+3        001     54   M  4 HOURS AFTER FIRST DOSE  4.0500   1170   A  alone
+4        001     54   M  6 HOURS AFTER FIRST DOSE  6.0000     52   A  alone
+5        001     54   M  8 HOURS AFTER FIRST DOSE  8.0500      0   A  alone
+\end{boxedverbatim}
+\end{table}
+
+The columns are:
+\begin{itemize}
+\item\texttt{CENTREID} - The centre at which the study was undertaken, either centre '001' or '002'.
+\item\texttt{SUBJID} - An identifier for each subject (patient) participating in the trial. There are 43 subjects.
+\item\texttt{SEX} - The sex of each subject, either 'M' or 'F'.
+\item\texttt{plantm} - The planned time of taking a blood sample for measuring parasite load, either 'PRE-DOSE' i.e. before the drug treatment is administered, or 'n HOURS AFTER FIRST DOSE'.
+\item\texttt{acttm} - The actual time in hours that the blood sample was taken relative to the time the treatment was administered, hence all pre-dose times are negative.
+\item\texttt{parct} - The parasite count per $\mu L$ of blood.
+\item\texttt{trt} - An indicator of which treatment was used 'A' or 'B'.
+\item\texttt{trttxt} - A description of treatments 'A' and 'B', namely 'alone', meaning that a single drug was used or 'combi' meaning that a combination treatment was used.
+\end{itemize}
+
