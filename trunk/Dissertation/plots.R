@@ -68,40 +68,14 @@ rawggplot <- function(data, title="") {
         data$SUBJID <- relevel(data$SUBJID, subj)
     }
 
-    q <- qplot(acttm, parct, data=data, aes(acttm, parct), xlab="Time (hours)", ylab="Parasite Count (1000s)", main=title)
+    q <- qplot(acttm, parct, data=data, aes(acttm, parct), xlab="Time (hours)", ylab="Parasite Count (1000s)", main=title, geom="blank")
     p <- geom_point(aes(shape=trttxt, colour=trttxt))
     q <- q + p + scale_shape(name="Treatment") + scale_colour_discrete("Treatment")
     q <- q + scale_y_continuous(formatter=function(x) return(x/1000))
     l <- length(unique(data$SUBJID))
     ncol <- ifelse(l < 3, l, 3)
-    q <- q + facet_wrap(~SUBJID, scales='free_y', ncol=ncol)
-	q + geom_line(aes(colour=trttxt))
-}
-
-ggplot90 <- function(data, title="", pc90lines=NA, xpos=45, am=1, vjust=0) {
-	q <- rawggplot(data, title)
-	if (is.null(dim(pc90lines))) {
-		pc90lines <- getPC90lines(data)
-	}
-	pc90lines <- data.frame(pc90lines, xpos=xpos, vjust=vjust)
-	l <- length(unique(data$SUBJID))
-    ncol <- ifelse(l < 3, l, 3)
-	q + geom_hline(aes(yintercept=pc90), data=pc90lines, linetype=2) + facet_wrap(~SUBJID, ncol=ncol) + geom_text(aes(x=xpos, y=pc90, label="PC90", vjust=vjust), data=pc90lines[am,])
-}
-
-gglog90 <- function(data, title="", xpos=45, am=1, vjust=0) {
-	data$parct <- data$parct + 1
-	pc90lines <- getPC90lines(data)
-	data$parct <- log(data$parct)
-	pc90lines$pc90 <- log(pc90lines$pc90)
-	q <- ggplot90(data, title, pc90lines, xpos, am, vjust)
-	q + scale_y_continuous("log(1 + parasite count)") 
-}
-
-getPC90lines <- function(data) {
-	predose <- subset(data, select=c(SUBJID, parct), subset=plantm=='PRE-DOSE')
-	pc90 <-data.frame(predose, pc90=predose$parct * 0.1)
-	return(pc90)
+    q + facet_wrap(~SUBJID, ncol=ncol)
+#	q + geom_line(aes(colour=trttxt))
 }
 
 predoseaov <- function(data, title="") {
