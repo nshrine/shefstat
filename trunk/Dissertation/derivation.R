@@ -40,3 +40,15 @@ cubic90 <- function(data, title="", pc90lines=NA, xpos=45, am=1, vjust=0) {
 plotcubic <- function() {
     cubic90(malaria.1M, am=8, vjust=-0.1, title="Cubic fit to log parasite count up to first 0 reading") + opts(legend_position="bottom")
 }
+
+gglog <- function(data, title="", xpos=45, am=1, vjust=0) {
+#    data$parct <- log(1 + data$parct)
+#    q <- rawggplot(data, title)
+#    q <- q + scale_y_continuous("log(1 + parasite count)")
+    q <- gglog90(data, title, xpos, am, vjust) 
+    q + stat_smooth(method="nls", formula="y ~ SSfpl(x, A, B, xmid, scal)", se=F)
+}
+
+plotlogistic <- function() {
+    gglog(subset(malaria, subset=SUBJID=='54' | SUBJID=='80' | SUBJID=='96' | SUBJID=='98' | SUBJID=='140' | SUBJID=='150' | SUBJID=='176' | SUBJID=='182' | SUBJID=='185' | SUBJID=='187' | SUBJID=='197' | SUBJID=='203'), am=10, vjust=-0.2, title="Logistic fit to log parasite count")
+}
