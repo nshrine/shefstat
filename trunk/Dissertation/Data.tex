@@ -38,7 +38,7 @@ There are some profiles that we might suspect contain anomalous data such as sub
 It can be seen from the parasite count profiles in Figures \ref{raw1F} to \ref{raw2M} that no simple linear model will closely approximate the behaviour of all patients' counts over the whole time range. However, as we are primarily interested in estimating the time to reduction of the parasite count by 90\% it is only really in this region that it is critical to find a good model. It may be that the erratic behaviour of some parasite counts at short times after first dose is of little relevance. With this in mind, one possible approach may be to use a logarithmic transform of the parasite count thereby emphasising the behaviour at low counts.
 \section{Properties of the Parasite Count}
 \subsection{Derivation of the Parasite Count}
-One of the first questions addressed was whether the parasite count is a true count, and thus Poission statistics would be applicable, or whether it is a derived measurement. Our contact informed us that the method used to arrive at the parasite count values given is broadly as follows.
+One of the first questions addressed was whether the parasite count is a true count, and thus Poisson statistics would be applicable, or whether it is a derived measurement. Our contact informed us that the method used to arrive at the parasite count values given is broadly as follows.
 \begin{enumerate}
  \item A microscopist would choose ``suitable area'' of a slide of blood and work from left to right counting parasites ($N_p$) and white blood cells ($N_w$).
 \item If by the time they have counted around 200 white blood cells they have seen less than 10 parasites then they continue counting until they have counted around 500 white blood cells.
@@ -50,7 +50,7 @@ and thus we cannot treat this derived measurement as a count for modeling purpos
 \subsection{The Pre-dose parasite count}
 We were also informed that the white blood cell count is right skewed and so we might expect that the parasite count per $\mu L$ will be also.
 %Table \ref{predose} shows the pre-treatment parasite counts in the subjects from each test centre and of each sex. It can be seen that for 3 cases the mean is larger than the median meaning that the distributions are right skewed. This is to be expected for non-negative data such as this. When model fitting to this data we may have to choose some transformation of the parasite count such as taking logarithms.
-Figure \ref{preaov} shows the pre-dose parasite counts grouped by sex, centre and treatment. There does not seem to be an obvious dependence of the level of the pre-dose parasite count on sex, centre or treatment.
+Figure \ref{preaov} shows the pre-dose parasite counts grouped by sex, centre and treatment. There does not seem to be an obvious dependence of the level of the pre-dose parasite count on sex, centre or treatment, although there appears to be a greater dispersion of the count for patients on the single treatment.
 \begin{figure}[h]
 \begin{center}
 \includegraphics[width=6.1in]{preaov.eps}
@@ -94,6 +94,7 @@ Figure \ref{allaov} shows the progression of the parasite count for all patients
 $$y=log\left(\frac{1+P_t}{P_0}\right)$$
 where $t$ is the time from first dose and $P_0$ is the pre-dose count. $1+P_t$ is used to avoid problems with taking the logarithm when the parasite count goes to 0.
 
+\pagebreak
 With regard to Figure \ref{allaov}, the behaviour as indicated by the average response lines can be summarised as follows:
 \begin{itemize}
  \item For female patients on the single-drug (``alone'') treatment the parasite count remains close to the initial level up to about 20 hours from first dose before beginning to fall off.
@@ -108,6 +109,7 @@ In summary it appears from this first rough comparison that the combined treatme
 \label{allaov}
 \end{sidewaysfigure}
 
+\pagebreak
 If we repeat the 3-way ANOVA as for the pre-dose counts but with the logarithm of the counts at 6, 12, 18 an 24 hours from first dose then we find strong evidence of a dependence of the count on the treatment, which can be seen graphically in the bottom-right panel of Figure \ref{allaov}. We also find at 6 and 12 hours evidence of an interaction between sex and treatment, $P<0.05$ and $P<0.01$ respectively, bearing in mind we are making multiple hypothesis tests and therefore should be more hesitant to draw any early conclusions. At 18 and 24 hours there is no evidence of an interaction with sex, only a treatment effect $P<0.0001$. We can attempt to get some insight into the interaction of sex and treatment effects by looking at the bottom-left and bottom-centre panels of Figure \ref{allaov}, although it is not easily interpretable at this stage, if there is a substantial interaction at all.
 
 The residuals from all these ANOVA analyses are normally distributed to a good approximation. This is not so if we use the counts without taking logarithms in all cases.
