@@ -1,13 +1,11 @@
-ggplot90 <- function(data, title="", pc90lines=NA, xpos=45, am=1, vjust=0) {
+ggplot90 <- function(data, title="", pc90lines, xpos=45, am=1, vjust=0) {
 	q <- rawggplot(data, title)
-	if (is.null(dim(pc90lines))) {
+	if (missing(pc90lines)) {
 		pc90lines <- getPC90lines(data)
 	}
 	pc90lines <- data.frame(pc90lines, xpos=xpos, vjust=vjust)
-	l <- length(unique(data$SUBJID))
-    ncol <- ifelse(l < 3, l, 3)
-#    q <- q + geom_line(aes(colour=trttxt))
-	q + geom_hline(aes(yintercept=pc90), data=pc90lines, linetype=2) + facet_wrap(~SUBJID, ncol=ncol, scales="free_y") + geom_text(aes(x=xpos, y=pc90, label="PC90", vjust=vjust), data=pc90lines[am,])
+	q <- q + geom_hline(aes(yintercept=pc90), data=pc90lines, linetype=2)
+	q + geom_text(aes(x=xpos, y=pc90, label="PC90", vjust=vjust), data=pc90lines[am,])
 }
 
 gglog90 <- function(data, title="", xpos=45, am=1, vjust=0) {
@@ -20,10 +18,15 @@ gglog90 <- function(data, title="", xpos=45, am=1, vjust=0) {
 	q + scale_y_continuous("log(1 + parasite count)") 
 }
 
-getPC90lines <- function(data) {
-	predose <- subset(data, select=c(SUBJID, parct), subset=plantm=='PRE-DOSE')
-	pc90 <-data.frame(predose, pc90=predose$parct * 0.1)
-	return(pc90)
+addPC90lines <- function(q, data, logplot=F, xpos=45, am=1, vjust=-0.1) {
+	if (missing(data)) {
+		data <- q$data
+	}
+	pc90.df <- subset(data, select=c(SUBJID, parct), subset=plantm=='PRE-DOSE')
+	pc90 <- ifelse(logplot, log((pc90.df$parct + 1) * 0.1), pc90.df$parct * 0.1)
+	pc90.df <- data.frame(pc90.df, pc90=pc90, xpos=xpos, vjust=vjust)
+	q <- q + geom_hline(aes(yintercept=pc90), data=pc90.df, linetype=2)
+	q + geom_text(aes(x=xpos, y=pc90, label="PC90", vjust=vjust), data=pc90.df[am,])
 }
 
 plotraw90 <- function() {
@@ -56,22 +59,21 @@ plotlogistic <- function() {
 logistic.fit <- function(data) {
 	subjects <- levels(data$SUBJID)
 	n <- length(subjects)
-	fits.df <- data.frame(SUBJID=array(dim=43), SEX=array(dim=43), CENTREID=array(dim=43), trttxt=array(dim=43), A=numeric(n), L=numeric(n), U=numeric(n), B=numeric(n))
-	i = 1
-	for (s in subjects) {
-		fits.df[i, 1:4] <- data[data$SUBJID==s & data$plantm=='PRE-DOSE', c('SUBJID', 'SEX', 'CENTREID', 'trttxt')]
-		fits.df[i, 5:8] <- NA
+	fits.df <- data.frame(subset(data, select=c(SUBJID, CENTREID, SEX, trttxt), subset=plantm=='PRE-DOSE'), A=numeric(n), L=numeric(n), U=numeric(n), B=numeric(n))
+	for (i in 1:n) {
 		fit <- NULL
-		tryCatch(fit <- nls(log(1 + parct) ~ SSfpl(acttm, A, L, U, B), data=data, subset=SUBJID==s), error=function(e) e)
+		tryCatch(fit <- nls(log(1 + parct) ~ SSfpl(acttm, A, L, U, B), data=data, subset=SUBJID==fits.df$SUBJID[i]), error=function(e) e)
 		if(!is.null(fit)) {
 			fits.df[i, 5:8] <- coef(fit)
 		}
-		i <- i + 1
 	}
 	return(fits.df)
 }
 
 gglogistic <- function(data, fits, title="", xpos=45, am=1, vjust=0) {
-	q <- gglog90(data, title, xpos, am, vjust)
-	q + geom_hline(data=fits, aes(yintercept=A))
+	q <- getrawplot(data)
+	q <- getlogplot(q)
+	q <- addPC90lines(q)
+	q <- q + geom_point()
+	q + geom_hline(data=fits, aes(yintercept=c(A, L), colour=y)) + geom_vline(data=fits, aes(xintercept=U))
 }
