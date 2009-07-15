@@ -1,29 +1,27 @@
-ggplot90 <- function(data, title="", pc90lines, xpos=45, am=1, vjust=0) {
+ggplot90 <- function(data, title="", pc90lines, xpos=45, am=1, vjust=-0.1) {
 	q <- rawggplot(data, title)
-	if (missing(pc90lines)) {
-		pc90lines <- getPC90lines(data)
-	}
-	pc90lines <- data.frame(pc90lines, xpos=xpos, vjust=vjust)
-	q <- q + geom_hline(aes(yintercept=pc90), data=pc90lines, linetype=2)
-	q + geom_text(aes(x=xpos, y=pc90, label="PC90", vjust=vjust), data=pc90lines[am,])
+	addPC90lines(q, xpos=xpos, am=am, vjust=vjust)
+#	if (missing(pc90lines)) {
+#		pc90lines <- getPC90lines(data)
+#	}
+#	pc90lines <- data.frame(pc90lines, xpos=xpos, vjust=vjust)
+#	q <- q + geom_hline(aes(yintercept=pc90), data=pc90lines, linetype=2)
+#	q + geom_text(aes(x=xpos, y=pc90, label="PC90", vjust=vjust), data=pc90lines[am,])
 }
 
-gglog90 <- function(data, title="", xpos=45, am=1, vjust=0) {
-	data$parct <- data$parct + 1
-	pc90lines <- getPC90lines(data)
-	data$parct <- log(data$parct)
-	pc90lines$pc90 <- log(pc90lines$pc90)
-	q <- ggplot90(data, title, pc90lines, xpos, am, vjust)
-#	q <- q + geom_line(aes(colour=trttxt))
-	q + scale_y_continuous("log(1 + parasite count)") 
+gglog90 <- function(data, title="", xpos=45, am=1, vjust=-0.1) {
+	q <- rawggplot(data, title)
+	q <- getlogplot(q)
+	addPC90lines(q, logplot=T, xpos=xpos, am=am, vjust=-0.1)
 }
 
-addPC90lines <- function(q, data, logplot=F, xpos=45, am=1, vjust=-0.1) {
-	if (missing(data)) {
-		data <- q$data
+addPC90lines <- function(q, logplot=F, xpos=45, am=1, vjust=-0.1) {
+	data <- q$data
+	if (logplot) {
+		data$parct <- exp(data$parct) - 1
 	}
 	pc90.df <- subset(data, select=c(SUBJID, parct), subset=plantm=='PRE-DOSE')
-	pc90 <- ifelse(logplot, log((pc90.df$parct + 1) * 0.1), pc90.df$parct * 0.1)
+	pc90 <- ifelse(rep(logplot, nrow(pc90.df)), log((pc90.df$parct + 1) * 0.1), pc90.df$parct * 0.1)
 	pc90.df <- data.frame(pc90.df, pc90=pc90, xpos=xpos, vjust=vjust)
 	q <- q + geom_hline(aes(yintercept=pc90), data=pc90.df, linetype=2)
 	q + geom_text(aes(x=xpos, y=pc90, label="PC90", vjust=vjust), data=pc90.df[am,])
@@ -58,6 +56,23 @@ logistic.fit <- function(data) {
 	return(fits.df)
 }
 
+uptofirstzero <- function(data) {
+	new.df <- data.frame()
+	for (s in unique(data$SUBJID)) {
+		rows <- data[data$SUBJID==s,]
+		n <- match(0, rows$parct)
+		if (!is.na(n)) {
+			rows <- rows[1:n,]
+		}
+		new.df <- rbind(new.df, rows)
+	}
+	return(new.df)
+}
+
+addcubicfit <- function(q) {
+	q + stat_smooth(method="lm", formula=y~x+I(x^2)+I(x^3), data=uptofirstzero(q$data), fullrange=F, se=F) 
+}
+
 addlogfit <- function(q) {
 	q + stat_smooth(method="nls", formula="y ~ SSfpl(x, A, L, U, B)", se=F)
 }
@@ -65,10 +80,10 @@ addlogfit <- function(q) {
 addlogparms <- function(q, fits) {
 	subjs <- unique(q$data$SUBJID)
 	fits <- subset(fits, subset=SUBJID %in% subjs)
-	q <- q + geom_segment(data=fits, aes(x=min(x),y=A,xend=U,yend=A), colour='red', size=1)
-	q <- q + geom_segment(data=fits, aes(x=U,y=L,xend=max(x),yend=L), colour='red', size=1)
+	q <- q + geom_segment(data=fits, aes(x=min(x), y=A, xend=U, yend=A), colour='red', size=1)
+	q <- q + geom_segment(data=fits, aes(x=U, y=L, xend=max(x), yend=L), colour='red', size=1)
 	q <- q + geom_segment(data=fits, aes(x=U, y=L, xend=U, yend=A), colour='red', size=1)
-	q + geom_text(data=fits, x=40, y=4, aes(label=round(B,1)), colour='blue')
+	q + geom_text(data=fits, x=40, y=4, aes(label=round(B, 1)), colour='blue')
 }
 
 gglogistic <- function(data, fits, title="", xpos=45, am=1, vjust=0) {
