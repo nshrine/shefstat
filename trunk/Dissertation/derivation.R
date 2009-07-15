@@ -44,18 +44,6 @@ plotcubic <- function() {
     cubic90(malaria.1M, am=8, vjust=-0.1, title="Cubic fit to log parasite count up to first 0 reading") + opts(legend_position="bottom")
 }
 
-gglog <- function(data, title="", xpos=45, am=1, vjust=0) {
-#    data$parct <- log(1 + data$parct)
-#    q <- rawggplot(data, title)
-#    q <- q + scale_y_continuous("log(1 + parasite count)")
-    q <- gglog90(data, title, xpos, am, vjust) 
-    q + stat_smooth(method="nls", formula="y ~ SSfpl(x, A, B, xmid, scal)", se=F)
-}
-
-plotlogistic <- function() {
-    gglog(subset(malaria, subset=SUBJID=='54' | SUBJID=='80' | SUBJID=='96' | SUBJID=='98' | SUBJID=='140' | SUBJID=='150' | SUBJID=='176' | SUBJID=='182' | SUBJID=='185' | SUBJID=='187' | SUBJID=='197' | SUBJID=='203'), am=10, vjust=-0.2, title="Logistic fit to log parasite count")
-}
-
 logistic.fit <- function(data) {
 	subjects <- levels(data$SUBJID)
 	n <- length(subjects)
@@ -70,10 +58,40 @@ logistic.fit <- function(data) {
 	return(fits.df)
 }
 
+addlogfit <- function(q) {
+	q + stat_smooth(method="nls", formula="y ~ SSfpl(x, A, L, U, B)", se=F)
+}
+
+addlogparms <- function(q, fits) {
+	subjs <- unique(q$data$SUBJID)
+	fits <- subset(fits, subset=SUBJID %in% subjs)
+	q <- q + geom_segment(data=fits, aes(x=min(x),y=A,xend=U,yend=A), colour='red', size=1)
+	q <- q + geom_segment(data=fits, aes(x=U,y=L,xend=max(x),yend=L), colour='red', size=1)
+	q <- q + geom_segment(data=fits, aes(x=U, y=L, xend=U, yend=A), colour='red', size=1)
+	q + geom_text(data=fits, x=40, y=4, aes(label=round(B,1)), colour='blue')
+}
+
 gglogistic <- function(data, fits, title="", xpos=45, am=1, vjust=0) {
 	q <- getrawplot(data)
 	q <- getlogplot(q)
-	q <- addPC90lines(q)
-	q <- q + geom_point()
-	q + geom_hline(data=fits, aes(yintercept=c(A, L), colour=y)) + geom_vline(data=fits, aes(xintercept=U))
+#	q <- addPC90lines(q, data, logplot=T)
+	q <- q + geom_point(size=3, shape=1)
+	q <- q + stat_smooth(method="nls", formula="y ~ SSfpl(x, A, L, U, B)", se=F)
 }
+
+plotlogistic <- function(subjs = c('54','80','96','98','140','150','176','182','185','187','197','203')) {
+	q <- rawggplot(subset(malaria, subset=SUBJID %in% subjs), title="Logistic fit to log parasite count", lines=F)
+	data <- q$data
+	q <- getlogplot(q)
+	q <- addPC90lines(q, data, logplot=T)
+	addlogfit(q)
+}
+
+showlogparms <- function(fits, subjs = c('54','80','96','98','140','150','176','182','185','187','197','203')) {
+	q <- rawggplot(subset(malaria, subset=SUBJID %in% subjs), title="Logistic fit to log parasite count", lines=F)
+	q <- getlogplot(q)
+	q <- addlogfit(q)
+	q <- addlogparms(q, fits)
+	q + opts(legend.position="none")
+}
+

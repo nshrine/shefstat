@@ -76,23 +76,27 @@ getlogplot <- function(q) {
     q + facet_wrap(~SUBJID, ncol=min(3,l), scales="fixed")
 }
 
-addtrtgeoms <- function(q) {
+addtrtgeoms <- function(q, points=T, lines=T) {
     # Reorder the patient factor so that "alone" treatment patients are first
     for(subj in as.character(unique(q$data$SUBJID[q$data$trt=='A']))) {
         q$data$SUBJID <- relevel(q$data$SUBJID, subj)
     }
 
-    q <- q + geom_point(aes(shape=trttxt, colour=trttxt))
-    q <- q + geom_line(aes(colour=trttxt))
+	if (points) {
+    	q <- q + geom_point(aes(shape=trttxt, colour=trttxt))
+	}
+	if (lines) {
+    	q <- q + geom_line(aes(colour=trttxt))
+	}
     q + scale_shape(name="Treatment") + scale_colour_discrete("Treatment")
 }
 
 # Initial raw plot of data take 2
-rawggplot <- function(data, title="") {
+rawggplot <- function(data, title="", points=T, lines=T) {
     
 #    q <- qplot(acttm, parct, data=data, aes(acttm, parct), xlab="Time (hours)", ylab="Parasite Count (1000s)", main=title, geom="blank")
     q <- getrawplot(data)
-    q <- addtrtgeoms(q)
+    q <- addtrtgeoms(q, points, lines)
     q + opts(title=title)
     #    q <- q + scale_y_continuous(formatter=function(x) return(x/1000))
 #    l <- length(unique(data$SUBJID))
