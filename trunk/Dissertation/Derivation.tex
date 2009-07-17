@@ -33,35 +33,42 @@ Figure \ref{cubics} shows the cubic fits to the log parasite count for centre 1,
 The value of PC90 i.e. the time t at which the parasite count has fallen to 10\% was found by least-squares i.e. using the \texttt{optimize} function in R to minimise:
 $$[log(1+0.1P_0)-\beta_0-\beta_1t-\beta_2t^2-\beta_3t^3]^2$$
 where $P_0$ is the pre-treatment parasite count, $t$ is the time from first dose and $\beta_i$ are the fitted coefficients for the models for each of the 43 patients. Table \ref{pc90} shows the values of PC90 derived from the cubic fit to the parasite count by centre, sex and treatment.
-\begin{figure}[p]
+\begin{figure}[h]
 \includegraphics[width=6.1in]{cubics.eps} 
 \caption{Cubic fits to log parasite count up to first zero reading}\label{cubics}
 \end{figure}
-\subsection{Logistic regression}
+\subsection{Non-linear logistic regression}
 The logistic model fitted is
 $$\log(1+P_t)=\alpha+\frac{\lambda}{1+e^{-\beta(t-\mu)}}+\epsilon$$
 This was fitted to all the data as it can model a drop from an initial count level to a level of 0, unlike the cubic model. $\alpha$ is the lower asymptote which we would expect to be 0. $\alpha+\lambda$ is the upper asymptote which we would generally expect to be $P_0$ except in the cases where there is a marked increase in the parasite count after the first dose. $\beta$ determines the rate of reduction with time and $\mu$ is the point of inflection (maximum rate of reduction). This model was fitted using non-linear least-squares routines in \emph{R} and \emph{SAS}. Logistic fits to the same subjects as the cubic fits in Figure \ref{cubics} are shown in Figure \ref{logistics}.
-\begin{figure}[p]
+\begin{figure}[h]
 \includegraphics[width=6.1in]{logistics.eps} 
 \caption{Logistic fits to log parasite count}\label{logistics}
 \end{figure}
-
-Figure \ref{logparms} shows the roles the parameters of the logistic model play in shaping the fitted curve.
+\subsubsection*{Choosing starting values for the parameters}
+Figure \ref{logparms} shows the roles the parameters of the logistic model play in shaping the fitted curve. The non-linear, least-squares fitting routines (the \texttt{nls} function) in \emph{R} can take starting values for the parameters to be estimated. Looking at Figure \ref{logparms} it clearly follows that sensible starting values are:
+\begin{itemize}
+\item $\alpha$ = the minimum parasite count; usually 0.
+\item $\lambda$ = the maximum minus the minimum count; usually the maximum.
+\item $\mu$ = the time corresponding to the parasite count closest to halfway between the maximum and minimum counts.
+\end{itemize} 
+It was found by experimentation that the most suitable starting value for $\beta$ was -0.5, but that the fitting was insensitive to choice of $\beta$ if varied over the range of fitted $\beta$ values observed (and somewhat beyond).
 \begin{figure}[h]
 \includegraphics[width=6.1in]{logparms.eps} 
 \caption{Illustration of parameters for logistic fits.\newline
-The horizontal red lines shows $P_t=\alpha$ (lower) and $P_t=\alpha+\lambda$ (upper), the vertical red line shows $t=\mu$ and the coefficient $\beta$ that determines the rate of reduction is given in blue.}\label{logparms}
+The horizontal red lines show $\log(1+P_t)=\alpha$ (lower) and $\log(1+P_t)=\alpha+\lambda$ (upper), the vertical red line shows $t=\mu$ and the coefficient $\beta$ (rate of reduction) is given in blue.}\label{logparms}
 \end{figure}
 
-\begin{figure}[p]
-\includegraphics[width=6.1in]{failures.eps} 
+Despite careful selection of starting parameters, it was found that for several subjects that a logistic model is simply not appropriate. In these cases either the non-linear fitting routine failed to converge or, if convergence criteria were relaxed, would fit a model highly dependent on choice of starting parameters and when plotted with the data obviously does not model the data satisfactorily. The data for these subjects are shown in Figure \ref{failures}. 
+\begin{figure}[h]
+\includegraphics[height=4.2in]{failures.eps} 
 \caption{Subjects for which the logistic fitting fails}\label{failures}
 \end{figure}
-\begin{figure}[p]
-\includegraphics[width=6.1in]{failcubics.eps} 
-\caption{Logistic fits to log parasite count}\label{failcubics}
+\begin{figure}[h]
+\includegraphics[height=4.2in]{failcubics.eps} 
+\caption{Cubic fits to subjects where logistic fitting failed}\label{failcubics}
 \end{figure}
-
+\clearpage
 \section{Interpolation}
 The data points immediately above and below $0.1P_0$ were joined with a straight line fit and then the point where this line crosses $0.1P_0$ determines $t$ at PC90.
 
