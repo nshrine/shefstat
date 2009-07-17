@@ -37,7 +37,15 @@ logistic.fit <- function(data) {
 	fits.df <- data.frame(subset(data, select=c(SUBJID, CENTREID, SEX, trttxt), subset=plantm=='PRE-DOSE'), A=numeric(n), L=numeric(n), U=numeric(n), B=numeric(n))
 	for (i in 1:n) {
 		fit <- NULL
-		tryCatch(fit <- nls(log(1 + parct) ~ SSfpl(acttm, A, L, U, B), data=data, subset=SUBJID==fits.df$SUBJID[i]), error=function(e) e)
+		dat <- subset(data, SUBJID==fits.df$SUBJID[i])
+		initA <- max(log(1 + dat$parct))
+		initL <- min(log(1 + dat$parct))
+		halfway <- (initA + initL)/2
+		initU <- dat$acttm[which.min(abs(log(1 + dat$parct) - halfway))]
+		initB <- 2
+		tryCatch(fit <- nls(log(1 + parct) ~ SSfpl(acttm, A, L, U, B), data=dat,
+					start=list(A=initA, L=initL, U=initU, B=initB)),
+			error=function(e) e)
 		if(!is.null(fit)) {
 			fits.df[i, 5:8] <- coef(fit)
 		}
@@ -71,7 +79,8 @@ plotcubic <- function(subjs = c('54','80','96','98','140','150','176','182','185
 }
 
 addlogfit <- function(q) {
-	q + stat_smooth(method="nls", formula="y ~ SSfpl(x, A, L, U, B)", se=F)
+	q + stat_smooth(method="nls", formula="y ~ SSfpl(x, A, L, U, B)",
+		start="list(A=max(y), L=min(y), U=x[which.min(abs(y-((max(y)+min(y))/2)))], B=2)", se=F)
 }
 
 addlogparms <- function(q, fits) {
@@ -109,5 +118,9 @@ showlogparms <- function(fits, subjs = c('96','150','197')) {
 plotfailures <- function(subjs) {
 	q <- rawggplot(subset(malaria, subset=SUBJID %in% subjs), title="Subjects for which logistic fitting fails")
 	q <- getlogplot(q)
-	addPC90lines(q, logplot=T)
+	addPC90lines(q, logplot=T, am=8)
+}
+
+cubicfailures <- function(q) {
+	addcubicfit(q) + opts(title="Cubic fit to data where logistic fitting fails")
 }
