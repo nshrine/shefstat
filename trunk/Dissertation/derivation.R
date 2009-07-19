@@ -31,40 +31,6 @@ plotraw90 <- function() {
 	ggplot90(malaria.1M, am=8, vjust=-0.1, title="Parasite counts for Centre 1 Males with PC90 level shown")
 }
 
-logistic.fit <- function(data) {
-	subjects <- levels(data$SUBJID)
-	n <- length(subjects)
-	fits.df <- data.frame(subset(data, select=c(SUBJID, CENTREID, SEX, trttxt), subset=plantm=='PRE-DOSE'), A=numeric(n), L=numeric(n), U=numeric(n), B=numeric(n))
-	for (i in 1:n) {
-		fit <- NULL
-		dat <- subset(data, SUBJID==fits.df$SUBJID[i])
-		initA <- max(log(1 + dat$parct))
-		initL <- min(log(1 + dat$parct))
-		halfway <- (initA + initL)/2
-		initU <- dat$acttm[which.min(abs(log(1 + dat$parct) - halfway))]
-		initB <- 2
-		tryCatch(fit <- nls(log(1 + parct) ~ SSfpl(acttm, A, L, U, B), data=dat,
-					start=list(A=initA, L=initL, U=initU, B=initB)),
-			error=function(e) e)
-		if(!is.null(fit)) {
-			fits.df[i, 5:8] <- coef(fit)
-		}
-	}
-	return(fits.df)
-}
-
-uptofirstzero <- function(data) {
-	new.df <- data.frame()
-	for (s in unique(data$SUBJID)) {
-		rows <- data[data$SUBJID==s,]
-		n <- match(0, rows$parct)
-		if (!is.na(n)) {
-			rows <- rows[1:n,]
-		}
-		new.df <- rbind(new.df, rows)
-	}
-	return(new.df)
-}
 
 addcubicfit <- function(q) {
 	q + stat_smooth(method="lm", formula=y~x+I(x^2)+I(x^3), data=uptofirstzero(q$data), fullrange=F, se=F) 
@@ -79,8 +45,8 @@ plotcubic <- function(subjs = c('54','80','96','98','140','150','176','182','185
 }
 
 addlogfit <- function(q) {
-	q + stat_smooth(method="nls", formula="y ~ SSfpl(x, A, L, U, B)",
-		start="list(A=max(y), L=min(y), U=x[which.min(abs(y-((max(y)+min(y))/2)))], B=2)", se=F)
+	q + stat_smooth(method="nls", formula="y ~ SSfpl(x, A, L, U, B)", se=F)
+		# start="list(A=max(y), L=min(y), U=x[which.min(abs(y-((max(y)+min(y))/2)))], B=2)", se=F)
 }
 
 addlogparms <- function(q, fits) {
@@ -123,4 +89,29 @@ plotfailures <- function(subjs) {
 
 cubicfailures <- function(q) {
 	addcubicfit(q) + opts(title="Cubic fit to data where logistic fitting fails")
+}
+
+cubicsresid <- function() {
+	predose.resid(residuals(cubics.lmlist, type='pearson'), b=0.5, limits=c(-2,5), title="Standardised residuals from cubic fits")
+}
+
+plotresids <- function(data, model, type='pearson') {
+	residuals <- residuals(model, type=type)
+
+	vp1 <- viewport(width=0.5, height=0.5, x=0.75, y=0.75)
+	q1 <- qplot(sample=residuals, stat="qq")
+	print(q1, vp=vp1)
+
+	vp2 <- viewport(width=0.5, height=0.5, x=.25, y=0.25)
+	q2 <- qplot(data$acttm, residuals, xlab="Time (hours)", ylab="Standardized residuals") + geom_hline(yintercept=0, linetype=2)
+	print(q2, vp=vp2)
+
+	vp3 <- viewport(width=0.5, height=0.5, x=.75, y=.25)
+	q3 <- qplot(fitted(model), residuals, xlab="Fitted", ylab="Standardized residuals")  + geom_hline(yintercept=0, linetype=2)
+	print(q3, vp=vp3)
+	
+	vp4 <- viewport(width=0.5, height=0.5, x=.25, y=.75)
+#	q4 <- qplot(fitted(model), log(1+data$parct), xlab="Fitted", ylab="Actual") + geom_abline(intercept=0, slope=1, linetype=2)
+	q4 <- qplot(residuals, xlab="Standardized residuals", geom="blank") + geom_histogram(fill="white", colour="black", binwidth=0.5)
+	print(q4, vp=vp4)
 }

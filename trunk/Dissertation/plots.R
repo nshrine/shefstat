@@ -121,10 +121,10 @@ allaov <- function(data, title="") {
 	q + facet_grid(CENTREID~SEX, margins=T)
 }
 
-predose.resid <- function(residuals, title="Residuals from pre-dose count ANOVA", b=20000, limits=NULL) {
+predose.resid <- function(residuals, title="Residuals from pre-dose count ANOVA", b=20000, limits) {
 	plot1 <- qplot(residuals, main=title, xlab="Residual", geom="blank")
 	plot1 <- plot1 + geom_histogram(fill='white', colour='black', binwidth=b)
-	if (!is.null(limits)) {
+	if (!missing(limits)) {
 		plot1 <- plot1 + scale_x_continuous(limits=limits)
 	}
 	print(plot1)
