@@ -29,3 +29,64 @@ optimPC90 <- function(fit, y, range=0:50) {
 minlogit <- function(t) {
 	return((y - predict(fit, data.frame(x=t)))^2)
 }
+
+pc90cubic <- function(fit, data) {
+	coefs <- coef(fit)
+	parct90 <- log(1 + (data$parct[data$plantm=='PRE-DOSE'] * 0.1))
+	preds <- predict(fit)
+	upper <- which.min(preds > parct90)
+	lower <- upper - 1
+	interval <- c(data$acttm[lower], data$acttm[upper])
+	soln <- uniroot(function(x) coefs[1] + coefs[2]*x + coefs[3]*x^2 + coefs[4]*x^3 - parct90, interval=interval)
+	soln$root
+}
+
+logistic.fit <- function(dat) {
+	initA <- max(log(1 + dat$parct))
+	initL <- min(log(1 + dat$parct))
+	halfway <- (initA + initL)/2
+	initU <- dat$acttm[which.min(abs(log(1 + dat$parct) - halfway))]
+	initB <- 2
+	tryCatch(fit <- nls(log(1 + parct) ~ SSfpl(acttm, A, L, U, B), data=dat,
+				start=list(A=initA, L=initL, U=initU, B=initB)),
+		error=function(e) e)
+	fit
+}
+
+logistic.fits <- function(data) {
+	subjects <- levels(data$SUBJID)
+	n <- length(subjects)
+	fits.df <- data.frame(subset(data, select=c(SUBJID, CENTREID, SEX, trttxt), subset=plantm=='PRE-DOSE'), A=numeric(n), L=numeric(n), U=numeric(n), B=numeric(n))
+	for (i in 1:n) {
+		fit <- NULL
+		dat <- subset(data, SUBJID==fits.df$SUBJID[i])
+		fit <- logistic.fit(dat)
+		if(!is.null(fit)) {
+			fits.df[i, 5:8] <- coef(fit)
+		}
+	}
+	return(fits.df)
+}
+
+uptofirstzero <- function(data) {
+	new.df <- data.frame()
+	for (s in unique(data$SUBJID)) {
+		rows <- data[data$SUBJID==s,]
+		n <- match(0, rows$parct)
+		if (!is.na(n)) {
+			rows <- rows[1:n,]
+		}
+		new.df <- rbind(new.df, rows)
+	}
+	return(new.df)
+}
+
+getPC90.logistic <- function(fit, data) {
+	parct90 <- log(1 + (data$parct[data$plantm=='PRE-DOSE'] * 0.1))
+	preds <- predict(fit)
+	upper <- which.min(preds > parct90)
+	lower <- upper - 1
+	interval <- c(data$acttm[lower], data$acttm[upper])
+	soln <- uniroot(function(x) predict(fit, data.frame(acttm=x)) - parct90, interval=interval)
+	soln$root
+}
