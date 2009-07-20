@@ -90,3 +90,6 @@ getPC90.logistic <- function(fit, data) {
 	soln <- uniroot(function(x) predict(fit, data.frame(acttm=x)) - parct90, interval=interval)
 	soln$root
 }
+
+# sapply(PC90.df$SUBJID, function(s) pc90cubic(cubics.lmlist[[s]], malaria.0[malaria.0$SUBJID==s,]))
+#
