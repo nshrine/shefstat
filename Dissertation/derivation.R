@@ -115,3 +115,23 @@ plotresids <- function(data, model, type='pearson') {
 	q4 <- qplot(residuals, xlab="Standardized residuals", geom="blank") + geom_histogram(fill="white", colour="black", binwidth=0.5)
 	print(q4, vp=vp4)
 }
+
+comparefits <- function() {
+	q <- getrawplot(subset(malaria, subset=SUBJID=='183')) + geom_point(shape=1)
+	q <- getlogplot(q)
+	q <- addPC90lines(q, logplot=T)
+	q <- addcubicfit(q)
+	q <- q + stat_function(fun=function(x) SSfpl(x, 8.3909, -0.1511, 25.0694, 2.0991))
+	q <- q + geom_vline(xintercept=4.5474043, lty=3, colour=4)
+	q <- q + geom_vline(xintercept=17.212508, lty=3, colour=1)
+	q <- q + geom_text(aes(x=5,y=4,label="cubic", angle=90))
+	q + geom_text(aes(x=17.6,y=4,label="logistic", angle=90))
+}
+
+addPC90vlines <- function(q, dat) {
+	dat <- subset(dat, subset=SUBJID %in% unique(q$data$SUBJID))
+	q <- q + geom_vline(data=dat, aes(xintercept=c(PC90.cubic, PC90.logistic)), linetype=3, colour=c(4,1))
+#	q <- q + geom_text(data=dat, aes(x=PC90.cubic, y=2, label="cubic", angle=90, hjust=-1))
+#	q + geom_text(data=dat, aes(x=PC90.logistic, y=2, label="logistic", angle=90, hjust=1))
+	q
+}
