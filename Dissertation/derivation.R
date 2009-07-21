@@ -130,7 +130,8 @@ comparefits <- function() {
 
 addPC90vlines <- function(q, dat) {
 	dat <- subset(dat, subset=SUBJID %in% unique(q$data$SUBJID))
-	q <- q + geom_vline(data=dat, aes(xintercept=c(PC90.cubic, PC90.logistic)), linetype=3, colour=c(4,1))
+#	q <- q + geom_vline(data=dat, aes(xintercept=c(PC90.cubic, PC90.logistic, PC90.loglin), linetype=..xintercept..)) 
+	q <- q + geom_vline(data=dat, aes(xintercept=PC90, colour=method), linetype=2) 
 #	q <- q + geom_text(data=dat, aes(x=PC90.cubic, y=2, label="cubic", angle=90, hjust=-1))
 #	q + geom_text(data=dat, aes(x=PC90.logistic, y=2, label="logistic", angle=90, hjust=1))
 	q
