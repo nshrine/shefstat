@@ -32,8 +32,8 @@ plotraw90 <- function() {
 }
 
 
-addcubicfit <- function(q) {
-	q + stat_smooth(method="lm", formula=y~x+I(x^2)+I(x^3), data=uptofirstzero(q$data), fullrange=F, se=F) 
+addcubicfit <- function(q, ...) {
+	q + stat_smooth(method="lm", formula=y~x+I(x^2)+I(x^3), data=uptofirstzero(q$data), fullrange=F, se=F, ...) 
 }
 
 plotcubic <- function(subjs = c('54','80','96','98','140','150','176','182','185','187','197','203')) {
@@ -44,8 +44,8 @@ plotcubic <- function(subjs = c('54','80','96','98','140','150','176','182','185
 	addcubicfit(q)
 }
 
-addlogfit <- function(q) {
-	q + stat_smooth(method="nls", formula="y ~ SSfpl(x, A, L, U, B)", se=F)
+addlogfit <- function(q, ...) {
+	q + stat_smooth(method="nls", formula="y ~ SSfpl(x, A, L, U, B)", se=F, ...)
 		# start="list(A=max(y), L=min(y), U=x[which.min(abs(y-((max(y)+min(y))/2)))], B=2)", se=F)
 }
 
@@ -116,11 +116,11 @@ plotresids <- function(data, model, type='pearson') {
 	print(q4, vp=vp4)
 }
 
-comparefits <- function() {
-	q <- getrawplot(subset(malaria, subset=SUBJID=='183')) + geom_point(shape=1)
+comparefits <- function(subjs) {
+	q <- getrawplot(subset(malaria, subset=SUBJID %in% subjs)) + geom_point(shape=1)
 	q <- getlogplot(q)
 	q <- addPC90lines(q, logplot=T)
-	q <- addcubicfit(q)
+	q <- addcubicfit(q, colour='blue')
 	q <- q + stat_function(fun=function(x) SSfpl(x, 8.3909, -0.1511, 25.0694, 2.0991))
 	q <- q + geom_vline(xintercept=4.5474043, lty=3, colour=4)
 	q <- q + geom_vline(xintercept=17.212508, lty=3, colour=1)
@@ -128,11 +128,56 @@ comparefits <- function() {
 	q + geom_text(aes(x=17.6,y=4,label="logistic", angle=90))
 }
 
-addPC90vlines <- function(q, dat) {
+addloglin <- function(q, ...) {
+	dat <- q$data
+	dat$parct <- exp(q$dat$parct) - 1
+	dat <- by(dat, dat$SUBJID, getAboveBelow)
+	data <- data.frame()
+	for (s in unique(q$data$SUBJID)) {
+		data <- rbind(data, q$data[q$data$SUBJID==s,][dat[[s]],])
+	}
+	q + geom_line(data=data, ...)
+}
+
+addPC90vlines <- function(q, dat, colours=c("blue", "red", "green")) {
 	dat <- subset(dat, subset=SUBJID %in% unique(q$data$SUBJID))
 #	q <- q + geom_vline(data=dat, aes(xintercept=c(PC90.cubic, PC90.logistic, PC90.loglin), linetype=..xintercept..)) 
-	q <- q + geom_vline(data=dat, aes(xintercept=PC90, colour=method), linetype=2) 
+	q <- q + geom_vline(data=dat, aes(xintercept=PC90, colour=method), linetype=2) + scale_colour_manual(values=colours)
 #	q <- q + geom_text(data=dat, aes(x=PC90.cubic, y=2, label="cubic", angle=90, hjust=-1))
 #	q + geom_text(data=dat, aes(x=PC90.logistic, y=2, label="logistic", angle=90, hjust=1))
 	q
+}
+
+comparePC90 <- function(dat, pc90, logfit=T, ...) {
+	q <- getrawplot(dat) + geom_point(shape=1)
+	q <- getlogplot(q)
+	q <- addPC90lines(q, logplot=T)
+	q <- addcubicfit(q, colour="blue")
+	if (logfit) {
+		q <- addlogfit(q, colour="red", ...)
+	}
+	q <- addloglin(q, colour="green")
+	addPC90vlines(q, pc90) + facet_wrap(~SUBJID, ncol=2)
+}
+
+plotresids.PC90 <- function(data, model, type='pearson', binwidth=1, ...) {
+	residuals <- residuals(model, type=type)
+	include <- !is.na(data$PC90)
+
+	vp1 <- viewport(width=0.5, height=0.5, x=0.75, y=0.75)
+	q1 <- qplot(sample=residuals, stat="qq") #+ geom_text(label=data$outlier[include], stat="qq", colour="red", size=4)
+	print(q1, vp=vp1)
+
+	vp2 <- viewport(width=0.5, height=0.5, x=.25, y=0.25)
+	q2 <- qplot(data$method[include], residuals, xlab="Method", ylab="Standardized residuals", geom="blank") + geom_boxplot(outlier.shape=NA) + geom_jitter() + geom_text(label=data$outlier[include], hjust=-0.1, colour="red", size=4) + geom_hline(yintercept=0, linetype=2)
+	print(q2, vp=vp2)
+
+	vp3 <- viewport(width=0.5, height=0.5, x=.75, y=.25)
+	q3 <- qplot(fitted(model), residuals, xlab="Fitted", ylab="Standardized residuals")  + geom_hline(yintercept=0, linetype=2) + geom_text(label=data$outlier[include], hjust=-0.1, colour="red", size=4)
+	print(q3, vp=vp3)
+	
+	vp4 <- viewport(width=0.5, height=0.5, x=.25, y=.75)
+#	q4 <- qplot(fitted(model), log(1+data$parct), xlab="Fitted", ylab="Actual") + geom_abline(intercept=0, slope=1, linetype=2)
+	q4 <- qplot(residuals, xlab="Standardized residuals", geom="blank") + geom_histogram(fill="white", colour="black", binwidth=binwidth)
+	print(q4, vp=vp4)
 }
