@@ -21,7 +21,7 @@ We can see that the logarithmic transformation reduces the significance of large
 \label{log901M}
 \end{center}
 \end{figure}
-\section{Regression modeling}
+\section{Estimation techniques}
 \subsection{Polynomial linear regression}
 It was found that a cubic was the most suitable model, if we include the data only up to the first 0 parasite count. For some patients where the parasite count drops quickly to 0 a fit that includes the subsequent run of 0s would pull the cubic fit away from the most sensible estimate of PC90. It is more suitable for the purpose of estimating PC90 to only model the drop in the count to 0.
 
@@ -30,7 +30,7 @@ $$\log(1+P_{t})=\beta_0+\beta_1t+\beta_2t^2+\beta_3t^3+\epsilon\quad\quad\epsilo
 
 Figure \ref{cubics} shows the cubic fits to the log parasite count for centre 1, male subjects. It can be seen that the model describes the data fairly well, but it looks as if the combined treatment data is more closely modelled with the single treatment data showing more dispersion about the fitted model. 
 
-Figure \ref{cubicsresid} shows the standardized residuals ($e/\hat{\sigma}$) for the cubic fits. It can be seen that they are normally distributed and show no obvious correlation with time from first dose or with fitted count.
+Figure \ref{cubicsresid} shows the standardized residuals ($e/\hat{\sigma}$) for the cubic fits. It can be seen that they are normally distributed and show no obvious correlation with time from first dose or with fitted count. The cluster of small magnitude residuals at 0 fitted value occurs because this datum in the fit for each subject is not random but is always 0. Strictly this invalidates the assumptions of the fitted model but there isn't a more suitable choice for determining the shape. The cubic model is really only used as a convenient method of interpolation and we are not interested in the accuracy of the fitted parameters as long as there is no systematic bias. 
 \subsubsection*{Determining PC90 from the fitted model}
 The value of PC90 i.e. the time t at which the parasite count has fallen to 10\% was found by least-squares i.e. using the \texttt{optimize} function in R to minimise:
 $$[log(1+0.1P_0)-\beta_0-\beta_1t-\beta_2t^2-\beta_3t^3]^2$$
@@ -43,15 +43,11 @@ where $P_0$ is the pre-treatment parasite count, $t$ is the time from first dose
 \includegraphics[width=6.1in]{cubicsresid.eps} 
 \caption{Standardized residuals for cubic fits}\label{cubicsresid}
 \end{figure}
+\clearpage
 \subsection{Non-linear logistic regression}
 The logistic model fitted is
 $$\log(1+P_t)=\alpha+\frac{\lambda}{1+e^{-\beta(t-\mu)}}+\epsilon$$
 This was fitted to all the data as it can model a drop from an initial count level to a level of 0, unlike the cubic model. $\alpha$ is the lower asymptote which we would expect to be 0. $\alpha+\lambda$ is the upper asymptote which we would generally expect to be $P_0$ except in the cases where there is a marked increase in the parasite count after the first dose. $\beta$ determines the rate of reduction with time and $\mu$ is the point of inflection (maximum rate of reduction). This model was fitted using non-linear least-squares routines in \emph{R} and \emph{SAS}. Logistic fits to the same subjects as the cubic fits in Figure \ref{cubics} are shown in Figure \ref{logistics}.
-\begin{figure}[h]
-\includegraphics[width=6.1in]{logistics.eps} 
-\caption{Logistic fits to log parasite count}\label{logistics}
-\end{figure}
-\clearpage
 \subsubsection*{Choosing starting values for the parameters}
 Figure \ref{logparms} shows the roles the parameters of the logistic model play in shaping the fitted curve. The non-linear, least-squares fitting routines (the \texttt{nls} function) in \emph{R} can take starting values for the parameters to be estimated.
 \begin{figure}[h]
@@ -67,91 +63,59 @@ Looking at Figure \ref{logparms} it clearly follows that sensible starting value
 \item $\mu$ = the time corresponding to the parasite count closest to halfway between the maximum and minimum counts.
 \end{itemize} 
 It was found by experimentation that the most suitable starting value for $\beta$ was -0.5, but that the fitting was insensitive to choice of $\beta$ if varied over the range of fitted $\beta$ values observed (and somewhat beyond).
-
+\begin{figure}[p]
+\includegraphics[width=6.1in]{logistics.eps} 
+\caption{Logistic fits to log parasite count}\label{logistics}
+\end{figure}
+\subsubsection*{Failure of logistic fitting}
 Despite careful selection of starting parameters, it was found for several subjects that a logistic model is simply not appropriate. In these cases either the non-linear fitting routine failed to converge or, if convergence criteria were relaxed, would fit a model highly dependent on choice of starting parameters and when plotted with the data obviously does not model the data satisfactorily. The data for these subjects where logistic fitting failed are shown in Figure \ref{failures}.
 
 It is interesting to note that all subjects for which logistic fitting fails are in the single treatment group; $p=0.0039$ under the null hypothesis of equal probability of a subject being from the single or combined treatment group using a binomial model. This is evidence that the parasite counts for patients on the single treatment follow more varied trajectories during clearance compared to patients on the combined treatment whose clearance can consistently be described with a logistic model to a good approximation. This was also the case for the cubic model.
-
 \begin{figure}[h]
-\includegraphics[height=4.2in]{failures.eps} 
+\includegraphics[width=6.1in]{failures.eps} 
 \caption{Subjects for which the logistic fitting fails}\label{failures}
 \end{figure}
+
+In addition to parasite count profiles that simply do not conform to a logistic shape there were subjects where insufficient data in the region between the upper and lower asymptotes meant that logistic fitting was inappropriate. For example subjects 526 and 101 in Figure \ref{failures} where choice of different starting parameters for $\mu$ and $\beta$ would result in different logistic fits being obtained. One possible fit having a steep transition (large absolute $\beta$) whereby the data at the upper and lower levels is closely modeled. Another possible fit having a shallower transition (smaller $\beta$) that models the slope of a line passing through the ends of the run of points at the upper and lower levels and the point in the middle, but that has a less severe curvature such that the corners at the upper and lower levels are less well modeled. In summary the fit is free to rotate about the single point between the upper and lower levels and thus cannot be suitably defined.
+\subsection{Log-linear interpolation}
+The datum immediately above the PC90 level is joined with a straight line to the datum immediately below the PC90 level in on a plot of $\log(1+P_{t})$ against time. The point where this line crosses the PC90 level determines $t$=PC90.
+\section{Comparison of estimation methods}
+\subsection{Graphical comparison}
+Figure \ref{pc90-agree} shows 8 examples of subjects where estimation by the 3 different methods shows good agreement. It seems likely that the differences between these estimates are comparable to experimental error. It can be seen that the 3 methods give close agreement when the data can be closely modeled by cubic or logistic fitting and when the gradient of the log-linear interpolation is similar to the regression models in the region around PC90. 
 \begin{figure}[h]
-\includegraphics[height=4.2in]{failcubics.eps} 
-\caption{Cubic fits to subjects where logistic fitting failed}\label{failcubics}
+\includegraphics[width=6.5in]{pc90-agree.eps} 
+\caption{Subjects with little difference in PC90 estimated by 3 methods}
+\label{pc90-agree}
+\end{figure}
+
+Figure \ref{pc90-bad} shows examples of subjects where estimation by the 3 different methods has resulted in notable differences between PC90 estimates. These differences appear to arise when:
+\begin{enumerate}
+\item The drop in parasite count is slow or stationary around the PC90 level e.g. subjects 98, 453 and 509. In these cases the regression lines and interpolation may cross the PC90 level at markedly different times. In subject 509 this has given a difference in PC90 between the interpolation and cubic methods of almost 10 hours.
+\item There is an ``unusual'' data near the PC90 level e.g. subjects 490 and 500 where recorded counts seemingly off the prevailing trend have influence the interpolated estimate.  
+\end{enumerate}
+\begin{figure}[h]
+\includegraphics[width=6.5in]{pc90-bad.eps} 
+\caption{Subjects with notable difference in PC90 estimated by 3 methods}
+\label{pc90-bad}
+\end{figure}
+\begin{figure}[h]
+\includegraphics[width=6.5in]{pc90-nofit.eps} 
+\caption{PC90 estimation for subjects where logistic fitting was inappropriate}
+\label{pc90-bad}
 \end{figure}
 \clearpage
-\section{Interpolation}
-The data points immediately above and below $0.1P_0$ were joined with a straight line fit and then the point where this line crosses $0.1P_0$ determines $t$ at PC90.
-
-For loglinear interpolation the same procedure was performed only on a plot of $log(1+parct)$ vs. $t$.
-\section{Comparison of results}
-Figures \ref{1MB} and \ref{2FA} compare the logistic with the loglinear interpolation methods; the horizontal line is the PC90 level. It can be seen in Figure \ref{1MB} for Centre 1 male patients on treatment B that there is close agreement between the two methods. However in Figure \ref{2FA} for Centre 2 female patients on treatment A where the data is more ``erratic" that these simple approaches can fail in two ways.
-
-Sometimes the non-linear fitting routine fails to converge on a solution (the plots with no logistic curve). This was found to be a problem using \texttt{nls} in \emph{R}. However, the \texttt{NLIN} routine in \emph{SAS} seems to achieve a reasonable solution in all cases. The second way in which this approach can fail is illustrated in the plot for patient 453 in Figure \ref{2FA} in that the parasite count temporarily dropped below the 10\% level before the actual final elimination of parasites had begun. It is clear that this approach should be modified to identify the \emph{last} time at which the parasite count drops below 10\%.
-
-Table \ref{PC90} shows a comparison of the PC90 estimates by the four different methods looked at so far. Looking at the table the agreement in PC90 estimates looks fairly good. If we perform 6 paired-sample $t$-tests between pairs of methods we find that there is no strong evidence that the cubic regression and linear interpolation methods produce different estimates, likewise for the cubic and loglinear methods and the linear and logistic methods. The other combinations of methods do show evidence of difference in PC90 estimates ($P<0.0002$).
-
-If we repeat the 3-way ANOVA of the previous report we find that \emph{Treatment} is the only factor that affects PC90 whichever method we use. Hence it would seem that the simplest method i.e. linear interpolation is the best method at this stage. However, as we know, the parasite count can be unreliable and depends on an operator-selected ``suitable" blood sample and so just one outlying value could throw the estimate by linear interpolation out as it only uses the two values above and below the PC90 count. In this respect an estimate based on more values should be more robust.
-\begin{figure}
-\includegraphics[scale=0.55]{logistic-1MB.eps} 
-\caption{PC90 estimates for Centre 1 male patients on treatment B}\label{1MB}
-\end{figure}
-\begin{figure}
-\includegraphics[scale=0.50]{logistic-2FA.eps} 
-\caption{PC90 estimates for Centre 2 female patients on treatment A}\label{2FA}
-\end{figure}
+\subsection{Statistical comparison}
+Table \ref{PC90} shows a comparison of the PC90 estimates by the 3 different methods utilised so far. If we perform 2-way ANOVA between the 3 PC90 estimates by subject and method i.e.
+$$\mathrm{PC}90_{ij}=subject_{i}+method_{j}+\epsilon_{ij}\quad\quad\epsilon\sim N(0,\sigma^{2})$$ 
+we obtain the residuals shown in Figure \ref
 \begin{table}
 \centering
-\caption{Comparison of PC90 estimates by 4 methods}\label{PC90}
-\begin{tabular}{|cccc|rrrr|}
+\caption{Comparison of PC90 estimated by 3 methods}\label{PC90}
+\begin{tabular}{|cccc|rrr|}
 \hline
-Subject&Centre&&&PC90&PC90&PC90&PC90\\
-ID&ID&Sex&Treatment&cubic&linear&loglinear&logistic\\
+Subject&Centre&&&PC90&PC90&PC90\\
+ID&ID&Sex&Treatment&cubic&logistic&log-linear\\
 \hline
-54&001&M&A&3.82&3.97&3.85&4.14\\
-80&001&M&A&27.87&29.73&27.32&28.50\\
-96&001&F&A&21.13&20.15&19.76&22.95\\
-98&001&M&A&34.25&36.63&36.30&33.51\\
-101&001&F&A&23.20&23.87&22.45&\\
-140&001&M&B&9.49&10.90&9.46&10.16\\
-150&001&F&A&22.53&23.24&21.75&23.12\\
-162&001&M&A&9.79&9.10&8.84&\\
-176&001&M&B&5.32&5.55&5.05&5.66\\
-182&001&F&B&4.18&3.86&3.65&4.29\\
-183&001&M&A&4.95&4.50&4.35&\\
-185&001&M&B&7.70&8.33&8.09&8.13\\
-187&001&M&A&0.83&1.93&1.53&3.05\\
-197&001&F&B&8.64&9.87&8.15&8.35\\
-203&001&F&B&9.44&11.27&9.69&10.30\\
-218&001&M&B&23.54&23.76&22.77&23.92\\
-224&001&M&A&28.86&30.02&30.01&30.26\\
-262&001&M&B&9.40&10.74&9.40&9.85\\
-264&001&F&B&0.88&0.96&0.85&1.43\\
-280&001&F&B&8.61&9.92&9.04&9.72\\
-285&001&F&A&47.24&46.76&46.52&\\
-288&001&F&B&12.86&9.67&9.38&12.38\\
-294&001&M&B&8.11&7.93&7.73&8.68\\
-295&001&M&A&4.67&5.11&4.83&4.98\\
-449&002&M&A&4.50&5.42&4.82&\\
-453&002&F&A&20.07&22.73&21.97&23.08\\
-462&002&F&A&2.22&2.67&2.49&\\
-469&002&M&A&2.15&2.26&2.21&\\
-477&002&F&A&24.03&26.10&25.08&\\
-490&002&F&A&28.73&24.10&24.17&29.94\\
-500&002&M&B&19.35&18.03&17.15&19.66\\
-502&002&F&B&15.39&16.10&14.77&16.33\\
-504&002&F&A&5.04&5.18&5.00&6.64\\
-505&002&F&B&8.37&10.30&8.74&9.02\\
-509&002&M&A&20.58&11.79&11.59&18.63\\
-511&002&M&B&9.99&10.55&9.51&10.91\\
-519&002&M&B&15.60&16.54&14.68&16.08\\
-521&002&F&A&22.21&23.34&21.64&23.38\\
-523&002&F&B&5.90&5.93&5.84&7.20\\
-525&002&F&B&6.26&6.91&6.11&6.17\\
-526&002&F&A&23.71&24.46&24.42&\\
-530&002&M&A&29.07&29.53&28.09&29.28\\
-532&002&M&B&8.94&8.33&8.08&9.21\\
-\hline
+54&Centre 1&Male&alone&3.82&4.14&3.85\\80&Centre 1&Male&alone&27.62&28.50&27.32\\96&Centre 1&Female&alone&21.18&22.95&19.76\\98&Centre 1&Male&alone&34.50&33.51&36.30\\101&Centre 1&Female&alone&23.20&-&22.45\\140&Centre 1&Male&combi&9.47&10.16&9.47\\150&Centre 1&Female&alone&22.52&23.12&21.75\\162&Centre 1&Male&alone&10.54&-&8.84\\176&Centre 1&Male&combi&5.32&5.66&5.05\\182&Centre 1&Female&combi&3.98&4.29&3.65\\183&Centre 1&Male&alone&4.55&17.21&4.35\\185&Centre 1&Male&combi&7.59&8.13&8.10\\187&Centre 1&Male&alone&1.81&3.05&1.53\\197&Centre 1&Female&combi&8.38&8.35&8.40\\203&Centre 1&Female&combi&10.48&10.30&9.69\\218&Centre 1&Male&combi&23.48&23.92&22.77\\224&Centre 1&Male&alone&28.86&30.26&30.01\\262&Centre 1&Male&combi&9.40&9.85&9.40\\264&Centre 1&Female&combi&0.37&1.43&0.85\\280&Centre 1&Female&combi&8.76&9.72&9.04\\285&Centre 1&Female&alone&47.74&-&46.52\\288&Centre 1&Female&combi&12.86&12.38&9.38\\294&Centre 1&Male&combi&8.86&8.68&7.73\\295&Centre 1&Male&alone&5.02&4.98&4.83\\449&Centre 2&Male&alone&4.45&-&4.82\\453&Centre 2&Female&alone&19.66&23.08&21.97\\462&Centre 2&Female&alone&2.11&-&2.49\\469&Centre 2&Male&alone&3.01&-&2.21\\477&Centre 2&Female&alone&24.03&-&25.08\\490&Centre 2&Female&alone&28.73&29.94&31.63\\500&Centre 2&Male&combi&19.36&19.66&17.15\\502&Centre 2&Female&combi&15.33&16.33&14.77\\504&Centre 2&Female&alone&5.07&6.64&5.00\\505&Centre 2&Female&combi&8.26&9.02&8.75\\509&Centre 2&Male&alone&20.59&18.63&11.59\\511&Centre 2&Male&combi&10.00&10.91&9.51\\519&Centre 2&Male&combi&15.63&16.08&14.68\\521&Centre 2&Female&alone&22.14&23.38&21.64\\523&Centre 2&Female&combi&5.82&5.97&5.84\\525&Centre 2&Female&combi&6.15&6.17&6.23\\526&Centre 2&Female&alone&23.48&-&24.42\\530&Centre 2&Male&alone&29.10&29.28&28.09\\532&Centre 2&Male&combi&9.16&9.21&8.08\\\hline
 \end{tabular}
 \end{table}
