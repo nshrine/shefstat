@@ -105,9 +105,7 @@ Figure \ref{pc90-bad} shows examples of subjects where estimation by the 3 diffe
 \end{figure}
 \clearpage
 \subsection{Statistical comparison}
-Table \ref{PC90} shows a comparison of the PC90 estimates by the 3 different methods utilised so far. If we perform 2-way ANOVA between the 3 PC90 estimates by subject and method i.e.
-$$\mathrm{PC}90_{ij}=subject_{i}+method_{j}+\epsilon_{ij}\quad\quad\epsilon\sim N(0,\sigma^{2})$$ 
-we obtain the residuals shown in Figure \ref
+Table \ref{PC90} shows a comparison of the PC90 estimates by the 3 different methods utilised so far.
 \begin{table}
 \centering
 \caption{Comparison of PC90 estimated by 3 methods}\label{PC90}
@@ -116,6 +114,77 @@ we obtain the residuals shown in Figure \ref
 Subject&Centre&&&PC90&PC90&PC90\\
 ID&ID&Sex&Treatment&cubic&logistic&log-linear\\
 \hline
-54&Centre 1&Male&alone&3.82&4.14&3.85\\80&Centre 1&Male&alone&27.62&28.50&27.32\\96&Centre 1&Female&alone&21.18&22.95&19.76\\98&Centre 1&Male&alone&34.50&33.51&36.30\\101&Centre 1&Female&alone&23.20&-&22.45\\140&Centre 1&Male&combi&9.47&10.16&9.47\\150&Centre 1&Female&alone&22.52&23.12&21.75\\162&Centre 1&Male&alone&10.54&-&8.84\\176&Centre 1&Male&combi&5.32&5.66&5.05\\182&Centre 1&Female&combi&3.98&4.29&3.65\\183&Centre 1&Male&alone&4.55&17.21&4.35\\185&Centre 1&Male&combi&7.59&8.13&8.10\\187&Centre 1&Male&alone&1.81&3.05&1.53\\197&Centre 1&Female&combi&8.38&8.35&8.40\\203&Centre 1&Female&combi&10.48&10.30&9.69\\218&Centre 1&Male&combi&23.48&23.92&22.77\\224&Centre 1&Male&alone&28.86&30.26&30.01\\262&Centre 1&Male&combi&9.40&9.85&9.40\\264&Centre 1&Female&combi&0.37&1.43&0.85\\280&Centre 1&Female&combi&8.76&9.72&9.04\\285&Centre 1&Female&alone&47.74&-&46.52\\288&Centre 1&Female&combi&12.86&12.38&9.38\\294&Centre 1&Male&combi&8.86&8.68&7.73\\295&Centre 1&Male&alone&5.02&4.98&4.83\\449&Centre 2&Male&alone&4.45&-&4.82\\453&Centre 2&Female&alone&19.66&23.08&21.97\\462&Centre 2&Female&alone&2.11&-&2.49\\469&Centre 2&Male&alone&3.01&-&2.21\\477&Centre 2&Female&alone&24.03&-&25.08\\490&Centre 2&Female&alone&28.73&29.94&31.63\\500&Centre 2&Male&combi&19.36&19.66&17.15\\502&Centre 2&Female&combi&15.33&16.33&14.77\\504&Centre 2&Female&alone&5.07&6.64&5.00\\505&Centre 2&Female&combi&8.26&9.02&8.75\\509&Centre 2&Male&alone&20.59&18.63&11.59\\511&Centre 2&Male&combi&10.00&10.91&9.51\\519&Centre 2&Male&combi&15.63&16.08&14.68\\521&Centre 2&Female&alone&22.14&23.38&21.64\\523&Centre 2&Female&combi&5.82&5.97&5.84\\525&Centre 2&Female&combi&6.15&6.17&6.23\\526&Centre 2&Female&alone&23.48&-&24.42\\530&Centre 2&Male&alone&29.10&29.28&28.09\\532&Centre 2&Male&combi&9.16&9.21&8.08\\\hline
+54&Centre 1&Male&alone&3.82&4.14&3.85\\
+80&Centre 1&Male&alone&27.62&28.50&27.32\\
+96&Centre 1&Female&alone&21.18&22.95&19.76\\
+98&Centre 1&Male&alone&34.50&33.51&36.30\\
+101&Centre 1&Female&alone&23.20&-&22.45\\
+140&Centre 1&Male&combi&9.47&10.16&9.47\\
+150&Centre 1&Female&alone&22.52&23.12&21.75\\
+162&Centre 1&Male&alone&10.54&-&8.84\\
+176&Centre 1&Male&combi&5.32&5.66&5.05\\
+182&Centre 1&Female&combi&3.98&4.29&3.65\\
+183&Centre 1&Male&alone&4.55&17.21&4.35\\
+185&Centre 1&Male&combi&7.59&8.13&8.10\\
+187&Centre 1&Male&alone&1.81&3.05&1.53\\
+197&Centre 1&Female&combi&8.38&8.35&8.40\\
+203&Centre 1&Female&combi&10.48&10.30&9.69\\
+218&Centre 1&Male&combi&23.48&23.92&22.77\\
+224&Centre 1&Male&alone&28.86&30.26&30.01\\
+262&Centre 1&Male&combi&9.40&9.85&9.40\\
+264&Centre 1&Female&combi&0.37&1.43&0.85\\
+280&Centre 1&Female&combi&8.76&9.72&9.04\\
+285&Centre 1&Female&alone&47.74&-&46.52\\
+288&Centre 1&Female&combi&12.86&12.38&9.38\\
+294&Centre 1&Male&combi&8.86&8.68&7.73\\
+295&Centre 1&Male&alone&5.02&4.98&4.83\\
+449&Centre 2&Male&alone&4.45&-&4.82\\
+453&Centre 2&Female&alone&19.66&23.08&21.97\\
+462&Centre 2&Female&alone&2.11&-&2.49\\
+469&Centre 2&Male&alone&3.01&-&2.21\\
+477&Centre 2&Female&alone&24.03&-&25.08\\
+490&Centre 2&Female&alone&28.73&29.94&31.63\\
+500&Centre 2&Male&combi&19.36&19.66&17.15\\
+502&Centre 2&Female&combi&15.33&16.33&14.77\\
+504&Centre 2&Female&alone&5.07&6.64&5.00\\
+505&Centre 2&Female&combi&8.26&9.02&8.75\\
+509&Centre 2&Male&alone&20.59&18.63&11.59\\
+511&Centre 2&Male&combi&10.00&10.91&9.51\\
+519&Centre 2&Male&combi&15.63&16.08&14.68\\
+521&Centre 2&Female&alone&22.14&23.38&21.64\\
+523&Centre 2&Female&combi&5.82&5.97&5.84\\
+525&Centre 2&Female&combi&6.15&6.17&6.23\\
+526&Centre 2&Female&alone&23.48&-&24.42\\
+530&Centre 2&Male&alone&29.10&29.28&28.09\\
+532&Centre 2&Male&combi&9.16&9.21&8.08\\
+\hline
+\end{tabular}
+\end{table}
+If we perform 2-way ANOVA between the 3 PC90 estimates by subject and method i.e.
+$$\mathrm{PC}90_{ij}=subject_{i}+method_{j}+\epsilon_{ij}\quad\quad\epsilon\sim N(0,\sigma^{2})$$ 
+we obtain the residuals shown in Figure \ref{pc90resid}.
+\begin{figure}[h]
+\includegraphics[width=6.5in]{pc90resid.eps} 
+\caption{Residuals from ANOVA analysis of PC90 estimates}
+\label{pc90resid}
+\end{figure}
+ It can be seen that there are several outlying data points at up to $5\sigma$. These correspond to subject  509 for whom we obtained very different PC90 estimates by the 3 methods. As can be seen in Figure \ref{pc90-bad}, this is due to the parasite count being fairly constant around the PC90 level for these subjects.
+
+If we repeat the ANOVA analysis with subject 509 removed, we obtain the residuals shown in Figure \ref{pc90resid-sub}.
+\begin{figure}[h]
+\includegraphics[width=6.5in]{pc90resid-sub.eps} 
+\caption{Residuals from ANOVA analysis with subject 509 removed}
+\label{pc90resid-sub}
+\end{figure}
+It can be seen that the residuals are approximately normally distributed with no obvious structure except for pehaps a smaller variance at smaller PC90 times. The results of the ANOVA analysis are shown in Table \ref{pc90aov}. There is evidence to reject the hypothesis that the 3 methods give the same PC90 values ($P<0.0005$). If we follow this up with 3 separate paired $t$ tests we find no evidence 
+\begin{table}
+\centering
+\caption{ANOVA comparison of PC90 estimated by 3 methods}\label{pc90aov}
+\begin{tabular}{l|rrrrr}
+&D.O.F.&Sum Sq.&Mean Sq.&$F$&P($>F$)\\
+\hline
+subject&41&13896.8&338.9&574.85&$<2.2\times 10^{-16}$\\
+method&2&11.3&5.6&9.58&0.00018\\
+residual&82&48.3&0.6&&\\
 \end{tabular}
 \end{table}
