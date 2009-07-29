@@ -92,11 +92,11 @@ cubicfailures <- function(q) {
 }
 
 cubicsresid <- function() {
-	predose.resid(residuals(cubics.lmlist, type='pearson'), b=0.5, limits=c(-2,5), title="Standardised residuals from cubic fits")
+	predose.resid(stdres(cubics.lmlist), b=0.5, limits=c(-2,5), title="Standardized residuals from cubic fits")
 }
 
-plotresids <- function(data, model, type='pearson') {
-	residuals <- residuals(model, type=type)
+plotresids <- function(data, model, ...) {
+	residuals <- stdres(model)
 
 	vp1 <- viewport(width=0.5, height=0.5, x=0.75, y=0.75)
 	q1 <- qplot(sample=residuals, stat="qq")
@@ -112,7 +112,7 @@ plotresids <- function(data, model, type='pearson') {
 	
 	vp4 <- viewport(width=0.5, height=0.5, x=.25, y=.75)
 #	q4 <- qplot(fitted(model), log(1+data$parct), xlab="Fitted", ylab="Actual") + geom_abline(intercept=0, slope=1, linetype=2)
-	q4 <- qplot(residuals, xlab="Standardized residuals", geom="blank") + geom_histogram(fill="white", colour="black", binwidth=0.5)
+	q4 <- qplot(residuals, xlab="Standardized residuals", geom="blank") + geom_histogram(fill="white", colour="black", ...)
 	print(q4, vp=vp4)
 }
 
@@ -160,24 +160,31 @@ comparePC90 <- function(dat, pc90, logfit=T, ...) {
 	addPC90vlines(q, pc90) + facet_wrap(~SUBJID, ncol=2)
 }
 
-plotresids.PC90 <- function(data, model, type='pearson', binwidth=1, ...) {
-	residuals <- residuals(model, type=type)
-	include <- !is.na(data$PC90)
+plotresids.PC90 <- function(model, outliers, ...) {
+	residuals <- stdres(model)
+	data <- data.frame(model$model, outlier="")
+	class(data$outlier) <- "character"
+	data$outlier <- ""
+	if (!missing(outliers)) {
+		for (s in outliers) {
+			data$outlier[data$SUBJID==s] <- s
+		}
+	}
 
 	vp1 <- viewport(width=0.5, height=0.5, x=0.75, y=0.75)
-	q1 <- qplot(sample=residuals, stat="qq") #+ geom_text(label=data$outlier[include], stat="qq", colour="red", size=4)
+	q1 <- qplot(sample=residuals, stat="qq") #+ geom_text(label=data$outlier, stat="qq", colour="red", size=4)
 	print(q1, vp=vp1)
 
 	vp2 <- viewport(width=0.5, height=0.5, x=.25, y=0.25)
-	q2 <- qplot(data$method[include], residuals, xlab="Method", ylab="Standardized residuals", geom="blank") + geom_boxplot(outlier.shape=NA) + geom_jitter() + geom_text(label=data$outlier[include], hjust=-0.1, colour="red", size=4) + geom_hline(yintercept=0, linetype=2)
+	q2 <- qplot(model$model$method, residuals, xlab="Method", ylab="Standardized residuals", geom="blank") + geom_boxplot(outlier.shape=NA) + geom_jitter() + geom_text(label=data$outlier, hjust=-0.1, colour="red", size=4) + geom_hline(yintercept=0, linetype=2)
 	print(q2, vp=vp2)
 
 	vp3 <- viewport(width=0.5, height=0.5, x=.75, y=.25)
-	q3 <- qplot(fitted(model), residuals, xlab="Fitted", ylab="Standardized residuals")  + geom_hline(yintercept=0, linetype=2) + geom_text(label=data$outlier[include], hjust=-0.1, colour="red", size=4)
+	q3 <- qplot(fitted(model), residuals, xlab="Fitted", ylab="Standardized residuals")  + geom_hline(yintercept=0, linetype=2) + geom_text(label=data$outlier, hjust=-0.1, colour="red", size=4)
 	print(q3, vp=vp3)
 	
 	vp4 <- viewport(width=0.5, height=0.5, x=.25, y=.75)
 #	q4 <- qplot(fitted(model), log(1+data$parct), xlab="Fitted", ylab="Actual") + geom_abline(intercept=0, slope=1, linetype=2)
-	q4 <- qplot(residuals, xlab="Standardized residuals", geom="blank") + geom_histogram(fill="white", colour="black", binwidth=binwidth)
+	q4 <- qplot(residuals, xlab="Standardized residuals", geom="blank") + geom_histogram(fill="white", colour="black", ...)
 	print(q4, vp=vp4)
 }
