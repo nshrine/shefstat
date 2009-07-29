@@ -135,7 +135,7 @@ predose.resid <- function(residuals, title="Residuals from pre-dose count ANOVA"
 
 histandqq <- function(data, ..., xlab="") {
 	vp1 <- viewport(width=0.5, x=0.25)
-	print(qplot(data, geom='blank', xlab=xlab) + geom_histogram(fill='white', colour='black', ...), vp=vp1)
+	print(qplot(data, geom='blank', xlab=xlab) + geom_histogram(fill='white', colour='black', ...) + geom_vline(xintercept=0, linetype=2, size=1), vp=vp1)
 	vp2 <- viewport(width=0.5, x=0.75)
-	print(qplot(sample=data), vp=vp2)
+	print(qplot(sample=data, geom='blank') + geom_point(stat='qq', shape=16), vp=vp2)
 }
