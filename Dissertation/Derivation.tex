@@ -91,18 +91,20 @@ Figure \ref{pc90-agree} shows 8 examples of subjects where estimation by the 3 d
 Figure \ref{pc90-bad} shows examples of subjects where estimation by the 3 different methods has resulted in notable differences between PC90 estimates. These differences appear to arise when:
 \begin{enumerate}
 \item The drop in parasite count is slow or stationary around the PC90 level e.g. subjects 98, 453 and 509. In these cases the regression lines and interpolation may cross the PC90 level at markedly different times. In subject 509 this has given a difference in PC90 between the interpolation and cubic methods of almost 10 hours.
-\item There is an ``unusual'' data near the PC90 level e.g. subjects 490 and 500 where recorded counts seemingly off the prevailing trend have influence the interpolated estimate.  
+\item There is ``unusual'' data near the PC90 level e.g. subjects 490 and 500 where recorded counts seemingly off the prevailing trend have influence the interpolated estimate.
 \end{enumerate}
 \begin{figure}[h]
 \includegraphics[width=6.5in]{pc90-bad.eps} 
 \caption{Subjects with notable difference in PC90 estimated by 3 methods}
 \label{pc90-bad}
 \end{figure}
+Figure \ref{pc90-nofit} shows the cubic and log-linear interpolated estimates for subjects where logistic fitting was innapropriate.
 \begin{figure}[h]
 \includegraphics[width=6.5in]{pc90-nofit.eps} 
 \caption{PC90 estimation for subjects where logistic fitting was inappropriate}
-\label{pc90-bad}
+\label{pc90-nofit}
 \end{figure}
+It can be seen that the two methods in these cases appear to produce very similar estimates.
 \clearpage
 \subsection{Statistical comparison}
 Table \ref{PC90} shows a comparison of the PC90 estimates by the 3 different methods utilised so far.
@@ -168,23 +170,28 @@ we obtain the residuals shown in Figure \ref{pc90resid}.
 \caption{Residuals from ANOVA analysis of PC90 estimates}
 \label{pc90resid}
 \end{figure}
- It can be seen that there are several outlying data points at up to $5\sigma$. These correspond to subject  509 for whom we obtained very different PC90 estimates by the 3 methods. As can be seen in Figure \ref{pc90-bad}, this is due to the parasite count being fairly constant around the PC90 level for these subjects.
+ It can be seen that there are several outlying data points at up to $4\sigma$ and almost $8\sigma$. These correspond to subjects 183 and 509 for whom we obtained very different PC90 estimates by the 3 methods. As can be seen in Figure \ref{pc90-bad}, this is due to the parasite count being fairly constant around the PC90 level for these subjects.
 
-If we repeat the ANOVA analysis with subject 509 removed, we obtain the residuals shown in Figure \ref{pc90resid-sub}.
+If we repeat the ANOVA analysis with subjects 183 and 509 removed, we obtain the residuals shown in Figure \ref{pc90resid-sub}.
 \begin{figure}[h]
 \includegraphics[width=6.5in]{pc90resid-sub.eps} 
-\caption{Residuals from ANOVA analysis with subject 509 removed}
+\caption{Residuals from ANOVA analysis with subjects 183 and 509 removed}
 \label{pc90resid-sub}
 \end{figure}
-It can be seen that the residuals are approximately normally distributed with no obvious structure except for pehaps a smaller variance at smaller PC90 times. The results of the ANOVA analysis are shown in Table \ref{pc90aov}. There is evidence to reject the hypothesis that the 3 methods give the same PC90 values ($P<0.0005$). If we follow this up with 3 separate paired $t$ tests we find no evidence 
-\begin{table}
+It can be seen that the residuals are approximately normally distributed with no obvious structure except for pehaps a smaller variance at smaller PC90 times. The results of the ANOVA analysis are shown in Table \ref{pc90aov}.
+\begin{table}[h]
 \centering
 \caption{ANOVA comparison of PC90 estimated by 3 methods}\label{pc90aov}
 \begin{tabular}{l|rrrrr}
-&D.O.F.&Sum Sq.&Mean Sq.&$F$&P($>F$)\\
+Source&Sum Sq.&df&Mean Sq.&$F$&P($>F$)\\
 \hline
-subject&41&13896.8&338.9&574.85&$<2.2\times 10^{-16}$\\
-method&2&11.3&5.6&9.58&0.00018\\
-residual&82&48.3&0.6&&\\
+Subject&12023.7&40&300.6&558.8&$<1\times 10^{-15}$\\
+Method&12.1&2&6.0&11.2&$5.7\times 10^{-5}$\\
+Residual&38.7&72&0.54&&\\
+\hline
+Total&12074.5&114&&&
 \end{tabular}
 \end{table}
+It can be seen there is good evidence to reject the hypothesis that the 3 methods give the same PC90 values ($P<0.0001$).
+
+If we follow this up with 3 separate paired $t$ tests we find no evidence to reject the hypothesis that the PC90 values estimated by the cubic and log-linear interpolation methods are the same. However, we find strong evidence to reject both hypotheses that the cubic and logistic methods produce the same values ($P<0.0001$) and that the log-linear interpolation and logistic methods produce the same values ($P<0.0005$).  
