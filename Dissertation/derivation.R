@@ -188,3 +188,7 @@ plotresids.PC90 <- function(model, outliers, ...) {
 	q4 <- qplot(residuals, xlab="Standardized residuals", geom="blank") + geom_histogram(fill="white", colour="black", ...)
 	print(q4, vp=vp4)
 }
+
+plotcorrs <- function() {
+	qplot(PC90.mean, PC90.diff, data=subset(PC90.diffs, subset=SUBJID!='183' & SUBJID!='509'), xlab="Mean PC90 estimate (hours)", ylab="Difference in PC90 estimates (hours)", facets=.~methods)
+}
