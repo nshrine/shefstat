@@ -29,25 +29,31 @@ A cubic model was fitted to the log-transformed parasite count $P_{t}$ with time
 $$\log(1+P_{t})=\beta_0+\beta_1t+\beta_2t^2+\beta_3t^3+\epsilon\quad\quad\epsilon\sim N(0,\sigma^2)$$
 
 Figure \ref{cubics} shows the cubic fits to the log parasite count for centre 1, male subjects. It can be seen that the model describes the data fairly well, but it looks as if the combined treatment data is more closely modelled with the single treatment data showing more dispersion about the fitted model. 
-
-Figure \ref{cubicsresid} shows the standardized residuals ($e/\hat{\sigma}$) for the cubic fits. It can be seen that they are normally distributed and show no obvious correlation with time from first dose or with fitted count. The cluster of small magnitude residuals at 0 fitted value occurs because this datum in the fit for each subject is not random but is always 0. Strictly this invalidates the assumptions of the fitted model but there isn't a more suitable choice for determining the shape. The cubic model is really only used as a convenient method of interpolation and we are not interested in the accuracy of the fitted parameters as long as there is no systematic bias. 
-\subsubsection*{Determining PC90 from the fitted model}
-The value of PC90 i.e. the time t at which the parasite count has fallen to 10\% was found by least-squares i.e. using the \texttt{optimize} function in R to minimise:
-$$[log(1+0.1P_0)-\beta_0-\beta_1t-\beta_2t^2-\beta_3t^3]^2$$
-where $P_0$ is the pre-treatment parasite count, $t$ is the time from first dose and $\beta_i$ are the fitted coefficients for the models for each of the 43 patients. Table \ref{pc90} shows the values of PC90 derived from the cubic fit to the parasite count by centre, sex and treatment.
-\begin{figure}[h]
+\begin{figure}[p]
 \includegraphics[width=6.1in]{cubics.eps} 
 \caption{Cubic fits to log parasite count up to first zero reading}\label{cubics}
 \end{figure}
+
+Figure \ref{cubicsresid} shows the standardized residuals ($e/\hat{\sigma}$) for the cubic fits.
 \begin{figure}[h]
 \includegraphics[width=6.1in]{cubicsresid.eps} 
 \caption{Standardized residuals for cubic fits}\label{cubicsresid}
 \end{figure}
-\clearpage
+It can be seen that they are normally distributed and show no obvious correlation with time from first dose or with fitted count. The cluster of small magnitude residuals at 0 fitted value occurs because this datum in the fit for each subject is not random but is always 0. Strictly this invalidates the assumptions of the fitted model but there isn't a more suitable choice for determining the shape. The cubic model is really only used as a convenient method of interpolation and we are not interested in the accuracy of the fitted parameters as long as there is no systematic bias. 
+\subsubsection*{Determining PC90 from the fitted model}
+The value of PC90 i.e. the time t at which the parasite count has fallen to 10\% was found by finding the positive root of the cubic equation
+$$\hat{\beta_0}-\hat{\beta_1}t-\hat{\beta_2}t^2-\hat{\beta}_3t^3-0.1{P_{0}}=0$$
+that lies within our time period, where $P_0$ is the pre-treatment parasite count, $t$ is the time from first dose and $\hat{\beta_i}$ are the fitted coefficients for the cubic model. This root was found numerically using the \emph{R} \texttt{uniroot} function which takes as an argument the interval over which to search for the root.
+\pagebreak
 \subsection{Non-linear logistic regression}
 The logistic model fitted is
 $$\log(1+P_t)=\alpha+\frac{\lambda}{1+e^{-\beta(t-\mu)}}+\epsilon$$
 This was fitted to all the data as it can model a drop from an initial count level to a level of 0, unlike the cubic model. $\alpha$ is the lower asymptote which we would expect to be 0. $\alpha+\lambda$ is the upper asymptote which we would generally expect to be $P_0$ except in the cases where there is a marked increase in the parasite count after the first dose. $\beta$ determines the rate of reduction with time and $\mu$ is the point of inflection (maximum rate of reduction). This model was fitted using non-linear least-squares routines in \emph{R} and \emph{SAS}. Logistic fits to the same subjects as the cubic fits in Figure \ref{cubics} are shown in Figure \ref{logistics}.
+\begin{figure}[p]
+\includegraphics[width=6.1in]{logistics.eps} 
+\caption{Logistic fits to log parasite count}\label{logistics}
+\end{figure}
+\pagebreak
 \subsubsection*{Choosing starting values for the parameters}
 Figure \ref{logparms} shows the roles the parameters of the logistic model play in shaping the fitted curve. The non-linear, least-squares fitting routines (the \texttt{nls} function) in \emph{R} can take starting values for the parameters to be estimated.
 \begin{figure}[h]
@@ -63,18 +69,14 @@ Looking at Figure \ref{logparms} it clearly follows that sensible starting value
 \item $\mu$ = the time corresponding to the parasite count closest to halfway between the maximum and minimum counts.
 \end{itemize} 
 It was found by experimentation that the most suitable starting value for $\beta$ was -0.5, but that the fitting was insensitive to choice of $\beta$ if varied over the range of fitted $\beta$ values observed (and somewhat beyond).
-\begin{figure}[p]
-\includegraphics[width=6.1in]{logistics.eps} 
-\caption{Logistic fits to log parasite count}\label{logistics}
-\end{figure}
 \subsubsection*{Failure of logistic fitting}
 Despite careful selection of starting parameters, it was found for several subjects that a logistic model is simply not appropriate. In these cases either the non-linear fitting routine failed to converge or, if convergence criteria were relaxed, would fit a model highly dependent on choice of starting parameters and when plotted with the data obviously does not model the data satisfactorily. The data for these subjects where logistic fitting failed are shown in Figure \ref{failures}.
-
-It is interesting to note that all subjects for which logistic fitting fails are in the single treatment group; $p=0.0039$ under the null hypothesis of equal probability of a subject being from the single or combined treatment group using a binomial model. This is evidence that the parasite counts for patients on the single treatment follow more varied trajectories during clearance compared to patients on the combined treatment whose clearance can consistently be described with a logistic model to a good approximation. This was also the case for the cubic model.
 \begin{figure}[h]
 \includegraphics[width=6.1in]{failures.eps} 
 \caption{Subjects for which the logistic fitting fails}\label{failures}
 \end{figure}
+
+It is interesting to note that all subjects for which logistic fitting fails are in the single treatment group; $p=0.0039$ under the null hypothesis of equal probability of a subject being from the single or combined treatment group using a binomial model. This is evidence that the parasite counts for patients on the single treatment follow more varied trajectories during clearance compared to patients on the combined treatment whose clearance can consistently be described with a logistic model to a good approximation. This was also the case for the cubic model.
 
 In addition to parasite count profiles that simply do not conform to a logistic shape there were subjects where insufficient data in the region between the upper and lower asymptotes meant that logistic fitting was inappropriate. For example subjects 526 and 101 in Figure \ref{failures} where choice of different starting parameters for $\mu$ and $\beta$ would result in different logistic fits being obtained. One possible fit having a steep transition (large absolute $\beta$) whereby the data at the upper and lower levels is closely modeled. Another possible fit having a shallower transition (smaller $\beta$) that models the slope of a line passing through the ends of the run of points at the upper and lower levels and the point in the middle, but that has a less severe curvature such that the corners at the upper and lower levels are less well modeled. In summary the fit is free to rotate about the single point between the upper and lower levels and thus cannot be suitably defined.
 \subsection{Log-linear interpolation}
@@ -206,5 +208,15 @@ The distribution of the difference between PC90 estimated by the logistic and lo
 \label{log-loglin}
 \end{figure}
 The two outlying values correspond to subjects 183 and 509 again. A paired $t$ test excluding these values gives good evidence to reject the hypothesis that the logistic and log-linear methods produce the same PC90 estimates ($P<0.0005$). On average the logistic method produces PC90 estimates 49 minutes longer than the log-linear interpolation method with a 95\% confidence interval of (25, 73) minutes.
+
+If we perform 4-way ANOVA on the 121 PC90 estimates (3 estimates for each of 43 subjects, minus 8 where no logistic estimate could be made), classified by estimation method, centre, sex and treatment with all interactions we find no evidence that the variance in PC90 between estimation methods is any larger than the variance between subjects in each centre-sex-treatment stratum. The full results of the relative effects of all factors can be found in the next chapter. At this stage we are just concerned with the effect of choice of PC90 estimation method.
+
+We have deduced from the 4-way ANOVA with interactions that there is no interaction between the method chosen and the other factors that influences the PC90 estimation. The $t$ tests told us the average amount that the methods differ, if at all, and in which direction, but we should check if the difference between the methods is related to the size of the PC90 estimates. The difference in PC90 estimate between the methods is plotted against the mean estimate in Figure \ref{pc90est-cor}.
+\begin{figure}[h]
+\includegraphics[width=6.5in]{pc90est-cor.eps} 
+\caption{Difference in PC90 estimates against mean PC90 estimate}
+\label{pc90est-cor}
+\end{figure}
+There is no obvious correlation and Spearman rank tests do not give any evidence to reject the null hypothesis of 0 correlation. This means that we can expect the methods to give PC90 estimates that differ by the amounts given by the $t$ tests independent of the size of the PC90 estimate.
 \clearpage
 \section{Key Results}
