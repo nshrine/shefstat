@@ -95,24 +95,34 @@ cubicsresid <- function() {
 	predose.resid(stdres(cubics.lmlist), b=0.5, limits=c(-2,5), title="Standardized residuals from cubic fits")
 }
 
-plotresids <- function(data, model, ...) {
-	residuals <- stdres(model)
+plotresids <- function(data, model, resids, fits, ...) {
+
+	if (missing(resids)) {
+		if (inherits(model, "lmList")) 
+			resids <- unlist(lapply(model, stdres))
+		if (inherits(model, "list")) 
+			resids <- unlist(lapply(model, residuals, type='pearson'))
+	}
+
+	if (missing(fits)) {
+		fits <- unlist(lapply(model, fitted))
+	}
 
 	vp1 <- viewport(width=0.5, height=0.5, x=0.75, y=0.75)
-	q1 <- qplot(sample=residuals, stat="qq")
+	q1 <- qplot(sample=resids, stat="qq")
 	print(q1, vp=vp1)
 
 	vp2 <- viewport(width=0.5, height=0.5, x=.25, y=0.25)
-	q2 <- qplot(data$acttm, residuals, xlab="Time (hours)", ylab="Standardized residuals") + geom_hline(yintercept=0, linetype=2)
+	q2 <- qplot(data$acttm, resids, xlab="Time (hours)", ylab="Standardized residuals") + geom_hline(yintercept=0, linetype=2)
 	print(q2, vp=vp2)
 
 	vp3 <- viewport(width=0.5, height=0.5, x=.75, y=.25)
-	q3 <- qplot(fitted(model), residuals, xlab="Fitted", ylab="Standardized residuals")  + geom_hline(yintercept=0, linetype=2)
+	q3 <- qplot(fits, resids, xlab="Fitted", ylab="Standardized residuals")  + geom_hline(yintercept=0, linetype=2)
 	print(q3, vp=vp3)
 	
 	vp4 <- viewport(width=0.5, height=0.5, x=.25, y=.75)
 #	q4 <- qplot(fitted(model), log(1+data$parct), xlab="Fitted", ylab="Actual") + geom_abline(intercept=0, slope=1, linetype=2)
-	q4 <- qplot(residuals, xlab="Standardized residuals", geom="blank") + geom_histogram(fill="white", colour="black", ...)
+	q4 <- qplot(resids, xlab="Standardized residuals", geom="blank") + geom_histogram(fill="white", colour="black", ...)
 	print(q4, vp=vp4)
 }
 
@@ -191,4 +201,26 @@ plotresids.PC90 <- function(model, outliers, ...) {
 
 plotcorrs <- function() {
 	qplot(PC90.mean, PC90.diff, data=subset(PC90.diffs, subset=SUBJID!='183' & SUBJID!='509'), xlab="Mean PC90 estimate (hours)", ylab="Difference in PC90 estimates (hours)", facets=.~methods)
+}
+
+spread.acttm <- function(data) {
+	plantms <- as.character(unique(data$plantm[data$plantm!="PRE-DOSE"]))
+	sapply(plantms, acttm.resid, data=data)
+}
+
+acttm.resid <- function(plantm, acttm) {
+	pt <- as.numeric(strsplit(plantm, " ")[[1]][1])
+	acttm - pt
+}
+
+plotlogisticresidualswithout0data <- function(...) {
+	plotresids(malaria.fit[malaria.fit$parct>0,], logistic.lmlist, unlist(lapply(logistic.lmlist, residuals, type='pearson'))[malaria.fit$parct>0], unlist(lapply(logistic.lmlist, fitted))[malaria.fit$parct>0], ...)
+}
+
+splitresids <- function(data, residuals, ...) {
+	q <- qplot(trttxt, residuals, data=data, geom="blank")
+#	q <- q + geom_point(aes(colour=trttxt), position=position_jitter(w=0.05)) + scale_colour_discrete("Treatment")
+	q <- q + geom_boxplot(aes(colour=trttxt)) + scale_colour_discrete("Treatment")
+#	q <- q + stat_summary(fun.data="mean_cl_boot", size=3, geom="point", solid=T)
+	q + facet_grid(CENTREID~SEX, margins=T)
 }
