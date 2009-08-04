@@ -224,3 +224,8 @@ splitresids <- function(data, residuals, ...) {
 #	q <- q + stat_summary(fun.data="mean_cl_boot", size=3, geom="point", solid=T)
 	q + facet_grid(CENTREID~SEX, margins=T)
 }
+
+pc90.multilevel <- function() {
+	qplot(Method, PC90, data=PC90.reshape, geom="jitter", position=position_jitter(w=0.5), facets=Centre~Sex, margins=T) + stat_summary(fun.data="mean_cl_boot", width=0.5, geom="crossbar", size=1, aes(colour=Treatment), position="dodge")
+	qplot(Method, PC90, data=PC90.reshape, geom="boxplot", facets=Centre~Sex, margins=T, fill=Treatment)
+}
