@@ -229,3 +229,28 @@ pc90.multilevel <- function() {
 	qplot(Method, PC90, data=PC90.reshape, geom="jitter", position=position_jitter(w=0.5), facets=Centre~Sex, margins=T) + stat_summary(fun.data="mean_cl_boot", width=0.5, geom="crossbar", size=1, aes(colour=Treatment), position="dodge")
 	qplot(Method, PC90, data=PC90.reshape, geom="boxplot", facets=Centre~Sex, margins=T, fill=Treatment)
 }
+
+PC90.by.subjects <- function() {
+	vp1 <- viewport(width=0.5, x=0.25)
+	q <- qplot(Method, PC90, data=PC90.reshape, main="Between Subjects", ylab="PC90 (hours)", geom="blank") + stat_boxplot(width=0.3)
+	print(q, vp=vp1)
+	vp2 <- viewport(width=0.5, x=0.75)
+	q <- qplot(Method, PC90.s, data=PC90.reshape, main="Within Subjects", ylab="PC90 - subject mean (hours)", geom="blank") + stat_boxplot(width=0.3)
+	print(q, vp=vp2)
+}
+
+PC90.split.methods <- function(between=T, byFactors=F) {
+	q <- NULL
+	if (between) {
+		q <- qplot(Method, PC90, data=PC90.reshape, main="Between Subjects", ylab="PC90 (hours)", geom="blank") 
+	} else {
+		q <- qplot(Method, PC90.s, data=PC90.reshape, main="Within Subjects", ylab="PC90 - subject mean (hours)", geom="blank")
+	}
+	if (byFactors) {
+		q <- q + stat_boxplot(width=0.3, aes(fill=Treatment))
+		q <- q + facet_grid(Centre~Sex, margins=T)
+	} else {
+		q <- q + stat_boxplot(width=0.3)
+	}
+	q
+}
