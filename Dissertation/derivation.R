@@ -230,27 +230,28 @@ pc90.multilevel <- function() {
 	qplot(Method, PC90, data=PC90.reshape, geom="boxplot", facets=Centre~Sex, margins=T, fill=Treatment)
 }
 
-PC90.by.subjects <- function() {
+PC90.by.subjects <- function(...) {
 	vp1 <- viewport(width=0.5, x=0.25)
-	q <- qplot(Method, PC90, data=PC90.reshape, main="Between Subjects", ylab="PC90 (hours)", geom="blank") + stat_boxplot(width=0.3)
+	q <- PC90.split.methods(...)
 	print(q, vp=vp1)
 	vp2 <- viewport(width=0.5, x=0.75)
-	q <- qplot(Method, PC90.s, data=PC90.reshape, main="Within Subjects", ylab="PC90 - subject mean (hours)", geom="blank") + stat_boxplot(width=0.3)
+	q <- PC90.split.methods(between=F, ...)
 	print(q, vp=vp2)
 }
 
-PC90.split.methods <- function(between=T, byFactors=F) {
+PC90.split.methods <- function(between=T, facets) {
 	q <- NULL
 	if (between) {
 		q <- qplot(Method, PC90, data=PC90.reshape, main="Between Subjects", ylab="PC90 (hours)", geom="blank") 
 	} else {
 		q <- qplot(Method, PC90.s, data=PC90.reshape, main="Within Subjects", ylab="PC90 - subject mean (hours)", geom="blank")
 	}
-	if (byFactors) {
-		q <- q + stat_boxplot(width=0.3, aes(fill=Treatment))
-		q <- q + facet_grid(Centre~Sex, margins=T)
-	} else {
+	if (missing(facets)) {
 		q <- q + stat_boxplot(width=0.3)
+	} else {
+		q <- q + stat_boxplot(width=0.3,) #+ geom_point(aes(colour=Treatment), position=position_dodge(width=0.5)) # + stat_boxplot(width=0.5, aes(colour=Treatment, outlier.colour="grey"))
+#		q <- q + stat_summary(fun.data="median_hilow", conf.int=0.5, geom="crossbar", width=0.4, aes(colour=Treatment), position="dodge")
+		q <- q + facet_grid(facets)
 	}
 	q
 }

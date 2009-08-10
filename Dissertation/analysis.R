@@ -1,8 +1,11 @@
 pc90aov <- function(data, title="", ...) {
-	q <- qplot(trttxt, PC90.loglin, data=data, xlab="", ylab="PC90 (hours)", main=title, geom="blank")
-	q <- q + geom_point(aes(colour=trttxt), position=position_jitter(w=0.05)) + scale_colour_discrete("Treatment")
-	q <- q + stat_summary(fun.data="mean_cl_boot", width=0.3, geom="crossbar", aes(colour=trttxt), ...)
-	q + facet_grid(CENTREID~SEX, margins=T)
+	q <- qplot(Treatment, PC90.logistic, data=data, xlab="", ylab="PC90 (hours)", main=title, geom="blank", facets=Centre~Sex, margins=T)
+	q + stat_boxplot(aes(fill=Treatment), width=0.3)
+}
+
+pc90aov.fun <- function(data, title="", fun="mean_cl_boot", ...) {
+	q <- qplot(Treatment, PC90.logistic, data=data, xlab="", ylab="PC90 (hours)", main=title, geom="point", position=position_jitter(w=0.1), facets=Centre~Sex, margins=T, colour=Treatment)
+	q + stat_summary(fun.data=fun, geom="crossbar", width=0.3)
 }
 
 pc90ancova <- function(data, title="", ...) {
@@ -11,3 +14,95 @@ pc90ancova <- function(data, title="", ...) {
 	q + facet_grid(CENTREID~SEX, margins=T, scales="free")
 }
 
+pc90boxes <- function() {
+	vp1 <- viewport(width=1, height=0.5, y=1, just="top")
+	q <- qplot(Level, PC90.loglin, data=PC90.long, geom="blank", colour=Factor, xlab="", ylab="PC90 (hours)")
+	q <- q + geom_point(position=position_jitter(w=0.1))
+	q <- q + opts(legend.position="none")
+	q1 <- q + stat_summary(fun.data="median_hilow", conf.int=0.5, geom="crossbar", width=0.5)
+	q1 <- q1 + opts(title="Median and quartiles")
+	print(q1, vp=vp1)
+	
+	vp2 <- viewport(width=1, height=0.5, y=0, just="bottom")
+	q2 <- q + stat_summary(fun.data="mean_cl_normal", geom="crossbar", width=0.5)
+	q2 <- q2 + opts(title="95% normal confidence interval about mean")
+	print(q2, vp=vp2)
+
+#	vp3 <- viewport(width=1, height=0.33, y=0, just="bottom")
+#	q3 <- q + stat_summary(fun.data="mean_cl_boot", geom="crossbar", width=0.5)
+#	q3 <- q3 + opts(title="Non-parametric bootstrap")
+#	q3 <- q3 + opts(legend.position="none")
+#	print(q3, vp=vp3)
+}
+
+pc90interaction <- function() {
+	vp1 <- viewport(width=1, height=0.33, y=1, just="top")
+	q1 <- qplot(Sex, PC90.loglin, data=PC90.df, geom="blank", colour=Sex, xlab="Sex:Centre", ylab="PC90 (hours)")
+	q1 <- q1 + scale_colour_discrete(h.start=120)
+	q1 <- q1 + geom_point(position=position_jitter(w=0.1))
+	q1 <- q1 + stat_summary(fun.data="mean_cl_normal", geom="crossbar", width=0.3)
+	q1 <- q1 + opts( legend.position="none")
+	q1 <- q1 + facet_grid(.~Centre)
+	print(q1, vp=vp1)
+	
+	vp2 <- viewport(width=1, height=0.33, y=0.5, just="centre")
+	q2 <- qplot(Treatment, PC90.loglin, data=PC90.df, geom="blank", colour=Treatment, xlab="Treatment:Centre", ylab="PC90 (hours)")
+	q2 <- q2 + geom_point(position=position_jitter(w=0.1))
+	q2 <- q2 + stat_summary(fun.data="mean_cl_normal", geom="crossbar", width=0.3)
+	q2 <- q2 + opts( legend.position="none")
+	q2 <- q2 + facet_grid(.~Centre)
+	print(q2, vp=vp2)
+
+	vp3 <- viewport(width=1, height=0.33, y=0, just="bottom")
+	q3 <- qplot(Treatment, PC90.loglin, data=PC90.df, geom="blank", colour=Treatment, xlab="Treatment:Sex", ylab="PC90 (hours)")
+	q3 <- q3 + geom_point(position=position_jitter(w=0.1))
+	q3 <- q3 + stat_summary(fun.data="mean_cl_normal", geom="crossbar", width=0.3)
+	q3 <- q3 + opts(legend.position="none")
+	q3 <- q3 + facet_grid(.~Sex)
+	print(q3, vp=vp3)
+		
+}
+
+plotresids.lm <- function(model) {
+	resids <- stdres(model)
+	lab.txt <- "Standardized residuals"
+
+	#
+	# Histogram
+	#
+	vp1 <- viewport(width=0.5, height=0.5, x=0.25, y=0.75)
+	q <- qplot(resids, xlab=lab.txt, geom="blank") + geom_histogram(colour="black", fill="white", binwidth=0.5) 
+	print(q, vp=vp1)
+
+	#
+	# QQ normal
+	#
+	vp2 <- viewport(width=0.5, height=0.5, x=0.75, y=0.75)
+	q <- qplot(sample=resids)
+	y <- quantile(resids, c(0.25, 0.75))
+	x <- qnorm(c(0.25, 0.75))
+	slope <- diff(y)/diff(x)
+	int <- y[1L] - slope * x[1L]
+	q <- q + geom_abline(intercept=int, slope=slope, linetype=2)
+	print(q, vp=vp2)
+
+	#
+	# vs factors
+	#
+	vp3 <- viewport(width=0.5, height=0.5, x=0.25, y=0.25)
+	data <- reshape(model$model, direction="long", varying=list(2:4), v.names="Factor")
+	q <- qplot(Factor, rep(resids, 3), data=data, geom="blank", ylab=lab.txt, colour=time)
+	q <- q + geom_hline(aes(yintercept=0), linetype=2)
+	q <- q + stat_boxplot(width=0.5, aes(outlier.size=0))
+	q <- q + geom_point(position=position_jitter(w=0.1))
+	q <- q + opts(legend.position="none")
+	print(q, vp=vp3)
+
+	#
+	# vs fitted
+	#
+	vp4 <- viewport(width=0.5, height=0.5, x=0.75, y=0.25)
+	q <- qplot(fitted(model), resids, data=model$model, xlab="Fitted PC90 (hours)", ylab=lab.txt)
+	q <- q + geom_hline(aes(yintercept=0), linetype=2)
+	print(q, vp=vp4)
+}
