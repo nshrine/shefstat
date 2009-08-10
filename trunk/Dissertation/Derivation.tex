@@ -175,6 +175,42 @@ Figure \ref{pc90-nofit} shows the cubic and log-linear interpolated estimates fo
 \end{figure}
 It can be seen that the two methods in these cases appear to produce very similar estimates.
 \clearpage
+\subsubsection*{Between and within subjects comparisons}
+Figure \ref{methodsbysubject} shows the distribution of PC90 estimates for each method in two ways:
+\begin{enumerate}
+\item ``Between subjects'' simply shows the distributions of PC90 estimates.
+\item ``Within subjects'' removes the effect of correlation between estimates made on the same subject by showing the distribution of the difference of the PC90 estimate from the subject mean.
+\end{enumerate}
+\begin{figure}[p]
+\includegraphics[width=6.5in]{methodsbysubject.eps} 
+\caption{Comparison of PC90 estimates between and within subjects}
+\label{methodsbysubject}
+\end{figure}
+It can be seen that the choice of method only seems to have a significant effect within subjects with the logistic method appearing to give estimates higher than average and the log-linear interpolation method slightly lower. This suggests that variance between methods is only significant within subjects.
+\subsubsection{Interaction of estimation method with experimental factors}
+Figures \ref{methodsbycentre}, \ref{methodsbysex} and \ref{methodsbytreatment} show the between and within subject PC90 estimates split by experimental factors centre, sex and treatment respectively:
+\begin{itemize}
+\item There does not seem to be any significant difference in the relationship between the 3 methods between centres.
+\item Sex does not appear to alter the relationship between the 3 methods.
+\item The three methods perhaps show closer agreement on the combined treatment.
+\end{itemize}
+In summary it does not seem that there are any significant interactions between the experimental factors and the estimates produced by the 3 methods.
+\begin{figure}[p]
+\includegraphics[width=6.5in]{methodsbycentre.eps} 
+\caption{Comparison of PC90 estimates by centre}
+\label{methodsbycentre}
+\end{figure}
+\begin{figure}[p]
+\includegraphics[width=6.5in]{methodsbysex.eps} 
+\caption{Comparison of PC90 estimates by sex}
+\label{methodsbysex}
+\end{figure}
+\begin{figure}[p]
+\includegraphics[width=6.5in]{methodsbytreatment.eps} 
+\caption{Comparison of PC90 estimates by treatment}
+\label{methodsbytreatment}
+\end{figure}
+\pagebreak
 \subsection{Statistical comparison}
 %If we perform 2-way ANOVA between the 3 PC90 estimates by subject and method i.e.
 %$$\mathrm{PC}90_{ij}=subject_{i}+method_{j}+\epsilon_{ij}\quad\quad\epsilon\sim N(0,\sigma^{2})$$ 
