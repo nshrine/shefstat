@@ -63,7 +63,7 @@ pc90interaction <- function() {
 		
 }
 
-plotresids.lm <- function(model) {
+plotresids.lm <- function(model) { # Need to modify for lme
 	resids <- stdres(model)
 	lab.txt <- "Standardized residuals"
 
@@ -93,8 +93,9 @@ plotresids.lm <- function(model) {
 	data <- reshape(model$model, direction="long", varying=list(2:4), v.names="Factor")
 	q <- qplot(Factor, rep(resids, 3), data=data, geom="blank", ylab=lab.txt, colour=time)
 	q <- q + geom_hline(aes(yintercept=0), linetype=2)
-	q <- q + stat_boxplot(width=0.5, aes(outlier.size=0))
+#	q <- q + stat_boxplot(width=0.5, aes(outlier.size=0))
 	q <- q + geom_point(position=position_jitter(w=0.1))
+	q <- q + stat_summary(fun.dat="mean_sdl", mult=1, geom="crossbar", width=0.5)
 	q <- q + opts(legend.position="none")
 	print(q, vp=vp3)
 
