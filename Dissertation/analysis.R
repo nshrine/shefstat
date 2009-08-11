@@ -63,15 +63,24 @@ pc90interaction <- function() {
 		
 }
 
-plotresids.lm <- function(model) { # Need to modify for lme
-	resids <- stdres(model)
+plotresids.lme <- function(model, binwidth=0.5) {
+	plotresids.lm(model, resid(model, type='pearson'), model$data, binwidth)
+}
+
+plotresids.lm <- function(model, resids, data, binwidth=0.5) { # Need to modify for lme
+	if (missing(resids)) {
+		resids <- stdres(model)
+	}
+	if (missing(data)) {
+		data <- model$model
+	}
 	lab.txt <- "Standardized residuals"
 
 	#
 	# Histogram
 	#
 	vp1 <- viewport(width=0.5, height=0.5, x=0.25, y=0.75)
-	q <- qplot(resids, xlab=lab.txt, geom="blank") + geom_histogram(colour="black", fill="white", binwidth=0.5) 
+	q <- qplot(resids, xlab=lab.txt, geom="blank") + geom_histogram(colour="black", fill="white", binwidth=binwidth) 
 	print(q, vp=vp1)
 
 	#
@@ -90,8 +99,8 @@ plotresids.lm <- function(model) { # Need to modify for lme
 	# vs factors
 	#
 	vp3 <- viewport(width=0.5, height=0.5, x=0.25, y=0.25)
-	data <- reshape(model$model, direction="long", varying=list(2:4), v.names="Factor")
-	q <- qplot(Factor, rep(resids, 3), data=data, geom="blank", ylab=lab.txt, colour=time)
+	data.l <- reshape(data, direction="long", varying=list(2:4), v.names="Factor")
+	q <- qplot(Factor, rep(resids, 3), data=data.l, geom="blank", ylab=lab.txt, colour=time)
 	q <- q + geom_hline(aes(yintercept=0), linetype=2)
 #	q <- q + stat_boxplot(width=0.5, aes(outlier.size=0))
 	q <- q + geom_point(position=position_jitter(w=0.1))
@@ -103,7 +112,7 @@ plotresids.lm <- function(model) { # Need to modify for lme
 	# vs fitted
 	#
 	vp4 <- viewport(width=0.5, height=0.5, x=0.75, y=0.25)
-	q <- qplot(fitted(model), resids, data=model$model, xlab="Fitted PC90 (hours)", ylab=lab.txt)
+	q <- qplot(fitted(model), resids, data=data, xlab="Fitted PC90 (hours)", ylab=lab.txt)
 	q <- q + geom_hline(aes(yintercept=0), linetype=2)
 	print(q, vp=vp4)
 }
