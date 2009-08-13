@@ -81,7 +81,7 @@ It can be seen that there is no evidence to reject the hypothesis that the centr
 \begin{equation}
 \mathrm{PC}90_{jk}=\mu+S_j+T_k+ST_{jk}+\epsilon_{ijk}\quad\quad\epsilon\sim N(0,\sigma^2)\label{reduced}
 \end{equation}
-Table ANOVA table for this model is shown in Table \ref{aovreduced}.
+Table ANOVA table for this model is shown in Table \ref{aovreduced}, where the results are essentially the same with some variation in the sex and treatment sums of squares due to the design matrix not being orthogonal.
 \begin{table}[h]
 \centering
 \caption{ANOVA table for the reduced model}\label{aovreduced}
@@ -96,5 +96,30 @@ $Residuals$      &    64.95  &39& 1.67  &&&\\
 Total&83.66&42&&&
 \end{tabular}\\
 $*<0.05$
-\end{table} 
-\subsection{ANCOVA}
+\end{table}
+
+The fitted coefficients for the reduced model are shown in Table \ref{coefreduced}.
+\begin{table}[h]
+\centering
+\caption{Fitted coefficients for the reduced model}\label{coefreduced}
+\begin{tabular}{l|rrrrl}
+Factor levels&Coefficient&S.E.&$t$&P($>|t|$)\\
+\hline
+Male, single treatment ($\mu$)       &     3.30  &  0.37 &   8.85 &  $7\times 10^{-11}$& ***\\
+$\Delta$Female, single treatment  &            1.19 &  0.54 &  2.21 &  0.033& *\\
+$\Delta$Male, combined treatment    &    -0.029   & 0.55 & -0.052 &  0.96&\\
+$\Delta$Female, combined treatment    &  -1.80   & 0.79  & -2.28  & 0.028& *\\
+\hline
+Residual standard error&1.29&&&
+\end{tabular}\\
+$*<0.05\quad\quad***<0.0001$
+\end{table}
+With the corner-point constraint used only the male, single-treatment coefficient is absolute, the other 3 are the change in clearance time from this (indicated by $\Delta$). Bearing in mind that a square-root transformation was used, we have from Table \ref{coefreduced}:
+\begin{itemize}
+\item The mean clearance time for male patients on the single treatment is $3.30^{2}=10.88$ hours with a 95\% confidence interval of ($2.54^{2},\ 4.05^{2})=(6.47,\ 16.41)$ hours.
+\item There is no evidence to reject the hypothesis that there is no difference between mean clearance times for male subjects on the single and combined treatments.
+\item Female subjects on the single treatment have a mean clearance time of $(3.30+1.19)^{2}=20.16$ hours with a 95\% confidence interval of (13.72, 27.85) hours.
+\item Female subjects on the combined treatment have a mean clearance time of $(3.30+1.19-0.029-1.80)^{2}=7.09$ hours with a 95\% confidence interval of (3.37, 12.16) hours.
+\end{itemize}
+\clearpage
+\section{Dependence of clearance time on initial variables}
