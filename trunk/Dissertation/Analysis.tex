@@ -41,31 +41,60 @@ It can be seen that there doesn't seem to be any interaction between sex and cen
 \end{equation}
 where $C_i$ is the effect of the centre, $S_j$ the effect of the sex, $T_k$ the treatment effect, $CS_{ij}$ the interaction effect of centre and sex and so on ($i,j,k=1,2$). Using a corner-point constraint, $\mu$ corresponds to $E[\mathrm{PC}90]$ for a centre 1, male on the single-drug treatment, with all other terms in the model representing the difference from this mean.
 
-The standardized residuals ($e/\hat{\sigma}$) from fitting model \ref{full} are plotted in Figure \ref{aovloglinres}.
+The standardized residuals ($e/\hat{\sigma}$) obtained from fitting model \ref{full} are plotted in Figure \ref{aovloglinres}.
 \begin{figure}[h]
 \includegraphics[width=6.5in]{aovloglinres.eps} 
 \caption{Residuals from fitting a 3-way ANOVA model with interactions to PC90}
 \label{aovloglinres}
 \end{figure}
 It can be seen that the residuals are approximately normally distributed, but perhaps slightly right skewed. In the plot of the residuals by experimental factor (bottom-left) the standard deviation of the residuals is shown, which when they are standardized, should be approximately 1 and independent of factor. We can see that this is so for centre and sex, but there is heteroscedasticity between treatments with the residuals for the single-drug treatment showing a larger variance than for the combined-drug treatment. We can also see that the variance of the residuals increases with fitted PC90 value (bottom-right).
+
+If we apply a square-root transformation to PC90 we obtain the residuals for the ANOVA model shown in Figure \ref{aovsqrtres}.
+\begin{figure}[h]
+\includegraphics[width=6.5in]{aovsqrtres.eps} 
+\caption{Residuals after applying a square-root transformation to the dependent variable}
+\label{aovsqrtres}
+\end{figure}
+It can be seen that this transformation reduces the correlation of the variance of the residuals with fitted PC90 and treatment. No appreciably better simple transformation is identified at this stage.
+
+Table \ref{pc90aov} shows the results of the ANOVA analysis.
 \begin{table}[h]
 \centering
-\caption{ANOVA comparison of PC90 estimated by 3 methods}\label{pc90aov}
+\caption{ANOVA table for full model with all factors and interactions}\label{pc90aov}
 \begin{tabular}{l|rrrrrl}
 Source&Sum Sq.&df&Mean Sq.&$F$&P($>F$)\\
 \hline
-$Centre$     &               0.1  &1&   0.1 & 0.001 &0.974&\\
-$Sex$        &              78.0 &1&   78.0 & 0.813 &0.373&\\
-$Treatment$  &            748.2 &1&  748.2 & 7.80 &0.008& **\\
-$Centre\times Sex$ &              7.3  &1&   7.3 & 0.077& 0.784&\\
-$Centre\times Treatment$ &        84.1 &1&   84.1 & 0.877& 0.356&\\
-$Sex\times Treatment$     &     493.8 &1&  493.8 & 5.15 &0.030& *\\
-$Centre\times Sex\times Treatment$ &    21.8 &1&   21.8&  0.227& 0.637&\\
-$Residuals$      &    3356.4  & 35 & 95.9&&&\\
+$Centre$     &                0.137  & 1& 0.137 & 0.079 & 0.781&\\
+$Sex$        &              1.11& 1&   1.11 & 0.636 &0.430&\\
+$Treatment$  &            8.83& 1&  8.83  &5.06& 0.031 &*\\
+$Centre\times Sex$ &              0.071 & 1 &0.071 & 0.041 &0.841&\\
+$Centre\times Treatment$ &        1.51 & 1 &1.51  &0.866 &0.358&\\
+$Sex\times Treatment$     &     10.48 &1& 10.48  &6.00& 0.019 &*\\
+$Centre\times Sex\times Treatment$ &   0.462  &1&0.462 & 0.265& 0.610&\\
+$Residuals$      &    61.07   &35& 1.75  &&&\\
 \hline
-Total&4789.7&42&&&
-\end{tabular}
-$*<0.05\quad**<0.01$
+Total&83.66&42&&&
+\end{tabular}\\
+$*<0.05$
 \end{table}
-
+It can be seen that there is no evidence to reject the hypothesis that the centre has no effect on the clearance time. Hence, we fit the reduced model
+\begin{equation}
+\mathrm{PC}90_{jk}=\mu+S_j+T_k+ST_{jk}+\epsilon_{ijk}\quad\quad\epsilon\sim N(0,\sigma^2)\label{reduced}
+\end{equation}
+Table ANOVA table for this model is shown in Table \ref{aovreduced}.
+\begin{table}[h]
+\centering
+\caption{ANOVA table for the reduced model}\label{aovreduced}
+\begin{tabular}{l|rrrrrl}
+Source&Sum Sq.&df&Mean Sq.&$F$&P($>F$)\\
+\hline
+$Sex$        &              1.21   &1&1.21  &0.726& 0.399&\\
+$Treatment$  &            8.86   &1&8.86  &5.32 &0.026 &*\\
+$Sex\times Treatment$     &     8.65  & 1&8.65 & 5.19 &0.028&*\\
+$Residuals$      &    64.95  &39& 1.67  &&&\\
+\hline
+Total&83.66&42&&&
+\end{tabular}\\
+$*<0.05$
+\end{table} 
 \subsection{ANCOVA}
