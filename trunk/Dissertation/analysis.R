@@ -60,7 +60,27 @@ pc90interaction <- function() {
 	q3 <- q3 + opts(legend.position="none")
 	q3 <- q3 + facet_grid(.~Sex)
 	print(q3, vp=vp3)
-		
+}
+
+plot.ancova <- function(pretime=F) {
+	vp1 <- viewport(width=1, height=0.33, y=1, just="top")
+	q <- qplot(Predose, PC90.loglin, data=PC90.df, xlab="Pre-dose parasite count", ylab="PC90 (hours)")
+	q <- q + scale_x_continuous(limits=c(0,100000), formatter="comma")
+	if (pretime) {
+		q <- qplot(Pretime, PC90.loglin, data=PC90.df, xlab="Time of pre-dose count (hours)", ylab="PC90 (hours)")
+		#q <- q + scale_x_continuous(limits=c(0,100000), formatter="comma")
+	}
+	q <- q + opts( legend.position="none")
+		q1 <- q + facet_grid(.~Centre)
+	print(q1, vp=vp1)
+	
+	vp2 <- viewport(width=1, height=0.33, y=0.5, just="centre")
+	q2 <- q + facet_grid(.~Sex)
+	print(q2, vp=vp2)
+
+	vp3 <- viewport(width=1, height=0.33, y=0, just="bottom")
+	q3 <- q + facet_grid(.~Treatment)
+	print(q3, vp=vp3)
 }
 
 plotresids.lme <- function(model, binwidth=0.5) {
@@ -115,4 +135,20 @@ plotresids.lm <- function(model, resids, data, binwidth=0.5) { # Need to modify 
 	q <- qplot(fitted(model), resids, data=data, xlab="Fitted PC90 (hours)", ylab=lab.txt)
 	q <- q + geom_hline(aes(yintercept=0), linetype=2)
 	print(q, vp=vp4)
+}
+
+resample.pc90 <- function(data, n=10000, bootstrap=F) {
+	fit <- lm(sqrt(PC90.loglin) ~ Sex * Treatment, data)
+	coef.fitted <- abs(coef(fit))
+
+	coef.samples <- matrix(nrow=n, ncol=4)
+	pc90 <- data$PC90.loglin
+	for (i in 1:n) {
+		data$pc90 <- sample(pc90, length(pc90), replace=bootstrap)
+		fit <- lm(sqrt(pc90) ~ Sex * Treatment, data)
+		coef.samples[i,] <- abs(coef(fit))
+	}
+	
+	indicators <- apply(coef.samples, 1, function(x) x > coef.fitted)
+	rowMeans(indicators)
 }
