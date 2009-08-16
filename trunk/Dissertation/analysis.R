@@ -62,23 +62,26 @@ pc90interaction <- function() {
 	print(q3, vp=vp3)
 }
 
-plot.ancova <- function(pretime=F) {
-	vp1 <- viewport(width=1, height=0.33, y=1, just="top")
+ancova.interactions <- function(pretime=F) {
+	vp0 <- viewport(width=0.5, height=0.25, y=1, just="top")
 	q <- qplot(Predose, PC90.loglin, data=PC90.df, xlab="Pre-dose parasite count", ylab="PC90 (hours)")
 	q <- q + scale_x_continuous(limits=c(0,100000), formatter="comma")
 	if (pretime) {
-		q <- qplot(Pretime, PC90.loglin, data=PC90.df, xlab="Time of pre-dose count (hours)", ylab="PC90 (hours)")
+		q <- qplot(Pretime, PC90.loglin, data=PC90.df, xlab="Time of pre-dose count before first dose (hours)", ylab="PC90 (hours)")
 		#q <- q + scale_x_continuous(limits=c(0,100000), formatter="comma")
 	}
 	q <- q + opts( legend.position="none")
-		q1 <- q + facet_grid(.~Centre)
+	print(q, vp=vp0)
+	
+	vp1 <- viewport(width=1, height=0.25, y=0.75, just="top")
+	q1 <- q + facet_grid(.~Centre)
 	print(q1, vp=vp1)
 	
-	vp2 <- viewport(width=1, height=0.33, y=0.5, just="centre")
+	vp2 <- viewport(width=1, height=0.25, y=0.5, just="top")
 	q2 <- q + facet_grid(.~Sex)
 	print(q2, vp=vp2)
 
-	vp3 <- viewport(width=1, height=0.33, y=0, just="bottom")
+	vp3 <- viewport(width=1, height=0.25, y=0, just="bottom")
 	q3 <- q + facet_grid(.~Treatment)
 	print(q3, vp=vp3)
 }
@@ -87,7 +90,7 @@ plotresids.lme <- function(model, binwidth=0.5) {
 	plotresids.lm(model, resid(model, type='pearson'), model$data, binwidth)
 }
 
-plotresids.lm <- function(model, resids, data, binwidth=0.5) { # Need to modify for lme
+plotresids.lm <- function(model, resids, data, binwidth=0.5, trans=F, weighted=F) { # Need to modify for lme
 	if (missing(resids)) {
 		resids <- stdres(model)
 	}
@@ -119,8 +122,9 @@ plotresids.lm <- function(model, resids, data, binwidth=0.5) { # Need to modify 
 	# vs factors
 	#
 	vp3 <- viewport(width=0.5, height=0.5, x=0.25, y=0.25)
-	data.l <- reshape(data, direction="long", varying=list(2:4), v.names="Factor")
-	q <- qplot(Factor, rep(resids, 3), data=data.l, geom="blank", ylab=lab.txt, colour=time)
+	p <- dim(data)[2] - weighted
+	data.l <- reshape(data, direction="long", varying=list(2:p), v.names="Factor")
+	q <- qplot(Factor, rep(resids, p-1), data=data.l, geom="blank", ylab=lab.txt, colour=time)
 	q <- q + geom_hline(aes(yintercept=0), linetype=2)
 #	q <- q + stat_boxplot(width=0.5, aes(outlier.size=0))
 	q <- q + geom_point(position=position_jitter(w=0.1))
@@ -132,23 +136,53 @@ plotresids.lm <- function(model, resids, data, binwidth=0.5) { # Need to modify 
 	# vs fitted
 	#
 	vp4 <- viewport(width=0.5, height=0.5, x=0.75, y=0.25)
-	q <- qplot(fitted(model), resids, data=data, xlab="Fitted PC90 (hours)", ylab=lab.txt)
+	q <- qplot(fitted(model)^(1+1*trans), resids, data=data, xlab="Fitted PC90 (hours)", ylab=lab.txt)
 	q <- q + geom_hline(aes(yintercept=0), linetype=2)
 	print(q, vp=vp4)
 }
 
-resample.pc90 <- function(data, n=10000, bootstrap=F) {
-	fit <- lm(sqrt(PC90.loglin) ~ Sex * Treatment, data)
-	coef.fitted <- abs(coef(fit))
+resample.pc90 <- function(data, fit, n=1000, bootstrap=F) {
+	model.terms <- attr(terms(fit), "term.labels")
+	coef.samples <- matrix(nrow=n, ncol=length(model.terms) + 1)
+	pc90.sample <- data$PC90.loglin
 
-	coef.samples <- matrix(nrow=n, ncol=4)
-	pc90 <- data$PC90.loglin
 	for (i in 1:n) {
-		data$pc90 <- sample(pc90, length(pc90), replace=bootstrap)
-		fit <- lm(sqrt(pc90) ~ Sex * Treatment, data)
-		coef.samples[i,] <- abs(coef(fit))
+		data$PC90.loglin <- sample(pc90.sample, length(pc90.sample), replace=bootstrap)
+		fit.resample <- update(fit, data=data)
+		coef.samples[i,] <- coef(fit.resample)
 	}
-	
-	indicators <- apply(coef.samples, 1, function(x) x > coef.fitted)
-	rowMeans(indicators)
+
+	dimnames(coef.samples) <- list(sample=1:n, coefficient=names(coef(fit)))
+	coef.samples	
+}
+
+resample.aov <- function(data, fit, n=1000, bootstrap=F) {
+	model.terms <- attr(terms(fit), "term.labels")
+	p <- length(model.terms)
+	F.samples <- matrix(nrow=n, ncol=p, dimnames=list(sample=1:n, term=model.terms))
+	pc90.sample <- data$PC90.loglin
+
+	for (i in 1:n) {
+		data$PC90.loglin <- sample(pc90.sample, length(pc90.sample), replace=bootstrap)
+		fit.resample <- update(fit, data=data)
+		F.values <- summary(fit.resample)[[1]][4]
+		F.samples[i,] <- F.values[1:p,1]
+	}
+
+	F.samples	
+
+}
+
+pt.resample <- function(data, fit, n=1000, bootstrap=F) {
+	coef.samples <- resample.pc90(data, fit, n, bootstrap)
+	indicators <- apply(coef.samples, 1, function(x) abs(x) > abs(coef(fit)))
+	t(t(rowMeans(indicators)))
+}
+
+pf.resample <- function(data, fit, n=1000, bootstrap=F) {
+	F.samples <- resample.aov(data, fit, n, bootstrap)
+	p <- dim(F.samples)[2]
+	F.actual <- summary(fit)[[1]][4][1:p,1]
+	indicators <- apply(F.samples, 1, function(x) x > F.actual)
+	t(t(rowMeans(indicators)))
 }
