@@ -14,9 +14,9 @@ pc90ancova <- function(data, title="", ...) {
 	q + facet_grid(CENTREID~SEX, margins=T, scales="free")
 }
 
-pc90boxes <- function() {
+pc90boxes <- function(data) {
 	vp1 <- viewport(width=1, height=0.5, y=1, just="top")
-	q <- qplot(Level, PC90.loglin, data=PC90.long, geom="blank", colour=Factor, xlab="", ylab="PC90 (hours)")
+	q <- qplot(Level, PC90, data=data, geom="blank", colour=Factor, xlab="", ylab="PC90 (hours)")
 	q <- q + geom_point(position=position_jitter(w=0.1))
 	q <- q + opts(legend.position="none")
 	q1 <- q + stat_summary(fun.data="median_hilow", conf.int=0.5, geom="crossbar", width=0.5)
@@ -25,7 +25,7 @@ pc90boxes <- function() {
 	
 	vp2 <- viewport(width=1, height=0.5, y=0, just="bottom")
 	q2 <- q + stat_summary(fun.data="mean_cl_normal", geom="crossbar", width=0.5)
-	q2 <- q2 + opts(title="95% normal confidence interval about mean")
+	q2 <- q2 + opts(title="95% normal confidence interval for mean")
 	print(q2, vp=vp2)
 
 #	vp3 <- viewport(width=1, height=0.33, y=0, just="bottom")
@@ -35,9 +35,9 @@ pc90boxes <- function() {
 #	print(q3, vp=vp3)
 }
 
-pc90interaction <- function() {
+pc90interaction <- function(data) {
 	vp1 <- viewport(width=1, height=0.33, y=1, just="top")
-	q1 <- qplot(Sex, PC90.loglin, data=PC90.df, geom="blank", colour=Sex, xlab="Sex:Centre", ylab="PC90 (hours)")
+	q1 <- qplot(Sex, PC90, data=data, geom="blank", colour=Sex, xlab="Sex:Centre", ylab="PC90 (hours)")
 	q1 <- q1 + scale_colour_discrete(h.start=120)
 	q1 <- q1 + geom_point(position=position_jitter(w=0.1))
 	q1 <- q1 + stat_summary(fun.data="mean_cl_normal", geom="crossbar", width=0.3)
@@ -46,7 +46,7 @@ pc90interaction <- function() {
 	print(q1, vp=vp1)
 	
 	vp2 <- viewport(width=1, height=0.33, y=0.5, just="centre")
-	q2 <- qplot(Treatment, PC90.loglin, data=PC90.df, geom="blank", colour=Treatment, xlab="Treatment:Centre", ylab="PC90 (hours)")
+	q2 <- qplot(Treatment, PC90, data=data, geom="blank", colour=Treatment, xlab="Treatment:Centre", ylab="PC90 (hours)")
 	q2 <- q2 + geom_point(position=position_jitter(w=0.1))
 	q2 <- q2 + stat_summary(fun.data="mean_cl_normal", geom="crossbar", width=0.3)
 	q2 <- q2 + opts( legend.position="none")
@@ -54,7 +54,7 @@ pc90interaction <- function() {
 	print(q2, vp=vp2)
 
 	vp3 <- viewport(width=1, height=0.33, y=0, just="bottom")
-	q3 <- qplot(Treatment, PC90.loglin, data=PC90.df, geom="blank", colour=Treatment, xlab="Treatment:Sex", ylab="PC90 (hours)")
+	q3 <- qplot(Treatment, PC90, data=data, geom="blank", colour=Treatment, xlab="Treatment:Sex", ylab="PC90 (hours)")
 	q3 <- q3 + geom_point(position=position_jitter(w=0.1))
 	q3 <- q3 + stat_summary(fun.data="mean_cl_normal", geom="crossbar", width=0.3)
 	q3 <- q3 + opts(legend.position="none")
@@ -185,4 +185,10 @@ pf.resample <- function(data, fit, n=1000, bootstrap=F) {
 	F.actual <- summary(fit)[[1]][4][1:p,1]
 	indicators <- apply(F.samples, 1, function(x) x > F.actual)
 	t(t(rowMeans(indicators)))
+}
+
+summary.pc90 <- function(data, digits=2) {
+	result <- array(c(mean(data), median(data), sd(data)))
+	rownames(result) <- c("Mean", "Median", "sd")
+	round(result, digits)
 }
