@@ -94,16 +94,16 @@ getPC90.logistic <- function(fit, data) {
 # sapply(PC90.df$SUBJID, function(s) pc90cubic(cubics.lmlist[[s]], malaria.0[malaria.0$SUBJID==s,]))
 #
 
-getAboveBelow <- function(data) {
-	pc90 <- data$parct[data$plantm=='PRE-DOSE'] * 0.1
+getAboveBelow <- function(data, PC=90) {
+	pc90 <- data$parct[data$plantm=='PRE-DOSE'] * (100 - PC)/100
 	above.pc90 <- which(data$parct > pc90)
 	upper <- above.pc90[length(above.pc90)]
 	lower <- upper + 1
 	c(upper, lower)
 }
 
-lmloglin90 <- function(data) {
-	lm(log(1 + parct) ~ acttm, data=data, subset=getAboveBelow(data))
+lmloglin <- function(data, PC=90) {
+	lm(log(1 + parct) ~ acttm, data=data, subset=getAboveBelow(data, PC))
 }
 
 getPC90.loglin <- function(fit, data) {
@@ -111,4 +111,12 @@ getPC90.loglin <- function(fit, data) {
 	B0 <- coef(fit)[1]
 	B1 <- coef(fit)[2]
 	(pc90 - B0) / B1
+}
+
+getPC.loglin <- function(data, PC=90) {
+	pc <- log(1 + (data$parct[data$plantm=='PRE-DOSE'] * (100 - PC)/100))
+	fit <- lmloglin(data, PC)
+	B0 <- coef(fit)[1]
+	B1 <- coef(fit)[2]
+	(pc - B0) / B1
 }

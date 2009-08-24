@@ -1,4 +1,4 @@
-\chapter{Analysis of Parasite Clearance Times}
+\chapter{Analysis of Parasite Clearance Times}\label{analysis}
 The derived PC90 values using the log-linear interpolation method are shown in Table \ref{derivedPC90}
 \begin{table}[h]
 \centering
@@ -325,10 +325,25 @@ We might expect that subjects with a higher pre-dose parasite count would have a
 \caption{Dependence of clearance time on pre-dose parasite count}
 \label{predose-ancova}
 \end{figure}
+
+The fitted ANCOVA model is a modification of the reduced ANOVA model \ref{reduced} on page \pageref{reduced} adding the pre-dose parasite count as a covariate with all interactions with sex and treatment. This ANCOVA model is compared to the ANOVA model in Figure \ref{compancova}. It can be seen that the ANCOVA model isn't a significant improvement.
+\begin{figure}[ht]
+\includegraphics[width=6.5in]{compancova.eps} 
+\caption{Comparison of ANOVA and ANCOVA models}
+\label{compancova}
+\end{figure}
+
 \subsubsection*{Time of pre-dose count}
-The clearance time is plotted against the time before first dose at which the pre-dose count was recorded in Figure \ref{pretime-ancova}. Although it looks like there is some positive correlation between the time of pre-dose recording and clearance times, the statistical tests mentioned above show no evidence to reject the hypothesis that the effect of pre-dose recording time is negligible.
+The clearance time is plotted against the time before first dose at which the pre-dose count was recorded in Figure \ref{pretime-ancova}. Although it looks like there is some positive correlation between the time of pre-dose recording and clearance times, statistical tests show no evidence to reject the hypothesis that the effect of pre-dose recording time is negligible.
 \begin{figure}[p]
 \includegraphics[width=6.5in]{pretime-ancova.eps} 
 \caption{Dependence of clearance time on the time before first dose that the pre-dose parasite count was recorded}
 \label{pretime-ancova}
+\end{figure}
+
+The ANCOVA model with time of pre-dose count as a covariate is compared to the ANOVA model in Figure \ref{compancova2}. It looks like there is a significant interaction with time of pre-dose count for female subjects, but this is mainly attributed to a single high-leverage datum and the coefficient in the ANCOVA model isn't highly significant ($p$=0.077). It could be that we simply don't have high enough power in this experiment to detect this interaction.
+\begin{figure}[ht]
+\includegraphics[width=6.5in]{compancova2.eps} 
+\caption{Comparison of ANOVA and ANCOVA models}
+\label{compancova2}
 \end{figure}

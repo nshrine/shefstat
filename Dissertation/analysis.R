@@ -192,3 +192,17 @@ summary.pc90 <- function(data, digits=2) {
 	rownames(result) <- c("Mean", "Median", "sd")
 	round(result, digits)
 }
+
+compare.ancova <- function(data) {
+	q <- qplot(Predose, PC90, data=data, colour=Treatment, facets=.~Sex, xlab="Pre-dose parasite count", ylab="PC90 (hours)", main="Comparison of ANOVA and ANCOVA models") + scale_x_continuous(limits=c(0,100000), formatter="comma")
+	q + geom_line(aes(y=fit, linetype=Model, colour=Treatment), size=1)
+}
+
+compare.ancova2 <- function(data) {
+	q <- qplot(Pretime, PC90, data=data, colour=Treatment, facets=.~Sex, xlab="Time of pre-dose parasite count before first dose (hours)", ylab="PC90 (hours)", main="Comparison of ANOVA and ANCOVA models")# + scale_x_continuous(limits=c(0,100000), formatter="comma")
+	q + geom_line(aes(y=fit, linetype=Model, colour=Treatment), size=1)
+}
+
+sample.pc90 <- function(data, n=1000, bootstrap=F) {
+	
+}
