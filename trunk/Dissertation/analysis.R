@@ -156,22 +156,52 @@ resample.pc90 <- function(data, fit, n=1000, bootstrap=F) {
 	coef.samples	
 }
 
-resample.aov <- function(data, fit, n=1000, bootstrap=F) {
+resample.aov <- function(fit, n=1000, bootstrap=F) {
 	model.terms <- attr(terms(fit), "term.labels")
 	p <- length(model.terms)
 	F.samples <- matrix(nrow=n, ncol=p, dimnames=list(sample=1:n, term=model.terms))
-	pc90.sample <- data$PC90.loglin
+	data <- fit$model
+	response.sample <- data[,1]
 
-	for (i in 1:n) {
-		data$PC90.loglin <- sample(pc90.sample, length(pc90.sample), replace=bootstrap)
+	F.values <- summary(fit)[[1]][4]
+	F.samples[1,] <- F.values[1:p,1]
+	for (i in 2:n) {
+		data[,1] <- sample(response.sample, length(response.sample), replace=bootstrap)
 		fit.resample <- update(fit, data=data)
 		F.values <- summary(fit.resample)[[1]][4]
 		F.samples[i,] <- F.values[1:p,1]
 	}
 
 	F.samples	
-
 }
+
+restricted.resample.aov <-  function(fit, strata, n=1000, bootstrap=F) {
+	model.terms <- attr(terms(fit), "term.labels")
+	p <- length(model.terms)
+	F.samples <- matrix(nrow=n, ncol=p, dimnames=list(sample=1:n, term=model.terms))
+	data <- fit$model
+	randomize.within <- lapply(strata, function(x) data[,x])
+
+	F.values <- summary(fit)[[1]][4]
+	F.samples[1,] <- F.values[1:p,1]
+	for (i in 2:n) {
+		resample.list <- as.list(by(data, randomize.within, function(x) {
+			x[,1] <- sample(x[,1], length(x[,1]), replace=bootstrap)
+			x
+		}))
+		for (strata.sample in resample.list) {
+			data[dimnames(strata.sample)[[1]],] <- strata.sample
+		}
+		# Checksum on strata for code verification
+		# by(data, randomize.within, function(x) print(sum(x$PC90.loglin)))
+		fit.resample <- update(fit, data=data)
+		F.values <- summary(fit.resample)[[1]][4]
+		F.samples[i,] <- F.values[1:p,1]
+	}
+
+	F.samples	
+}
+
 
 pt.resample <- function(data, fit, n=1000, bootstrap=F) {
 	coef.samples <- resample.pc90(data, fit, n, bootstrap)
@@ -179,8 +209,16 @@ pt.resample <- function(data, fit, n=1000, bootstrap=F) {
 	t(t(rowMeans(indicators)))
 }
 
-pf.resample <- function(data, fit, n=1000, bootstrap=F) {
-	F.samples <- resample.aov(data, fit, n, bootstrap)
+pf.resample <- function(fit, n=1000, bootstrap=F) {
+	F.samples <- resample.aov(fit, n, bootstrap)
+	p <- dim(F.samples)[2]
+	F.actual <- summary(fit)[[1]][4][1:p,1]
+	indicators <- apply(F.samples, 1, function(x) x > F.actual)
+	t(t(rowMeans(indicators)))
+}
+
+pf.restricted.resample <- function(fit, strata, n=1000, bootstrap=F) {
+	F.samples <- restricted.resample.aov(fit, strata, n, bootstrap)
 	p <- dim(F.samples)[2]
 	F.actual <- summary(fit)[[1]][4][1:p,1]
 	indicators <- apply(F.samples, 1, function(x) x > F.actual)
@@ -205,4 +243,13 @@ compare.ancova2 <- function(data) {
 
 sample.pc90 <- function(data, n=1000, bootstrap=F) {
 	
+}
+
+stillwhite.resid <- function(row, data) {
+	centre <- row['Centre'][1,1]
+	sex <- row['Sex'][1,1]
+	trt <- row['Treatment'][1,1]
+	Xcst <- row['PC90'][1,1]
+	Xstar <- with(data, Xcst - mean(PC90[Centre==centre]) - mean(PC90[Sex==sex]) - mean(PC90[Treatment==trt]) + mean(PC90))
+	Xstar
 }
