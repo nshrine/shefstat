@@ -335,6 +335,11 @@ The fitted ANCOVA model is a modification of the reduced ANOVA model \ref{reduce
 
 \subsubsection*{Time of pre-dose count}
 The clearance time is plotted against the time before first dose at which the pre-dose count was recorded in Figure \ref{pretime-ancova}. Although it looks like there is some positive correlation between the time of pre-dose recording and clearance times, statistical tests show no evidence to reject the hypothesis that the effect of pre-dose recording time is negligible.
+\begin{figure}[h]
+\includegraphics[width=6.5in]{compancova2.eps} 
+\caption{Comparison of ANOVA and ANCOVA models}
+\label{compancova2}
+\end{figure}
 \begin{figure}[p]
 \includegraphics[width=6.5in]{pretime-ancova.eps} 
 \caption{Dependence of clearance time on the time before first dose that the pre-dose parasite count was recorded}
@@ -342,8 +347,77 @@ The clearance time is plotted against the time before first dose at which the pr
 \end{figure}
 
 The ANCOVA model with time of pre-dose count as a covariate is compared to the ANOVA model in Figure \ref{compancova2}. It looks like there is a significant interaction with time of pre-dose count for female subjects, but this is mainly attributed to a single high-leverage datum and the coefficient in the ANCOVA model isn't highly significant ($p$=0.077). It could be that we simply don't have high enough power in this experiment to detect this interaction.
-\begin{figure}[ht]
-\includegraphics[width=6.5in]{compancova2.eps} 
-\caption{Comparison of ANOVA and ANCOVA models}
-\label{compancova2}
-\end{figure}
+
+\section{Non-parametric methods}
+As an additional verification of the analysis so far based on parametric methods, we can compare the results with analysis of clearance times using non-paramteric, distribution-free methods.
+\subsection{Non-parametric statistics}
+\subsubsection*{ANOVA using ranks}
+One non-paramteric alternative to two-way ANOVA is to calculate the $F$ statistics using the ranks of the data instead of the actual values of the dependent variable\cite{conover}. The results of ANOVA using ranks are shown in Table \ref{aovranks} with the $p$-values from the parametric analysis (Table \ref{aovreduced} on page \pageref{aovreduced}) shown for comparison.
+%> summary(PC90.loglinr.rank.aov)
+%              Df Sum Sq Mean Sq F value  Pr(>F)  
+%Sex            1   78.3    78.3  0.5562 0.46025  
+%Treatment      1  390.6   390.6  2.7758 0.10371  
+%Sex:Treatment  1  664.9   664.9  4.7247 0.03587 *
+%Residuals     39 5488.2   140.7    
+\begin{table}[h]
+\centering
+\caption{ANOVA using ranks}\label{aovranks}
+\begin{tabular}{l|rrrrrl|rl}
+Source&Sum Sq.&df&Mean Sq.&$F$&P($>F$)&&P$^{\dag}$($>F$)\\
+\hline
+$Sex$				& 78.3 & 1 & 78.3 & 0.556 &  0.460 && 0.446& \\
+$Treatment$			& 390.6   & 1 & 390.6   & 2.78 & 0.104&  & 0.022&* \\
+$Sex\times Treatment$	& 664.9   & 1 & 664.9   & 4.72 & 0.036&*   & 0.022&* \\
+$Residuals$			& 5488.2 & 39 & 140.7 &&&&\\
+\hline
+Total&6622&42&&&&
+\end{tabular}\\
+P$^{\dag}$ $p$-value from parametric analysis\qquad$*<0.05$
+\end{table}
+
+It can be seen that the non-parametric method shows a significant interaction effect at the 5\% level, but not for the main treatment effect unlike the parametric analysis. It could be that there is only an effect of treatment for one sex (Figure \ref{pc90interaction} on page \pageref{pc90interaction} would suggest this), although Toothaker \textit{et al.}\cite{toothaker} note that these tests should not be used to test for main effects in the presence of an interaction and vice-versa.
+\subsection{Resampling methods}
+Another alternative to parametric ANOVA is to resample the data using either the permutation or bootstrap methods\cite{manly} and thereby determine the sampling distribution of our statistics. There are several different approaches for resampling ANOVA models with crossed factors, such as ours, by permutation\cite{manly, anderson}. Three of them are:
+\begin{description}
+\item[Unrestricted permutation of raw data] - The raw data is randomized between all groups and the $F$ statistics recalculated for each randomization; Anderson and Braak\cite{anderson} note is an approximate test for both main effects and interactions.
+\item[Permutation of residuals] - An approximate test for an interaction effect by controlling for main effects can be performed by defining residuals
+$$r_{ijk}=y_{ijk}-\bar{y}_{i..}-\bar{y}_{.j.}+\bar{y}_{...}$$
+where $\bar{y}_{i..}$ is the mean response at level $i$ of the first factor, $\bar{y}_{.j.}$ the mean response at level $j$ of the second factor and $\bar{y}_{...}$ the overall mean. The $F$ statistics are then calculated from ANOVA using these residuals as the response.
+\item[Restricted permutation of raw data] - To test for a main effect the response can be randomized \emph{between} levels of the main effect but \emph{within} the levels of the other factors. For example, with our data, to test for a treatment main effect we would randomize the treatment of each observation but keep the sex and centre static. Only the $F$ statistic of the main effect being randomized is relevant in the ANOVA output from this method. Anderson and Braak\cite{anderson} note that this is an exact test for main effects, but is only reasonable if there is no evidence of an interaction effect.
+\end{description}
+Manly\cite{manly} finds by simulation that the $F$ statistic gives the most consistent results across all three methods, as opposed to using mean square residuals for example. Anderson and Braak\cite{anderson} note that permutation of residuals is significantly more powerful that permutation of raw data when errors are highly non-normal, for example lognormal.
+
+These methods were implemented in \emph{R}. The results for the full 3-way ANOVA model are shown in Table \ref{aovresamp}.
+\begin{table}[h]
+\centering
+\caption{$p$-values for 3-way ANOVA $F$ statistic determined by resampling.\\Values not relevant to test in \small{\textit{small italics}}.}\label{aovresamp}
+\begin{tabular}{l|rrrr|r}                   
+Source						&P($>F_{1}$)&P($>F_{2}$)&P($>F_{3t}$)&P($>F_{3s}$)&P$^{\dag}$($>F$)\\
+\hline
+$Centre$     					& 0.971 & \small{\textit{0.720}} & \small{\textit{0.008}} & \small{\textit{0.173}} & 0.354 \\    
+$Sex$        					& 0.370 & \small{\textit{0.912}} & \small{\textit{0.008}} & 0.364 & 0.420 \\  
+$Treatment$  					& 0.009 & \small{\textit{0.962}} & 0.007 			   & \small{\textit{0.126}} & 0.029 \\
+$Centre\times Sex$ 				& 0.781 & 0.780 			& \small{\textit{0.174}} & \small{\textit{0.774}} & 0.956 \\
+$Centre\times Treatment$ 		& 0.361 & 0.352 			& \small{\textit{0.334}} & \small{\textit{0.113}} & 0.462 \\
+$Sex\times Treatment$     		& 0.026 & 0.027 			& \small{\textit{0.027}} & \small{\textit{0.029}} & 0.017 \\
+$Centre\times Sex\times Treatment$& 0.634 & 0.637 			& \small{\textit{0.629}} & \small{\textit{0.607}} & 0.596
+\end{tabular}\\
+$F_{1}$: Unrestricted permutation; $F_{2}$: Permutation of residuals; $F_{3t}$: Permutation restricted to treatment; $F_{3s}$: Permutation restricted to sex; P$^{\dag}$: Parametric result\\
+10,000 samples for each method
+\end{table}
+
+It can be seen that the $p$-values obtained by resampling lead to the same conclusions as the parametric test. In particular that there is no evidence to reject the hypothesis that the effect of centre is negligible. Accordingly, the results for the reduced 2-way model are shown in Table \ref{aovresampr}.
+\begin{table}[h]
+\centering
+\caption{$p$-values for 2-way ANOVA $F$ statistic determined by resampling.}\label{aovresampr}
+\begin{tabular}{l|rrrr|r}                   
+Source						&P($>F_{1}$)&P($>F_{2}$)&P($>F_{3t}$)&P($>F_{3s}$)&P$^{\dag}$($>F$)\\
+\hline
+$Sex$        					& 0.375 & \small{\textit{0.951}} & \small{\textit{0.004}} & 0.360 & 0.446 \\  
+$Treatment$  					& 0.007 & \small{\textit{0.981}} & 0.007 			   & \small{\textit{0.086}} & 0.022 \\
+$Sex\times Treatment$     		& 0.049 & 0.049 			& \small{\textit{0.049}} & \small{\textit{0.041}} & 0.022 \\
+\end{tabular}\\
+10,000 samples for each method
+\end{table}
+
+\section{Key results}
