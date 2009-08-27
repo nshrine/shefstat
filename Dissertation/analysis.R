@@ -254,6 +254,15 @@ stillwhite.resid <- function(row, data) {
 	Xstar
 }
 
+stillwhite2.resid <- function(row, data) {
+	sex <- row['Sex'][1,1]
+	trt <- row['Treatment'][1,1]
+	Xcst <- row['PC90'][1,1]
+	Xstar <- with(data, Xcst - mean(PC90[Sex==sex]) - mean(PC90[Treatment==trt]) + mean(PC90))
+	Xstar
+}
+
+
 t.resample <- function(x1, x2, R=1000, bootstrap=F) {
 	Tobs <- mean(x1) - mean(x2)
 	n1 <- length(x1)
