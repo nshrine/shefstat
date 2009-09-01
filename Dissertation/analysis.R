@@ -124,7 +124,10 @@ plotresids.lm <- function(model, resids, data, binwidth=0.5, trans=F, weighted=F
 	vp3 <- viewport(width=0.5, height=0.5, x=0.25, y=0.25)
 	p <- dim(data)[2] - weighted
 	data.l <- reshape(data, direction="long", varying=list(2:p), v.names="Factor")
-	q <- qplot(Factor, rep(resids, p-1), data=data.l, geom="blank", ylab=lab.txt, colour=time)
+	if (p > 2)
+		q <- qplot(Factor, rep(resids, p-1), data=data.l, geom="blank", ylab=lab.txt, colour=time)
+	else
+		q <- qplot(Factor, resids, data=data.l, geom="blank", ylab=lab.txt)
 	q <- q + geom_hline(aes(yintercept=0), linetype=2)
 #	q <- q + stat_boxplot(width=0.5, aes(outlier.size=0))
 	q <- q + geom_point(position=position_jitter(w=0.1))
@@ -272,4 +275,10 @@ t.resample <- function(x1, x2, R=1000, bootstrap=F) {
 	values.resampled <- replicate(R - 1, sample(values, n, replace=bootstrap))
 	T <- c(Tobs, apply(values.resampled, 2, function(x) mean(x[1:n1]) - mean(x[n1+1:n2])))
 	mean(abs(T) > abs(Tobs))
+}
+
+permute.f.ci <- function(data, k, R=1000, bootstrap=F) {
+	data$PC90.loglin[data$Treatment=='alone'] <- data$PC90.loglin[data$Treatment=='alone'] - k
+	fit <- aov(PC90.loglin ~ Centre*Sex*Treatment, data)
+	pf.restricted.resample(fit, c("Centre", "Sex"), R, bootstrap)
 }

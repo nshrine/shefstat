@@ -129,6 +129,11 @@ predose.resid <- function(residuals, title="Residuals from pre-dose count ANOVA"
 	}
 	print(plot1)
 	subplot1 <- qplot(sample=residuals, stat="qq")
+	y <- quantile(residuals, c(0.25, 0.75))
+	x <- qnorm(c(0.25, 0.75))
+	slope <- diff(y)/diff(x)
+	int <- y[1L] - slope * x[1L]
+	subplot1 <- subplot1 + geom_abline(intercept=int, slope=slope, linetype=2)
 	vp2 <- viewport(x=1, y=0.90, width=0.5, height=0.5, just=c("right", "top"))
 	print(subplot1, vp=vp2)
 }
