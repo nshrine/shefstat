@@ -109,7 +109,7 @@ Total&47.40&39&&&
 The mean PC99 clearance time for patients on the single treatment is 21:07 (hrs:mins) with a 95\% confidence interval of (16:12, 26:41); for the combined treatment it is 12:33 (9:53, 15:32). This gives a mean decrease in PC99 for subjects on the combined treatment over the single treatment of 9.3 hours with a 95\% confidence interval of (3.7, 15.0) hours.
 
 \subsection{Parasite reduction ratios}
-Another endpoint used in studies of the efficacy of antimalarial drugs is the \emph{Parasite Reduction Ratio}, which is the ratio of the pre-dose parasite count to the count at a specific time from the time of first dose. 48 hours is often chosen as a time to calculate this ratio (PRR48) as this represents the reduction in parasites over a single lifecycle of the parasites\cite{white}. ``PRR24'', The reduction over 24 hours is also used\cite{newton}.
+Another endpoint used in studies of the efficacy of antimalarial drugs is the \emph{Parasite Reduction Ratio}, which is the ratio of the pre-dose parasite count to the count at a specific time from the time of first dose. 48 hours is often chosen as a time to calculate this ratio (PRR48) as this represents the reduction in parasites over a single life-cycle of the parasites\cite{white}. ``PRR24'', The reduction over 24 hours is also used\cite{newton}.
 
 PRR48 measurements are not available for our data as the parasite count is 0 by 48 hours for all but 6 subjects. Even after 24 hours there are only 25 of the 43 subjects with non-zero parasite counts. After 12 hours though there are still 37 of the 43 subjects with a non-zero parasite count so we can look at PRR12 and have reasonable numbers in groups to make comparisons between treatments. The log parasite reduction ratio after 12 hours is shown in Figure \ref{prr12}
 \begin{figure}
@@ -145,43 +145,62 @@ It can be seen that there is some evidence between the 5 and 10\% level to rejec
 
 \section{Functional data analysis}
 \subsection{Overview of functional data analysis}
-Functional data analysis(FDA) is a relatively new technique whereby the data is analysed in terms of smooth functions. An example is longitudinal data such as the growth of children or the weather over a year\cite{ramsay}. With such data we describe the response with a smooth function and then look at the ways the characteristics of the function change between cases. This type of analysis can make use of looking at derivitives of the functions to look for patterns in rates of change. Functional data analysis is somewhat analagous to multivariate data analysis, looking at multiple responses and characteristic combinations of responses between \emph{replicates}.
+Functional data analysis (FDA) is a relatively new technique whereby the data is analysed in terms of smooth functions. An example is longitudinal data such as the growth of children or the weather over a year\cite{ramsay}. With such data we describe the response with a smooth function and then look at the ways the characteristics of the function change between cases. For example, this type of analysis can make use of derivatives of the functions to look for patterns in rates of change. Functional data analysis is somewhat analogous to multivariate data analysis, looking at multiple responses and characteristic combinations of responses between cases.
 
 The parasite count data in this study is a good candidate for functional data analysis in that the response for each replicate of experimental factors centre, sex and treatment can be described as a smooth function of parasite count with time. We already used cubic and logistic functions in order to extract a single response variable, the PC90 clearance time, but now we can go on to explore the nature of a functional response.
 
-Many familiar statistical summaries and techniques have functional equivalents. Means and standard deviations can be expressed as mean functions and standard deviation functions for example. Regression and ANOVA can be performed with functional dependent and independent variables yielding coefficient functions and residual functions.
+Many familiar statistical summaries and techniques have functional equivalents. Means and standard deviations can be expressed as mean functions and standard deviation functions for example. Regression and ANOVA can be performed with functional dependent and independent variables yielding residual, $F$ statistic and coefficient functions.
 \subsection{Basis functions}
-The first step in FDA is to identify an appropriate smoothing function for our data known as a \emph{basis function}. For periodic data fourier functions are normally used, for non-periodic data the most commonly used basis functions are cubic splines\cite{fda}. Fitting a cubic spline requires choice of \emph{breakpoints} or ``knots'' (not entirely interchangeable terms) between which we fit cubic polynomials. The simplest choice of breakpoints with longitudinal data is to choose the times at which the data were taken. We also specify a smoothness parameter that limits the size of higher derivitives and hence the sharpness of the curve.
+The first step in FDA is to identify an appropriate smoothing function for our data known as a \emph{basis function}. For periodic data fourier functions are normally used, for non-periodic data the most commonly used basis functions are cubic splines\cite{fdaweb}. Fitting a cubic spline requires choice of \emph{breakpoints} between which we fit cubic polynomials. The simplest choice of breakpoints with longitudinal data is to choose the times at which the data were taken. We also specify a smoothness parameter that limits the size of higher derivatives and hence the sharpness of the curve.
 
+\subsubsection*{Fitting a basis function to the parasite count data}
 
+We want to compare the development of parasite count with time between subjects using a scale that is independent of the absolute count. Hence we will use the fraction of the pre-dose parasite count. We determined that a logarithmic transform of the count is appropriate for this data and hence we will use as our time-dependent variable $y(t)$
+$$y(t)=\log (1+P(t))-\log(1+P_{0})$$
+which is the logarithm of the ratio of the parasite count at time $t$, $P(t)$, to the pre-dose parasite count $P_{0}$. 1 is added to both so that the logarithm of 0 count is 0.
+
+Ramsay \textit{et al.} have written a \emph{R} package, \texttt{fda}\cite{fdaR, fdaRbook} for functional data analysis. The functions in this package were used to fit cubic splines to the data. The level of smoothing is determined by penalising derivatives of the spline function. It was found that penalising the 2nd derivative (the rate of change of slope) by a factor of 10 gave reasonable smoothing such that the fitted curves were insensitive to small-scale (perhaps random-error scale) variation but described the overall trend of the parasite count well. The resulting curves for the 43 subjects are shown in Figure \ref{cubicspline}.
 \begin{figure}[h]
 \includegraphics[width=150mm]{cubicspline.eps} 
-\caption{}
+\caption{Cubic splines fitted to the parasite count, smoothed by penalising the 2nd derivative}
 \label{cubicspline}
 \end{figure}
-\begin{figure}[h]
+
+\subsection{Functional ANOVA}
+Once we have suitably represented our dependent data as a functional response we can perform ANOVA by sex and treatment in an analogous way to the previous analyses. The model now becomes
+$$y_{jkl}(t)=\mu(t)+S_{j}(t)+T_{k}(t)+\epsilon_{jkl}(t)\quad\quad\epsilon\sim N(0, \sigma^{2}(t))$$
+where each part of the model is now a function of time. Hence, we will have 43 residual functions, a mean function for the overall mean with time, $\mu(t)$, a function for the effect of sex, $S(t)$, and for the effect of treatment, $T(t)$.
+
+The standardized residuals ($e_{jkl}(t)/\hat{\sigma}(t)$) from fitting this model are shown in Figures \ref{fdaresids} and \ref{fdahistqq}. It can be seen that they are approximately normally distributed about 0 indicating that our parameter function estimates will be unbiased.
+\begin{figure}[p]
 \includegraphics[width=150mm]{fdaresids.eps} 
-\caption{}
+\caption{Standardized residual functions for 2-way functional ANOVA}
 \label{fdaresids}
 \end{figure}
-\begin{figure}[h]
+\begin{figure}[p]
 \includegraphics[width=150mm]{fdahistqq.eps} 
-\caption{}
+\caption{Distribution of standardized residuals for 2-way functional ANOVA}
 \label{fdahistqq}
 \end{figure}
+
+The \texttt{fda} library provides functions for deriving a permutation $F$ test similar to the methods used in section \ref{section:resampling}. The results of this permutation $F$ test for our 2-way ANOVA are shown in Figure \ref{fdapermF}. It can be seen that the null hypothesis of no difference of sex or treatment groups is not rejected up to 10 hours from first dose, then there is evidence after 10 hours to reject the null hypothesis, with no evidence for rejection after about 30 hours. This can be explained by the parasite count being independent of sex and treatment allocation at the start, with significant differences in the count trajectories developing between the groups as time goes on, with them eventually returning to parity as clearance is finally achieved for all subjects.
 \begin{figure}[h]
 \includegraphics[width=150mm]{fdapermF.eps} 
-\caption{}
+\caption{$F$ statistic function for 2-way functional ANOVA}
 \label{fdapermF}
 \end{figure}
-\begin{figure}[h]
+
+Figure \ref{fdcoef} shows the fitted coefficient functions. For the sex and treatment effects the curves show the difference from the overall mean (the black line) that can be attributed to these factors respectively. We can see that the sex has no significant effect over the whole time period, but that subjects on the combined treatment have a significant reduction in parasite count after 10 hours from first dose, reaching a maximum relative effect at 20 hours.
+\begin{figure}[p]
 \includegraphics[width=150mm]{fdcoef.eps} 
-\caption{}
+\caption{Fitted coefficient functions for 2-way ANOVA}
 \label{fdcoef}
 \end{figure}
-\begin{figure}[h]
+
+Figure \ref{fdfitted} shows the fitted ANOVA model.
+\begin{figure}[p]
 \includegraphics[width=150mm]{fdfitted.eps} 
-\caption{}
+\caption{Fitted functional ANOVA model}
 \label{fdfitted}
 \end{figure}
 

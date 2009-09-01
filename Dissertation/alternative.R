@@ -197,9 +197,13 @@ getfRegress <- function(data.smooth, smoothing=10) {
 	fRegress(fd, xfdlist, betalist, y2cMap=data.smooth$y2cMap)
 }
 
-getfStderr <- function(fit, data) {
+getSigmaE <- function(fit, data) {
 	errmat <- data - eval.fd(malaria.fda.df$pt, fit$yhatfdobj$fd)
-	sigmaE <- errmat %*% t(errmat) / 43
+	errmat %*% t(errmat) / 43
+}
+
+getfStderr <- function(fit, data) {
+	sigmaE <- getSigmaE(fit, data)
 	fRegress.stderr(fit, fit$y2cMap, sigmaE)
 }
 
@@ -223,7 +227,7 @@ plotfSmooth <- function() {
 }
 
 plotfresids <- function() {
-	q <- qplot(pt, e, data=lprr2.stderr.long, colour=Treatment, linetype=Sex, group=Subject, geom='line', stat='smooth', xlab="Time (hours)", ylab="Residual", main="Residual functions from ANOVA")
+	q <- qplot(pt, sr, data=lprr2.stderr.long, colour=Treatment, linetype=Sex, group=Subject, geom='line', stat='smooth', xlab="Time (hours)", ylab="Standardized residual", main="Residual functions from ANOVA")
 	q + geom_hline(yintercept=0, lty=2)
 }
 
