@@ -144,6 +144,16 @@ It can be seen that there is some evidence between the 5 and 10\% level to rejec
 %\subsection{Logistic model of those cured after 24 hours?}
 
 \section{Functional data analysis}
+\subsection{Overview of functional data analysis}
+Functional data analysis(FDA) is a relatively new technique whereby the data is analysed in terms of smooth functions. An example is longitudinal data such as the growth of children or the weather over a year\cite{ramsay}. With such data we describe the response with a smooth function and then look at the ways the characteristics of the function change between cases. This type of analysis can make use of looking at derivitives of the functions to look for patterns in rates of change. Functional data analysis is somewhat analagous to multivariate data analysis, looking at multiple responses and characteristic combinations of responses between \emph{replicates}.
+
+The parasite count data in this study is a good candidate for functional data analysis in that the response for each replicate of experimental factors centre, sex and treatment can be described as a smooth function of parasite count with time. We already used cubic and logistic functions in order to extract a single response variable, the PC90 clearance time, but now we can go on to explore the nature of a functional response.
+
+Many familiar statistical summaries and techniques have functional equivalents. Means and standard deviations can be expressed as mean functions and standard deviation functions for example. Regression and ANOVA can be performed with functional dependent and independent variables yielding coefficient functions and residual functions.
+\subsection{Basis functions}
+The first step in FDA is to identify an appropriate smoothing function for our data known as a \emph{basis function}. For periodic data fourier functions are normally used, for non-periodic data the most commonly used basis functions are cubic splines\cite{fda}. Fitting a cubic spline requires choice of \emph{breakpoints} or ``knots'' (not entirely interchangeable terms) between which we fit cubic polynomials. The simplest choice of breakpoints with longitudinal data is to choose the times at which the data were taken. We also specify a smoothness parameter that limits the size of higher derivitives and hence the sharpness of the curve.
+
+
 \begin{figure}[h]
 \includegraphics[width=150mm]{cubicspline.eps} 
 \caption{}
