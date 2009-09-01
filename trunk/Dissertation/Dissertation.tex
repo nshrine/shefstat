@@ -1,4 +1,4 @@
-\documentclass[11pt,a4paper,oneside]{book}
+\documentclass[a4paper,12pt,openright,twoside,doublespace]{book}
 \usepackage[latin1]{inputenc}
 \usepackage{amsmath}
 \usepackage{amsfonts}
@@ -7,26 +7,54 @@
 \usepackage{makeidx}
 \usepackage{moreverb}
 \usepackage{multirow}
+\usepackage{parskip}
+\usepackage{longtable}
 \usepackage{rotating}
 \usepackage{array}
+\usepackage[page,title]{appendix}
+\usepackage[onehalfspacing]{setspace}
 \newcommand{\mat}{\mathbf}
-\usepackage[justification=centering]{caption}
-\oddsidemargin 0.1in \evensidemargin 0.1in \textwidth 6.1in
-\topmargin -0.60in \headheight -.0in \textheight 9.210in 
+\usepackage[justification=centering, font=singlespacing]{caption}
+% \oddsidemargin 0.72in \evensidemargin 0.12in
+%\textwidth 6.15in \topmargin -0.60in \headheight -.0in \textheight 9.210in
+\usepackage{vmargin}
+\setpapersize{A4}
+\setmarginsrb{40mm}{20mm}{20mm}{20mm}
+{0pt}{0pt}{12pt}{30pt}
+\pagestyle{plain}
+%\newenvironment{refs}{
+%\begin{list}{}{\leftmargin=0.5cm \topsep=0.06cm \itemindent=-0.5cm
+%\listparindent=-0.5cm \parsep=0.035cm
+%\itemsep=0.0cm}\item[]}{\end{list}}
 \setlength{\parindent}{0.0in}
 \setlength{\parskip}{0.1in}
+%floats
+%\renewcommand\floatpagefraction{.9}
+%\renewcommand\topfraction{.9}
+%\renewcommand\bottomfraction{.9}
+%\renewcommand\textfraction{.1}   
+%\setcounter{totalnumber}{50}
+%\setcounter{topnumber}{50}
+%\setcounter{bottomnumber}{50}
 
 \includeonly{Analysis}
 
 \begin{document}
-\title{
-\centerline{Derivation and Analysis of Malaria Parasite Clearance Times}}
-\author{Nick Shrine}
-\maketitle
+\begin{titlepage}
+\vspace*{\fill}
+\begin{center}
+{\huge Derivation and Analysis of Malaria Parasite Clearance Times}\\[1cm]
+by\\[1cm]
+{\large Nicholas Robert George Shrine}\\[4cm]
+Submitted in partial fulfilment of the requirements for the MSc in Statistics\\
+Department of Probability \& Statistics\\[2cm]
+September 2009
+\end{center}
+\vspace*{\fill}
+\end{titlepage}
 
 \frontmatter
-\tableofcontents 
-\listoftables
+\tableofcontents
 \listoffigures 
 
 \mainmatter
@@ -34,8 +62,11 @@
 \include{Data}
 \include{Derivation}
 \include{Analysis}
+\include{Alternative}
+\include{Discussion}
 
 \backmatter
 \bibliographystyle{wileyj} 
-\bibliography{dissertation}
+{\singlespace\bibliography{dissertation}}
+\include{Appendices}
 \end{document}
