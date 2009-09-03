@@ -166,11 +166,12 @@ getBasis <- function(knots, norder=4) {
 	create.bspline.basis(range(knots), nbasis, norder, knots)
 }
 
-getFdsmooth <- function(data, smoothing=10) {
-	cubic.basis <- getBasis(malaria.fda.df$pt)
+getFdsmooth <- function(x, y, smoothing=10) {
+	# x <- malaria.fda.df$pt
+	cubic.basis <- getBasis(x)
 	cubic.fdPar <- fdPar(cubic.basis, 2, smoothing)
-	# data <- as.matrix(malaria.fda.df$lparct)
-	smooth.basis(malaria.fda.df$pt, data, cubic.fdPar)
+	# y <- as.matrix(malaria.fda.df$lparct)
+	smooth.basis(x, y, cubic.fdPar)
 }
 
 misc <- function() {
@@ -180,30 +181,37 @@ misc <- function() {
 
 getxfdlist <- function() {
 	pt.cbasis <- create.constant.basis(range(malaria.fda.df$pt))
-	constfd=fd(matrix(1,1,43),pt.cbasis)
-	Sexfd=fd(matrix(as.numeric(malaria.fda.df$Sex),1,43),pt.cbasis)
-	Treatmentfd=fd(matrix(as.numeric(malaria.fda.df$Treatment),1,43),pt.cbasis)
-	list(constfd, Sexfd, Treatmentfd)
+	constfd=fd(matrix(1, 1, 43), pt.cbasis)
+	Sexfd=fd(matrix(as.numeric(malaria.fda.df$Sex) - 1, 1, 43), pt.cbasis)
+	Treatmentfd=fd(matrix(as.numeric(malaria.fda.df$Treatment) - 1, 1, 43), pt.cbasis)
+	Interactionfd=fd(matrix((as.numeric(malaria.fda.df$Sex) - 1)*(as.numeric(malaria.fda.df$Treatment) -1), 1, 43), pt.cbasis)
+	list(constfd, Sexfd, Treatmentfd, Interactionfd)
 }
 
 getbetalist <- function(fd, smoothing=10) {
-	 list(fdPar(fd$basis, 2, smoothing), fdPar(fd$basis, 2, smoothing), fdPar(fd$basis, 2, smoothing))
+	betaifdPar <- fdPar(fd$basis, 2, smoothing)
+	list(betaifdPar, betaifdPar, betaifdPar, betaifdPar)
 }
 
 getfRegress <- function(data.smooth, smoothing=10) {
 	fd <- data.smooth$fd
+	x <- data.smooth$argvals
+	y <- data.smooth$y
 	xfdlist <- getxfdlist()
 	betalist <- getbetalist(fd, smoothing)
-	fRegress(fd, xfdlist, betalist, y2cMap=data.smooth$y2cMap)
+	fr <- fRegress(fd, xfdlist, betalist, y2cMap=data.smooth$y2cMap)
+	fr$SigmaE <- getSigmaE(fr, x, y)
+	fr$betastderrlist <- getfStderr(fr, x, y)$betastderrlist
+	fr
 }
 
-getSigmaE <- function(fit, data) {
-	errmat <- data - eval.fd(malaria.fda.df$pt, fit$yhatfdobj$fd)
-	errmat %*% t(errmat) / 43
+getSigmaE <- function(fit, x, y) {
+	errmat <- y - eval.fd(x, fit$yhatfdobj$fd)
+	errmat %*% t(errmat) / dim(y)[2]
 }
 
-getfStderr <- function(fit, data) {
-	sigmaE <- getSigmaE(fit, data)
+getfStderr <- function(fit, x, y) {
+	sigmaE <- getSigmaE(fit, x, y)
 	fRegress.stderr(fit, fit$y2cMap, sigmaE)
 }
 
@@ -214,20 +222,31 @@ getFperm <- function(data.smooth, smoothing=10) {
 	Fperm.fd(fd, xfdlist, betalist)
 }
 
-getfResid <- function(fit, data) {
-	errmat <- data - eval.fd(malaria.fda.df$pt, fit$yhatfdobj$fd)
-	errmat.df <- data.frame(pt=malaria.fda.df$pt, as.data.frame(errmat))
-	errmat.long <- reshape(errmat.df, direction='long', varying=list(2:44))
-	names(errmat.long)[2:3] <- c("Subject","e")
-	errmat.long
+getfResid <- function(fit, data.smooth) {
+	x <- data.smooth$argvals
+	n <- dim(data.smooth$y)[2]
+	errmat <- data.smooth$y - eval.fd(x, fit$yhatfdobj$fd)
+	resids.df <- data.frame(pt=x, as.data.frame(errmat))
+	p <- n + 1
+	resids.long <- reshape(resids.df, direction='long', varying=list(2:p))
+	names(resids.long)[2:3] <- c("Subject","e")
+	resids.long$s <- rep(sqrt(diag(fit$SigmaE)), n)
+	resids.long$sr <- with(resids.long, e/s)
+	resids.long$Sex <- PC90.df$Sex[1]
+	resids.long$Treatment <- PC90.df$Treatment[1]
+	for (i in 1:n) {
+		resids.long$Sex[resids.long$Subject==i] <- PC90.df$Sex[i]
+		resids.long$Treatment[resids.long$Subject==i] <- PC90.df$Treatment[i]
+	}
+	resids.long
 }
 
 plotfSmooth <- function() {
 	qplot(pt, y, data=lprr2.fdSmooth.long, colour=Treatment, linetype=Sex, group=Subject, geom='line', stat='smooth', xlab="Time (hours)", ylab="log ratio of parasite count to pre-dose", main="Cubic spline smoothing")
 }
 
-plotfresids <- function() {
-	q <- qplot(pt, sr, data=lprr2.stderr.long, colour=Treatment, linetype=Sex, group=Subject, geom='line', stat='smooth', xlab="Time (hours)", ylab="Standardized residual", main="Residual functions from ANOVA")
+plotfresids <- function(resids.df) {
+	q <- qplot(pt, sr, data=resids.df, colour=Treatment, linetype=Sex, group=Subject, geom='line', stat='smooth', xlab="Time (hours)", ylab="Standardized residual", main="Residual functions from ANOVA")
 	q + geom_hline(yintercept=0, lty=2)
 }
 
@@ -242,4 +261,30 @@ plotbetas <- function(fit) {
 	lines(fit$betaestlist[[3]]$fd+2*fit$betastderrlist[[3]],col=4,lwd=1,lty=2)
 	lines(fit$betaestlist[[3]]$fd-2*fit$betastderrlist[[3]],col=4,lwd=1,lty=2)
 	legend(0, -6, lty=c(1,1,1,2), col=c(1,2,4,1), legend=c("Mean (Male, single)","Female","Combined treatment","95% CIs"))
+}
+
+plotfdcoefs <- function(fit, nx=201) {
+	rngx <- fit$yfdPar$fd$basis$range
+	x <- seq(rngx[1], rngx[2], length=nx)
+	coef.names <- c("Mean (male, single)", "Female, single", "Male, combi", "Female, combi")
+	plot.df <- data.frame()
+	for (i in 1:4) {
+		y <- eval.fd(x, fit$betaestlist[[i]]$fd)
+		s <- eval.fd(x, fit$betastderrlist[[i]])[,1]
+		plot.df <- rbind(plot.df, data.frame(x=x, y=y, upper=y+1.96*s, lower=y-1.96*s, coef=coef.names[i]))
+	}
+	q <- qplot(x, y, data=plot.df, geom='line', colour=coef, size=1, xlab="Time (hours)", ylab="log ratio of parasite count to pre-dose", main="Fitted coefficient functions with 95% confidence intervals")
+	q <- q + geom_line(aes(y=upper), linetype=2) + geom_line(aes(y=lower), linetype=2)
+	q <- q + geom_hline(yintercept=0, linetype=2)
+	q + facet_wrap(~coef, ncol=2) + opts(legend.position='none')
+}
+
+plotFperm <- function(fperm, x, y1, y2) {
+	time <- fperm$argvals
+	q <- qplot(time, fperm$Fvals, colour='red', size=1, geom='line', xlab='Time (hours)', ylab='F-statistic', main='Permutation F-test')
+	q <- q + geom_line(aes(y=fperm$qvals.pts), linetype=2, colour='blue', size=0.5)
+	q <- q + geom_hline(yintercept=fperm$qval, linetype=2, colour='blue', size=1)
+	q <- q + geom_text(aes(x=x, y=y1, label="maximum 0.05 critical value"), size=4, colour='blue')
+	q <- q + geom_text(aes(x=x, y=y2, label="pointwise 0.05 critical value"), size=4, colour='blue')
+	q + opts(legend.position='none')
 }
