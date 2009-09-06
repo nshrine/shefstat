@@ -105,6 +105,23 @@ rawggplot <- function(data, title="", points=T, lines=T) {
 #	q + geom_line(aes(colour=trttxt))
 }
 
+# Initial raw plot of data take 3
+rawggplot3 <- function(data, title="", centre="", r1=4, r2=4, points=T, lines=T) {
+    vp1 <- viewport(width=0.45, x=0, just="left")
+    q <- getrawplot(data[data$SEX=='Male',])
+    q <- addtrtgeoms(q, points, lines)
+    q <- q + opts(title=paste(centre, "Male"), legend.position='none')
+    q <- q + facet_wrap(~SUBJID, nrow=r1, scales="free_y")
+    print(q, vp=vp1)
+
+    vp2 <- viewport(width=0.55, x=1, just="right")
+    q <- getrawplot(data[data$SEX=='Female',])
+    q <- addtrtgeoms(q, points, lines)
+    q <- q + opts(title=paste(centre, "Female"))
+    q <- q + facet_wrap(~SUBJID, nrow=r2, scales="free_y")
+    print(q, vp=vp2)
+}
+
 predoseaov <- function(data, title="") {
 	q <- qplot(trttxt, parct, data=data, xlab="", ylab="Parasite Count (1000s)", main=title, geom="blank")
 	q <- q + geom_point(aes(colour=trttxt), position=position_jitter(w=0.05)) + scale_colour_discrete("Treatment")
@@ -113,12 +130,61 @@ predoseaov <- function(data, title="") {
 	q + facet_grid(CENTREID~SEX, margins=T)
 }
 
+predoseaov2 <- function(data) {
+	vp1 <- viewport(width=1, height=0.33, y=1, just="top")
+	q1 <- qplot(SEX, parct, data=data, geom="blank", colour=SEX, xlab="Sex:Centre", ylab="")
+	q1 <- q1 + scale_colour_discrete(h.start=120)
+	q1 <- q1 + scale_y_continuous(limits=c(0,100000), formatter="comma")
+	q1 <- q1 + geom_boxplot(width=0.3, outlier.size=0)
+	q1 <- q1 + geom_point(position=position_jitter(w=0.1))
+	#q1 <- q1 + stat_summary(fun.data="mean_cl_normal", geom="crossbar", width=0.3)
+	q1 <- q1 + opts( legend.position="none")
+	q1 <- q1 + facet_grid(.~CENTREID)
+	print(q1, vp=vp1)
+	
+	vp2 <- viewport(width=1, height=0.33, y=0.5, just="centre")
+	q2 <- qplot(trttxt, parct, data=data, geom="blank", colour=trttxt, xlab="Treatment:Centre", ylab="Parasite Count")
+	q2 <- q2 + scale_y_continuous(limits=c(0,100000), formatter="comma")
+	q2 <- q2 + geom_boxplot(width=0.3, outlier.size=0)
+	q2 <- q2 + geom_point(position=position_jitter(w=0.1))
+	#q2 <- q2 + stat_summary(fun.data="mean_cl_normal", geom="crossbar", width=0.3)
+	q2 <- q2 + opts( legend.position="none")
+	q2 <- q2 + facet_grid(.~CENTREID)
+	print(q2, vp=vp2)
+
+	vp3 <- viewport(width=1, height=0.33, y=0, just="bottom")
+	q3 <- qplot(trttxt, parct, data=data, geom="blank", colour=trttxt, xlab="Treatment:Sex", ylab="")
+	q3 <- q3 + scale_y_continuous(limits=c(0,100000), formatter="comma")
+	q3 <- q3 + geom_boxplot(width=0.3, outlier.size=0)
+	q3 <- q3 + geom_point(position=position_jitter(w=0.1))
+	#q3 <- q3 + stat_summary(fun.data="mean_cl_normal", geom="crossbar", width=0.3)
+	q3 <- q3 + opts(legend.position="none")
+	q3 <- q3 + facet_grid(.~SEX)
+	print(q3, vp=vp3)
+}
+
 allaov <- function(data, title="") {
 	q <- qplot(pt, log((1 + parct)/pre), data=data, xlab="Time from first dose (hours)", ylab="Log fraction of pre-dose count", main=title, geom="blank")
 	q <- q + geom_point(aes(colour=trttxt, shape=trttxt)) + scale_colour_discrete("Treatment") + scale_shape("Treatment")
 #	q <- q + scale_y_continuous(formatter=function(x) return(x/1000)) #+ opts(axis.text.x = theme_text(angle=90))
 	q <- q + stat_summary(fun.y="mean", geom="line", aes(colour=trttxt))
 	q + facet_grid(CENTREID~SEX, margins=T)
+}
+
+allaov2 <- function(data, title="Parasite reduction averaged over subjects with time from first treatment") {
+    vp1 <- viewport(width=0.7, height=0.33, x=0.5, y=1, just="top")
+    q <- qplot(pt, log((1 + parct)/pre), data=data, xlab="", ylab="", main="", geom="blank")
+    q <- q + geom_point(aes(colour=trttxt, shape=trttxt)) + scale_colour_discrete("Treatment") + scale_shape("Treatment")
+    q <- q + stat_summary(fun.y="mean", geom="line", aes(colour=trttxt)) 
+    print(q, vp=vp1)
+
+    vp2 <- viewport(height=0.33, y=0.5, just="centre")
+    q <- q + facet_grid(.~CENTREID) + opts(title="", legend.position="none") + scale_y_continuous(name="Log fraction of pre-dose count")
+    print(q, vp=vp2)
+
+    vp3 <- viewport(height=0.33, y=0, just="bottom")
+    q <- q + facet_grid(.~SEX) + opts(title="", legend.position="none") + scale_x_continuous(name="Time from first dose (hours)") + scale_y_continuous(name="")
+    print(q, vp=vp3)
 }
 
 predose.resid <- function(residuals, title="Residuals from pre-dose count ANOVA", b=20000, limits) {

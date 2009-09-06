@@ -232,11 +232,11 @@ getfResid <- function(fit, data.smooth) {
 	names(resids.long)[2:3] <- c("Subject","e")
 	resids.long$s <- rep(sqrt(diag(fit$SigmaE)), n)
 	resids.long$sr <- with(resids.long, e/s)
-	resids.long$Sex <- PC90.df$Sex[1]
-	resids.long$Treatment <- PC90.df$Treatment[1]
+	resids.long$Sex <- factor("Male","Female")
+	resids.long$Treatment <- factor("alone","combi")
 	for (i in 1:n) {
-		resids.long$Sex[resids.long$Subject==i] <- PC90.df$Sex[i]
-		resids.long$Treatment[resids.long$Subject==i] <- PC90.df$Treatment[i]
+		resids.long$Sex[resids.long$Subject==i] <- PC90.df$Sex[PC90.df$Subject==i]
+		resids.long$Treatment[resids.long$Subject==i] <- PC90.df$Treatment[PC90.df$Subject==i]
 	}
 	resids.long
 }
@@ -266,7 +266,7 @@ plotbetas <- function(fit) {
 plotfdcoefs <- function(fit, nx=201) {
 	rngx <- fit$yfdPar$fd$basis$range
 	x <- seq(rngx[1], rngx[2], length=nx)
-	coef.names <- c("Mean (male, single)", "Female, single", "Male, combi", "Female, combi")
+	coef.names <- c("Mean (male, alone)", "Sex (female)", "Treatment (combi)", "Sex:Treatment (female, combi)")
 	plot.df <- data.frame()
 	for (i in 1:4) {
 		y <- eval.fd(x, fit$betaestlist[[i]]$fd)
@@ -282,9 +282,61 @@ plotfdcoefs <- function(fit, nx=201) {
 plotFperm <- function(fperm, x, y1, y2) {
 	time <- fperm$argvals
 	q <- qplot(time, fperm$Fvals, colour='red', size=1, geom='line', xlab='Time (hours)', ylab='F-statistic', main='Permutation F-test')
-	q <- q + geom_line(aes(y=fperm$qvals.pts), linetype=2, colour='blue', size=0.5)
-	q <- q + geom_hline(yintercept=fperm$qval, linetype=2, colour='blue', size=1)
+	q <- q + geom_line(aes(y=fperm$qvals.pts), linetype=3, colour='blue')
+	q <- q + geom_hline(yintercept=fperm$qval, linetype=2, colour='blue')
 	q <- q + geom_text(aes(x=x, y=y1, label="maximum 0.05 critical value"), size=4, colour='blue')
 	q <- q + geom_text(aes(x=x, y=y2, label="pointwise 0.05 critical value"), size=4, colour='blue')
 	q + opts(legend.position='none')
+}
+
+getPredxfdlist <- function() {
+	pt.cbasis <- create.constant.basis(range(malaria.fda.df$pt))
+	constfd=fd(matrix(1, 1, 4), pt.cbasis)
+	Sexfd=fd(matrix(c(0,1,0,1), 1, 4), pt.cbasis)
+	Treatmentfd=fd(matrix(c(0,0,1,1), 1, 4), pt.cbasis)
+	Interactionfd=fd(matrix(c(0,0,0,1), 1, 4), pt.cbasis)
+	list(constfd, Sexfd, Treatmentfd, Interactionfd)
+}
+
+model.matrix.fRegress <- function(obj) {
+	sapply(obj$xfdlist, function(x) x$coefs)	
+	
+}
+
+getfdpreddata <- function(fit, nt=201, level.names=c("Male, alone", "Female, alone", "Male, combi", "Female, combi")) {
+	rngt <- fit$yfdPar$fd$basis$range
+	t <- seq(rngt[1], rngt[2], length=nt)
+	data.df <- data.frame(getfdpred(t[1], fit))
+	for (i in 2:nt)
+		data.df <- rbind(data.df, getfdpred(t[i], fit))
+	data.df$level <- rep(level.names, nt)
+	data.df
+}
+
+getfdpred <- function(t, fit, conf=0.95) {
+	require(fda)
+	x <- t(sapply(getPredxfdlist(), function(x) x$coef))
+	Beta <- as.matrix(sapply(fit$betaestlist, function(x) eval.fd(t, x$fd)))
+	pred <- t(x)%*%Beta
+	yobs <- eval.fd(fit$yfdPar$fd, t)
+	yfit <- eval.fd(fit$yhatfdobj$fd, t)
+	e <- yobs - yfit
+	n <- length(e)
+	p <- length(Beta)
+	s2 <- e%*%t(e) / (n-p)
+	X <- model.matrix(fit)
+	varpred <- as.numeric(s2) * t(x)%*%solve(t(X)%*%X)%*%x
+	pval <- (1-conf)/2
+	limit <- sqrt(diag(varpred)) * abs(qt(pval, n-p))
+	matrix(c(rep(t, p), pred, pred-limit, pred+limit), p, p,
+		dimnames=list(NULL, c("t","pred","lwr","upr")))
+}
+
+plotfdpred <- function(data) {
+	require(ggplot2)
+	q <- qplot(t, pred, data=data, ymin=lwr, ymax=upr, geom='errorbar', colour=Treatment, xlab="Time (hours)", ylab="log ratio of parasite count to predose", main="95% confidence intervals for functional model")
+	#q + geom_line(aes(y=lwr), linetype=2) + geom_line(aes(y=upr), linetype=2)
+	#q + geom_errorbar(aes(ymin=lwr, ymax=upr, colour=Treatment))
+	q <- q + geom_line(size=1)
+	q + facet_grid(~Sex)
 }

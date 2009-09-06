@@ -16,15 +16,19 @@ pc90ancova <- function(data, title="", ...) {
 
 pc90boxes <- function(data) {
 	vp1 <- viewport(width=1, height=0.5, y=1, just="top")
-	q <- qplot(Level, PC90, data=data, geom="blank", colour=Factor, xlab="", ylab="PC90 (hours)")
-	q <- q + geom_point(position=position_jitter(w=0.1))
-	q <- q + opts(legend.position="none")
-	q1 <- q + stat_summary(fun.data="median_hilow", conf.int=0.5, geom="crossbar", width=0.5)
+	q1 <- qplot(Level, PC90, data=data, geom="blank", colour=Factor, xlab="", ylab="PC90 (hours)")
+	q1 <- q1 + geom_boxplot(width=0.5, outlier.size=0)
+	q1 <- q1 + geom_point(position=position_jitter(w=0.1))
+	q1 <- q1 + opts(legend.position="none")
+#	q1 <- q1 + stat_summary(fun.data="median_hilow", conf.int=0.5, geom="crossbar", width=0.5)
 	q1 <- q1 + opts(title="Median and quartiles")
 	print(q1, vp=vp1)
 	
 	vp2 <- viewport(width=1, height=0.5, y=0, just="bottom")
-	q2 <- q + stat_summary(fun.data="mean_cl_normal", geom="crossbar", width=0.5)
+	q2 <- qplot(Level, PC90, data=data, geom="blank", colour=Factor, xlab="", ylab="PC90 (hours)")
+	q2 <- q2 + geom_point(position=position_jitter(w=0.1))
+	q2 <- q2 + opts(legend.position="none")
+	q2 <- q2 + stat_summary(fun.data="mean_cl_normal", geom="crossbar", width=0.5)
 	q2 <- q2 + opts(title="95% normal confidence interval for mean")
 	print(q2, vp=vp2)
 
@@ -90,7 +94,7 @@ plotresids.lme <- function(model, binwidth=0.5) {
 	plotresids.lm(model, resid(model, type='pearson'), model$data, binwidth)
 }
 
-plotresids.lm <- function(model, resids, data, binwidth=0.5, trans=F, weighted=F) { # Need to modify for lme
+plotresids.lm <- function(model, resids, data, binwidth=0.5, trans=F, weighted=F, xlab="Fitted PC90 (hours)") { # Need to modify for lme
 	if (missing(resids)) {
 		resids <- stdres(model)
 	}
@@ -131,7 +135,8 @@ plotresids.lm <- function(model, resids, data, binwidth=0.5, trans=F, weighted=F
 	q <- q + geom_hline(aes(yintercept=0), linetype=2)
 #	q <- q + stat_boxplot(width=0.5, aes(outlier.size=0))
 	q <- q + geom_point(position=position_jitter(w=0.1))
-	q <- q + stat_summary(fun.dat="mean_sdl", mult=1, geom="crossbar", width=0.5)
+	if (is.factor(data$Factor))
+	    q <- q + stat_summary(fun.dat="mean_sdl", mult=1, geom="crossbar", width=0.5)
 	q <- q + opts(legend.position="none")
 	print(q, vp=vp3)
 
@@ -139,7 +144,7 @@ plotresids.lm <- function(model, resids, data, binwidth=0.5, trans=F, weighted=F
 	# vs fitted
 	#
 	vp4 <- viewport(width=0.5, height=0.5, x=0.75, y=0.25)
-	q <- qplot(fitted(model)^(1+1*trans), resids, data=data, xlab="Fitted PC90 (hours)", ylab=lab.txt)
+	q <- qplot(fitted(model)^(1+1*trans), resids, data=data, xlab=xlab, ylab=lab.txt)
 	q <- q + geom_hline(aes(yintercept=0), linetype=2)
 	print(q, vp=vp4)
 }

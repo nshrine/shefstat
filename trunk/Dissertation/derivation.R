@@ -242,9 +242,9 @@ PC90.by.subjects <- function(...) {
 PC90.split.methods <- function(between=T, facets) {
 	q <- NULL
 	if (between) {
-		q <- qplot(Method, PC90, data=PC90.reshape, main="Between Subjects", ylab="PC90 (hours)", geom="blank") 
+		q <- qplot(Method, resid(PC90methods.between.aov), data=PC90.reshape[!is.na(PC90.reshape$PC90),], main="Between Subjects", ylab="PC90 - stratum mean (hours)", geom="blank", ylim=c(-4,4)) 
 	} else {
-		q <- qplot(Method, PC90.s, data=PC90.reshape, main="Within Subjects", ylab="PC90 - subject mean (hours)", geom="blank")
+		q <- qplot(Method, PC90.s, data=PC90.reshape, main="Within Subjects", ylab="PC90 - subject mean (hours)", geom="blank", ylim=c(-4,4))
 	}
 	if (missing(facets)) {
 		q <- q + stat_boxplot(width=0.3)
@@ -254,4 +254,23 @@ PC90.split.methods <- function(between=T, facets) {
 		q <- q + facet_grid(facets)
 	}
 	q
+}
+
+comparelog <- function(data, title="", centre="", r1=4, r2=4, points=T, lines=T) {
+    vp1 <- viewport(width=0.47, x=0, just="left")
+    q <- getrawplot(data)
+    q <- addtrtgeoms(q, points, lines)
+    q <- addPC90lines(q, xpos=40)
+    q <- q + opts(title=paste(centre, "Untransformed counts"), legend.position='none')
+    q <- q + facet_wrap(~SUBJID, nrow=r1, scales="free_y")
+    print(q, vp=vp1)
+
+    vp2 <- viewport(width=0.53, x=1, just="right")
+    q <- getrawplot(data)
+    q <- addtrtgeoms(q, points, lines)
+    q <- getlogplot(q)
+    q <- addPC90lines(q, logplot=T, xpos=40)
+    q <- q + opts(title=paste(centre, "Logarithmic transformation"))
+    q <- q + facet_wrap(~SUBJID, nrow=r2, scales="free_y")
+    print(q, vp=vp2)
 }

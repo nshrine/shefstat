@@ -1,4 +1,4 @@
-\chapter{Introduction}\label{intro}
+\chapter{Introduction}\label{ch:intro}
 \section{Background}
 \subsection{Malaria}
 Malaria is a serious, potentially fatal disease caused by infection of the blood by a parasitic organism. The parasite is transmitted between people by mosquito bites. Over one million people a year die of malaria and this number is rising due to increasing resistance of the parasite to antimalarial drugs\cite{who}. Malaria is also a health hazard for people travelling to areas of the world where Malaria is endemic.
@@ -36,14 +36,15 @@ A clinical trial was conducted by Glaxo Smithkline (GSK) comparing parasite clea
 The data were received as an email attachment from our contact at Glaxo Smithkline. The attachment was a \emph{SAS} data set which was able to be read into \emph{R} by first exporting from \emph{SAS} in dbf format and then read into \emph{R} using the \texttt{read.dbf} function.
 Table \ref{rdata} shows the data as an \emph{R} data frame. 
 \begin{table}[h]
+\centering
 \caption{Data as an R data frame}\label{rdata}
 \begin{boxedverbatim}
-    CENTREID SUBJID SEX                    plantm   acttm  parct trt trttxt
-1        001     54   M                  PRE-DOSE -2.8333  14092   A  alone
-2        001     54   M  2 HOURS AFTER FIRST DOSE  2.0333   7592   A  alone
-3        001     54   M  4 HOURS AFTER FIRST DOSE  4.0500   1170   A  alone
-4        001     54   M  6 HOURS AFTER FIRST DOSE  6.0000     52   A  alone
-5        001     54   M  8 HOURS AFTER FIRST DOSE  8.0500      0   A  alone
+CENTREID SUBJID SEX                    plantm   acttm  parct trt
+     001     54   M                  PRE-DOSE -2.8333  14092   A  
+     001     54   M  2 HOURS AFTER FIRST DOSE  2.0333   7592   A  
+     001     54   M  4 HOURS AFTER FIRST DOSE  4.0500   1170   A  
+     001     54   M  6 HOURS AFTER FIRST DOSE  6.0000     52   A  
+     001     54   M  8 HOURS AFTER FIRST DOSE  8.0500      0   A  
 \end{boxedverbatim}
 \end{table}
 
@@ -56,7 +57,7 @@ The columns are:
 \item\texttt{acttm} - The actual time in hours that the blood sample was taken relative to the time the treatment was administered, hence all pre-dose times are negative.
 \item\texttt{parct} - The parasite count per $\mu L$ of blood.
 \item\texttt{trt} - An indicator of which treatment was used \texttt{A} or \texttt{B}.
-\item\texttt{trttxt} - A description of treatments \texttt{A} and \texttt{B}: \texttt{alone}, meaning that a single drug was used or \texttt{combi} meaning that a combination treatment was used.
+\item\texttt{trttxt} (not shown) - A description of treatments \texttt{A} and \texttt{B}: \texttt{alone}, meaning that a single drug was used or \texttt{combi} meaning that a combination treatment was used.
 \end{itemize}
 
 As this data was released by GSK purely for training purposes only the minimum data was disclosed to allow a methodological study of estimating and analysing parasite clearance times. Hence, we have no information on the actual drug combination used, nor the dosage. We know nothing more about the subject than their sex, nor how they were allocated to treatment groups.
@@ -80,20 +81,26 @@ In order to determine the effect of the factors centre, sex and treatment on the
 
 \section{Dissertation overview}
 \begin{description}
-\item[Chapter \ref{intro}, Introduction] - An overview of clinical trials for antimalarial drug treatments is given with a summary of the statistical techniques used in the literature for the kind of parasite count data that is analysed in this dissertation. A description of the data received from GSK is given. The two main aims of this study are outlined.
-\item[Chapter \ref{data}, Exploratory data analysis] - Exploratory data analysis of the raw parasite counts is presented. This is initially performed by graphical analysis of the parasite count plotted against time in separate plots for each subject, grouped by centre, sex and treatment. The main features of the data are described and their possible implications for modelling.
+\item[Chapter \ref{ch:intro}, Introduction] - An overview of clinical trials for antimalarial drug treatments is given with a summary of the statistical techniques used in the literature for the kind of parasite count data that is analysed in this dissertation. A description of the data received from GSK is given. The two main aims of this study are outlined.
+\item[Chapter \ref{ch:data}, Exploratory data analysis] - Exploratory data analysis of the raw parasite counts is presented. This is initially performed by graphical analysis of the parasite count plotted against time in separate plots for each subject, grouped by centre, sex and treatment. The main features of the data are described and their possible implications for modelling.
 
 The derivation of the parasite count and its distributional properties are discussed. The distribution of the pre-dose count is analysed and a normalizing transformation is suggested.
 
 The development of the parasite count with time is explored graphically by comparing the MEAN/MEDIAN? counts between treatments and preliminary observations are made.
-\item[Chapter \ref{derivation}, Derivation of clearance times] - An transformation of the count appropriate for clearance time estimation is identified and 3 different methods of estimating the PC90 clearance time are presented based on regression and interpolation techniques.
+\item[Chapter \ref{ch:derivation}, Derivation of clearance times] - An transformation of the count appropriate for clearance time estimation is identified and 3 different methods of estimating the PC90 clearance time are presented based on regression and interpolation techniques.
 
 The performance of the 3 methods is evaluated and compared for consistency or otherwise, both graphically and by statistical tests. The effect on PC90 estimates of interaction between the estimation method and experimental factors is investigated.
 
 The merits of each method are summarized and a recommendation for PC90 estimation is made.
-\item[Chapter \ref{analysis}, Analysis of clearance times] - The effect of centre, sex and treatment on PC90 clearance times is investigated graphically.
+\item[Chapter \ref{ch:analysis}, Analysis of clearance times] - The effect of centre, sex and treatment on PC90 clearance times is investigated graphically.
 
 The residuals from 3-way ANOVA analysis of the clearance times are investigated to determine the distributional properties of clearance times between the groups. Accordingly, a transformation and modelling method are identified in order to make a valid statistical comparison of the treatment effect.
 
 The effect of the treatment and sex and centre factors are quantified with appropriate confidence intervals.
+\item[Chapter \ref{ch:alternative}, Alternative measures of clearance times] - Other commonly used clearance times such as PC50, PC99 and the parasite reduction ratio PRR are analysed to complement the analysis in chapter \ref{ch:analysis}.
+
+The relatively new statistical technique of \emph{functional data analysis} is employed to develop a functional model of the parasite clearance profiles for the sex and treatment groups. 
+ 
+\item[Chapter \ref{ch:discussion}] - 
+
 \end{description}

@@ -1,26 +1,20 @@
-\chapter{Derivation of Parasite Clearance Times}\label{derivation}
+\chapter{Derivation of Parasite Clearance Times}\label{ch:derivation}
 \section{Estimating the primary endpoint}
 The endpoint of primary importance is PC90, the time to achieve a reduction of the parasitaemia by 90\% from the baseline level. The baseline level is the pre-dose parasite count. We have data for parasite counts taken at approximately fixed times after first dose. Therefore we will have a measurement of the parasite count at a time when the count was above 10\% of the baseline count, followed by one where it where it is below 10\% and hence we need to find an appropriate interpolation to determine a time at which the parasite count was 10\% of baseline i.e. has fallen by 90\%.
 
 As a first attempt at deriving estimates of PC90 from the data, simple linear polynomial fits to the logarithm of the parasite count with time from first dose are investigated. This is followed by non-linear logistic regression as has been used by others\cite{wootton}. We also look at simple linear log-linear interpolation\footnote{Linear interpolation between two points plotted in cartesian co-ordinates where one axis has a logarithmic scale.}, which has also been used for data of this kind\cite{carmello}.
 \subsection{Using a transformation of the count}
-In the previous chapter it was noted that a logarithmic transformation was appropriate to remove the skew of the parasite count distribution. Figure \ref{raw901M} shows the untransformed parasite count for centre 1 males with a horizontal line indicating the PC90 level and Figure \ref{log901M} shows the log-transformed parasite count.
+In the previous chapter it was noted that a logarithmic transformation was appropriate to remove the skew of the parasite count distribution. Figure \ref{comprawlog} shows the untransformed parasite count for centre 1 males with a horizontal line indicating the PC90 level on the left, with the corresponding log-transformed parasite count on the right.
+\begin{sidewaysfigure}[p]
+\begin{center}
+\includegraphics[height=150mm]{comprawlog90.eps}
+\caption{Comparison of using untransformed counts and logarithmic transformation for estimation of PC90}
+\label{comprawlog}
+\end{center}
+\end{sidewaysfigure}
 
 We can see that the logarithmic transformation reduces the significance of large fluctuations in the parasite count soon after first dose and brings the region around the PC90 level into greater prominence. Consequently, interpolated estimates of PC90 in these log-linear co-ordinates will be more accurate and any regression will be more influenced by data close to the region of interest.  
-\begin{figure}[p]
-\begin{center}
-\includegraphics[width=150mm]{raw901M.eps}
-\caption{Untransformed parasite counts with PC90 level shown}
-\label{raw901M}
-\end{center}
-\end{figure}
-\begin{figure}[p]
-\begin{center}
-\includegraphics[width=150mm]{log901M.eps}
-\caption{Log parasite counts with PC90 level shown}
-\label{log901M}
-\end{center}
-\end{figure}
+
 \section{Estimation techniques}
 \subsection{Polynomial linear regression}
 It was found that a cubic polynomial was the most suitable model, if we include the data only up to the first zero parasite count. For some patients where the parasite count drops quickly to zero a fit that includes the subsequent run of zeroes would pull the cubic fit away from the most sensible estimate of PC90. It is more suitable for the purpose of estimating PC90 to only model the drop in the count to zero.
@@ -30,7 +24,7 @@ $$\log(1+P_{t})=\beta_0+\beta_1t+\beta_2t^2+\beta_3t^3+\epsilon\quad\quad\epsilo
 where $\log(1+P_{t})$ is used so that the dependent variable is zero at zero parasite count.
 
 Figure \ref{cubics} shows the cubic fits to the log parasite count for centre 1, male subjects. It can be seen that the model describes the data fairly well, but it looks as if the combined treatment data is more closely modelled, with the single treatment data showing more dispersion about the fitted model. 
-\begin{figure}[p]
+\begin{figure}[h]
 \includegraphics[width=150mm]{cubics.eps} 
 \caption{Cubic fits to log parasite count up to first zero reading}\label{cubics}
 \end{figure}
@@ -41,16 +35,17 @@ Figure \ref{cubicsresid} shows the standardized residuals ($e/\hat{\sigma}$) for
 \caption{Standardized residuals for cubic fits}\label{cubicsresid}
 \end{figure}
 It can be seen that they are normally distributed and show no obvious correlation with time from first dose or with fitted count. The cluster of small magnitude residuals at zero fitted value occurs because, in the fitting, this datum is not random but always zero each subject. Strictly this invalidates the assumptions of the fitted model but there isn't a more suitable choice for determining the shape. The cubic model is really only used as a convenient method of interpolation and we are not interested in inference regarding the fitted parameters as long as there is no systematic bias. 
+
 \subsubsection*{Determining PC90 from the fitted model}
 The value of PC90 i.e. the time t at which the parasite count has fallen to 10\% was found by finding the positive root of the cubic equation
 $$\hat{\beta_0}-\hat{\beta_1}t-\hat{\beta_2}t^2-\hat{\beta}_3t^3-0.1{P_{0}}=0$$
 that lies within our time period, where $P_0$ is the pre-treatment parasite count, $t$ is the time from first dose and $\hat{\beta_i}$ are the fitted coefficients for the cubic model. This root was found numerically using the \emph{R} \texttt{uniroot} function\cite{R}, which takes as an argument the interval over which to search for the root.
-\pagebreak
+
 \subsection{Non-linear logistic regression}
-The logistic model as, used by Wootton \textit{et al}.\cite{wootton}, is
+The logistic model that GSK specified had been tried for this data and also used by Wootton \textit{et al}.\cite{wootton}, is
 $$\log(1+P_t)=\alpha+\frac{\lambda}{1+e^{-\beta(t-\mu)}}+\epsilon\quad\quad\epsilon\sim N(0,\sigma^2)$$
 This was fitted to all the data as it can model a drop from an initial count level to a level of zero, unlike the cubic model. $\alpha$ is the lower asymptote which we would expect to be zero. $\alpha+\lambda$ is the upper asymptote which we would generally expect to be $P_0$ except in the cases where there is a marked increase in the parasite count after the first dose. $\beta$ determines the rate of reduction with time and $\mu$ is the point of inflection (maximum rate of reduction). This model was fitted using the \emph{R} non-linear least-squares function \texttt{nls}\cite{R}. Logistic fits to the same subjects as the cubic fits in Figure \ref{cubics} are shown in Figure \ref{logistics}.
-\begin{figure}[p]
+\begin{figure}[h]
 \includegraphics[width=150mm]{logistics.eps} 
 \caption{Logistic fits to log parasite count}\label{logistics}
 \end{figure}
@@ -62,17 +57,19 @@ If we look at the standardized residuals from the logistic fitting in Figure \re
 \includegraphics[width=150mm]{logisticresid.eps} 
 \caption{Standardized residuals for logistic fits}\label{logisticresid}
 \end{figure}
+
 \subsubsection*{Determining PC90 from the fitted model}
 As before the \emph{R} \texttt{uniroot} function was used to find $t$ lying within our time period satisfying the equation
 $$\log(1+P_t)=\hat{\alpha}+\frac{\hat{\lambda}}{1+\exp[-\hat{\beta}(t-\hat{\mu})]}-0.1{P_{0}}=0$$
 where $\hat{\alpha}$, $\hat{\lambda}$, $\hat{\beta}$ and $\hat{\mu}$ are the fitted coefficients of the model.
 \subsubsection*{Choosing starting values for the parameters}
 Figure \ref{logparms} shows the roles the parameters of the logistic model play in shaping the fitted curve. The \texttt{nls} non-linear, least-squares fitting routine can take starting values for the parameters to be estimated.
-\begin{figure}[h]
+\begin{figure}[ht]
 \includegraphics[width=150mm]{logparms.eps} 
 \caption{Illustration of parameters for logistic fits.\newline
 The horizontal red lines show $\log(1+P_t)=\alpha$ (lower) and $\log(1+P_t)=\alpha+\lambda$ (upper), the vertical red line shows $t=\mu$ and the coefficient $\beta$ (rate of reduction) is given in blue.}\label{logparms}
 \end{figure}
+
 Looking at Figure \ref{logparms} it clearly follows that sensible starting values are:
 \begin{itemize}
 \item $\alpha$ = the minimum parasite count; usually 0.
@@ -80,6 +77,7 @@ Looking at Figure \ref{logparms} it clearly follows that sensible starting value
 \item $\mu$ = the time corresponding to the parasite count closest to halfway between the maximum and minimum counts.
 \end{itemize} 
 It was found by experimentation that the most suitable starting value for $\beta$ was -0.5, but that the fitting was insensitive to choice of $\beta$ if varied over the range of fitted $\beta$ values observed (and somewhat beyond).
+
 \subsubsection*{Failure of logistic fitting}
 Despite careful selection of starting parameters, it was found for several subjects that a logistic model is simply not appropriate. In these cases either the non-linear fitting routine failed to converge or, if convergence criteria were relaxed, would fit a model highly dependent on choice of starting parameters which, when plotted with the data, obviously does not model the data satisfactorily. The data for these subjects where logistic fitting failed are shown in Figure \ref{failures}.
 \begin{figure}[h]
@@ -90,8 +88,10 @@ Despite careful selection of starting parameters, it was found for several subje
 It is interesting to note that all subjects for which logistic fitting fails are in the single treatment group; $p=0.0039$ under the null hypothesis of equal probability of a subject being from the single or combined treatment group using a binomial model. This is evidence that the parasite counts for patients on the single treatment follow more varied trajectories during clearance compared to patients on the combined treatment whose clearance can consistently be described with a logistic or cubic model to a reasonable approximation.
 
 In addition to parasite count profiles that simply do not conform to a logistic shape there were subjects where insufficient data in the region between the upper and lower asymptotes meant that logistic fitting was inappropriate. For example, subjects 526 and 101 in Figure \ref{failures}, where choice of different starting parameters for $\mu$ and $\beta$ would result in different logistic fits being obtained. One possible fit having a steep transition (large absolute $\beta$), whereby the data at the upper and lower levels is closely modelled. Another possible fit having a shallower transition (smaller $\beta$) that models the slope of a line passing through the ends of the run of points at the upper and lower levels and the point in the middle, but  has a less severe curvature such that the corners at the upper and lower levels are poorly modelled. In summary the fit is free to rotate about the single point between the upper and lower levels and thus cannot be suitably defined.
+
 \subsection{Log-linear interpolation}
 The datum immediately above the PC90 level is joined with a straight line to the datum immediately below the PC90 level in on a plot of $\log(1+P_{t})$ against time. The point where this line crosses the PC90 level determines $t$=PC90.
+
 \section{Comparison of estimation methods}
 Table \ref{PC90} shows a comparison of the PC90 estimates obtained by the 3 different methods utilised so far.
 \begin{table}[p]
@@ -148,7 +148,7 @@ ID&ID&Sex&Treatment&cubic&logistic&log-linear\\
 \hline
 \end{tabular}
 \end{table}
-\pagebreak
+
 \subsection{Graphical comparison}
 Figure \ref{pc90-agree} shows 8 examples of subjects where estimation by the 3 different methods shows good agreement. It seems likely that the differences between these estimates are of a comparable scale to experimental error. It can be seen that the 3 methods give close agreement when the data can be closely modelled by cubic or logistic fitting and when the gradient of the log-linear interpolation is similar to the regression models in the region around PC90. 
 \begin{figure}[h]
@@ -168,25 +168,26 @@ Figure \ref{pc90-bad} shows examples of subjects where estimation by the 3 diffe
 \label{pc90-bad}
 \end{figure}
 Figure \ref{pc90-nofit} shows the cubic and log-linear interpolated estimates for subjects where logistic fitting was inappropriate.
-\begin{figure}[h]
+\begin{figure}[hp]
 \includegraphics[width=150mm]{pc90-nofit.eps} 
 \caption{PC90 estimation for subjects where logistic fitting was inappropriate}
 \label{pc90-nofit}
 \end{figure}
 It can be seen that the two methods in these cases appear to produce very similar estimates.
-\clearpage
+
 \subsubsection*{Between and within subjects comparisons}
-Figure \ref{methodsbysubject} shows the distribution of PC90 estimates for each method in two ways:
-\begin{enumerate}
-\item ``Between subjects'' simply shows the distributions of PC90 estimates.
-\item ``Within subjects'' removes the effect of correlation between estimates made on the same subject by showing the distribution of the difference of the PC90 estimate from the subject mean.
-\end{enumerate}
-\begin{figure}[p]
+Figure \ref{methodsbysubject} shows the distribution of PC90 estimates between and within subjects. This is to give us an idea of what should be used as an error term in any modelling of the effect of the factors on PC90. The two ways of showing the distribution of PC90 estimates are:
+\begin{description}
+\item[Between subjects] - shows the distributions of residuals of PC90 values from the stratum mean i.e. the distribution of PC90 estimates about the mean at each unique centre-sex-treatment combination to which each subject belongs. In this way the distribution of the between-subjects ``error'' is shown.
+\item[Within subjects] removes the effect of correlation between estimates made on the same subject by showing the distribution of the residuals of the PC90 estimate from the subject mean. In this way the distribution of within-subjects ``error'' is shown.
+\end{description}
+\begin{figure}[ht]
 \includegraphics[width=150mm]{methodsbysubject.eps} 
 \caption{Comparison of PC90 estimates between and within subjects}
 \label{methodsbysubject}
 \end{figure}
-It can be seen that the choice of method only seems to have a significant effect within subjects with the logistic method appearing to give estimates higher than average and the log-linear interpolation method slightly lower. This suggests that variance between methods is only significant within subjects.
+
+It can be seen that the choice of method only seems to have a significant effect within subjects with the logistic method appearing to give estimates higher than average and the log-linear interpolation method slightly lower. This suggests that variance between methods is only significant within subjects. It also shows that in any modelling of PC90 that the error between subjects is larger than that due to choice of PC90 estimation method.
 % \subsubsection{Interaction of estimation method with experimental factors}
 % Figures \ref{methodsbycentre}, \ref{methodsbysex} and \ref{methodsbytreatment} show the between and within subject PC90 estimates split by experimental factors centre, sex and treatment respectively:
 % \begin{itemize}
@@ -210,7 +211,7 @@ It can be seen that the choice of method only seems to have a significant effect
 % \caption{Comparison of PC90 estimates by treatment}
 % \label{methodsbytreatment}
 % \end{figure}
-\pagebreak
+\clearpage
 \subsection{Statistical comparison}
 %If we perform 2-way ANOVA between the 3 PC90 estimates by subject and method i.e.
 %$$\mathrm{PC}90_{ij}=subject_{i}+method_{j}+\epsilon_{ij}\quad\quad\epsilon\sim N(0,\sigma^{2})$$ 
@@ -233,6 +234,7 @@ It can be seen that the choice of method only seems to have a significant effect
 %\end{tabular}
 %\end{table}
 To perform a statistical comparison between the PC90 estimation methods we want to test the null hypothesis that the difference between PC90 estimated by each method is zero. In order to do this we need to look at the distribution of the differences between PC90 estimates and accordingly choose an appropriate statistical test.
+
 \subsubsection*{Distributions of differences}
 \begin{description}
 \item[Cubic and logistic methods] - The distribution of the difference between PC90 estimated by the cubic and logistic methods is shown in Figure \ref{cub-log}. Apart from one outlying datum it can be seen that the differences are approximately normally distributed. The outlying value corresponds to subject 183, which we can see in Figure \ref{pc90-bad} gives a very different estimate by the two methods due to the parasite count being fairly constant around the PC90 level.
@@ -241,7 +243,7 @@ Again the distribution is approximately normally distributed apart from a single
 \item[Logistic and log-linear interpolation methods] - The distribution of the difference between PC90 estimated by the logistic and log-linear interpolation methods is shown in Figure \ref{log-loglin}. The two outlying values correspond to subjects 183 and 509 again.
 \end{description}
 As the distributions of differences are all approximately normally distributed, apart from a few anomalous estimates as described, we can used paired-sample $t$ tests to test our null hypothesis.
-\begin{figure}[h]
+\begin{figure}[p]
 \includegraphics[width=150mm]{cub-log.eps} 
 \caption{Distribution of the difference between PC90 estimated by the cubic and logistic methods}
 \label{cub-log}
@@ -256,6 +258,7 @@ As the distributions of differences are all approximately normally distributed, 
 \caption{Distribution of the difference between PC90 estimated by the logistic and log-linear interpolation methods}
 \label{log-loglin}
 \end{figure}
+
 \subsubsection*{Paired $t$ tests}
 \begin{description}
 \item[Cubic and logistic methods] - If we perform a paired $t$ test between PC90 estimated by the cubic and logistic methods, excluding subject 183, we find good evidence to reject the hypothesis that the two methods result in the same PC90 estimate ($P<0.005$). On average the logistic method gives PC90 32 minutes longer than the cubic method with a 95\% confidence interval of (13, 51) minutes, bearing in mind this is only based on a comparison of the subset of 35 subjects for which a logistic fit was possible out of the total of 43.
@@ -263,27 +266,52 @@ As the distributions of differences are all approximately normally distributed, 
 \item[Logistic and log-linear interpolation methods] - A paired $t$ test excluding subjects 183 and 509 gives good evidence to reject the hypothesis that the logistic and log-linear methods produce the same PC90 estimates ($P<0.0005$). On average the logistic method produces PC90 estimates 49 minutes longer than the log-linear interpolation method with a 95\% confidence interval of (25, 73) minutes.
 \end{description}
 \subsubsection*{ANOVA}
-The results of 4-way ANOVA on the 121 PC90 estimates (3 estimates for each of 43 subjects, minus 8 where no logistic estimate could be made), classified by estimation method, centre, sex and treatment with all interactions are shown in Table \ref{pc90aov}. Only the results for the effect of the PC90 method used and its 2-way interactions are shown here so as not to pre-empt the analysis of the next chapter; 3-way and higher interactions were all non-significant.
+The results of 4-way ANOVA on the 121 PC90 estimates (3 estimates for each of 43 subjects, minus 8 where no logistic estimate could be made), classified by estimation method, centre, sex and treatment with all interactions are shown in Table \ref{pc90aov}. A square-root transformation of the P90 dependent variable was used for variance stabilisation; it will be shown in chapter \ref{ch:analysis} that this is appropriate for this data. Only the results for the effect of the PC90 method used and its 2-way interactions are shown here so as not to pre-empt the analysis of chapter \ref{ch:analysis}. 3-way and higher interactions were all non-significant.
+%> summary(PC90methods.within.aov)
+%                            Df  Sum Sq Mean Sq F value    Pr(>F)    
+%Method                       2   0.438   0.219  0.1345 0.8742919    
+%Centre                       1   1.356   1.356  0.8319 0.3639784    
+%Sex                          1   0.226   0.226  0.1385 0.7106024    
+%Treatment                    1  27.955  27.955 17.1533 7.366e-05 ***
+%Method:Centre                2   0.981   0.490  0.3008 0.7408770    
+%Method:Sex                   2   1.973   0.987  0.6054 0.5479050    
+%Centre:Sex                   1   1.152   1.152  0.7072 0.4024495    
+%Method:Treatment             2   0.320   0.160  0.0980 0.9067164    
+%Centre:Treatment             1   1.648   1.648  1.0113 0.3170836    
+%Sex:Treatment                1  20.927  20.927 12.8409 0.0005326 ***
+%Method:Centre:Sex            2   0.215   0.107  0.0659 0.9362209    
+%Method:Centre:Treatment      2   0.843   0.421  0.2585 0.7727248    
+%Method:Sex:Treatment         2   1.371   0.685  0.4206 0.6578573    
+%Centre:Sex:Treatment         1   2.040   2.040  1.2520 0.2659387    
+%Method:Centre:Sex:Treatment  2   0.056   0.028  0.0173 0.9828618    
+%Residuals                   97 158.081   1.630                   
 \begin{table}[h]
 \centering
 \caption{ANOVA comparison of PC90 estimated by 3 methods}\label{pc90aov}
 \begin{tabular}{l|rrrrr}
 Source&Sum Sq.&df&Mean Sq.&$F$&P($>F$)\\
 \hline
-$Method$&7.2&2&3.6&0.041&$0.96$\\
-$Method\times Centre$&61.0&2&30.5&0.35&$0.71$\\
-$Method\times Sex$&119.2&2&59.6&0.68&0.51\\
-$Method\times Treatment$&10.0&2&5.0&0.057&0.94\\
+$Method$&0.438&2&0.219&0.135&$0.874$\\
+$Method\times Centre$&0.981&2&0.490&0.301&$0.741$\\
+$Method\times Sex$&1.973&2&0.987&0.605&0.548\\
+$Method\times Treatment$&0.320&2&0.160&0.098&0.907\\
 $\vdots$&$\vdots$&$\vdots$&$\vdots$&$\vdots$&$\vdots$\\
-$Residuals$&8517.1&97&87.8&&\\
+$All\ other\ terms$&57.8&15&3.85&&\\
+$\vdots$&$\vdots$&$\vdots$&$\vdots$&&\\
+$Residuals$&158.08&97&1.630&&\\
 \hline
-Total&12340.86&120&&&
+Total&219.58&120&&&
 \end{tabular}
 \end{table}
 
-It can be seen that there is no evidence that the variance in PC90 between estimation methods is any larger than the variance between subjects in each centre-sex-treatment stratum. Therefore the difference between PC90 estimates is independent of other factors. The full results of the relative effects of all factors can be found in the next chapter. At this stage we are just concerned with the effect of choice of PC90 estimation method.
+It can be seen that there is no evidence that the variance in PC90 between estimation methods is any larger than the variance between subjects in each centre-sex-treatment stratum. Therefore the difference between PC90 estimates is independent of other factors. If we fit a multilevel model such that our residual variance is partitioned into that between subjects and that within subjects (between methods) i.e.
+\begin{eqnarray*}
+\sqrt{\mathrm{PC}90}=\mathrm{main\ effects\ + interactions} + b_{l} + \epsilon_{lm}\\
+b_{l}\sim N(0,\sigma_{b}^{2})\quad\quad\epsilon_{lm}\sim N(0,\sigma^{2})
+\end{eqnarray*}
+for subject $l$ and method $m$ then we find $\sigma_{b}^{2}=1.64$ (compare with mean-square residual in Table \ref{pc90aov}) and $\sigma^{2}=0.052$. This quantifies the relative magnitudes of the between and within subjects variance, as shown in Figure \ref{methodsbysubject} on page \pageref{methodsbysubject}, and shows that the ``error'' due to between-subject variations is larger than the error due to choice of method.
 
-In summary the $t$ tests show us that the difference between methods is significant within subjects for 2 out of the 3 comparisons. The ANOVA analysis shows that it is insignificant in comparison to the variation due to centre, sex and treatment.
+The full results of the relative effects of all factors can be found in chapter \ref{ch:analysis}. At this stage we are just concerned with the effect of choice of PC90 estimation method. In summary the $t$ tests show us that the difference between methods is significant within subjects for 2 out of the 3 comparisons. The ANOVA analysis shows that it is insignificant in comparison to the variation due to centre, sex and treatment.
 \subsubsection*{Correlation of difference with magnitude}
 We have deduced from the 4-way ANOVA with interactions that there is no interaction between the method chosen and the other factors that influences the PC90 estimation. The $t$ tests told us the average amount that the methods differ, if at all, and in which direction, but we should check if the difference between the methods is related to the size of the PC90 estimates. The difference in PC90 estimate between the methods is plotted against the mean estimate in Figure \ref{pc90est-cor}.
 \begin{figure}[h]
@@ -304,7 +332,7 @@ The key results from this investigation into methods for derivation of parasite 
 \item The logistic non-linear model produces PC90 estimates 32 minutes longer than the cubic method 
 with a 95\% confidence interval of (13, 51) minutes.
 \item The logistic method produces PC90 estimates 49 minutes longer than the log-linear interpolation method with a 95\% confidence interval of (25, 73) minutes.
-\item The variance in PC90 between methods is insignificant compared to the variance in PC90 due to sex, centre and treatment.
+\item The variance in PC90 between methods is smaller than that between subjects. Hence, choice of estimation method is not crucial and any weighting based on an error derived from between-method variation would be swamped by between-subject variation.
 \item The difference in PC90 due to estimation method is independent of sex, centre and treatment and magnitude of PC90. 
 \end{itemize}
 \subsection{Choice of PC90 estimation method}
@@ -312,7 +340,7 @@ The key advantages and disadvantages of each method are shown in Table \ref{pc90
 \begin{table}[h]
 \centering
 \caption{Comparison of PC90 estimation methods}\label{pc90compare}
-\begin{tabular}{|m{1.5in}|m{2.2in}|m{2.2in}|}
+\begin{tabular}{|m{1.4in}|m{2.0in}|m{2.0in}|}
 \hline
 Method&Advantages&Disadvantages\\\hline
 Cubic polynomial\newline linear regression&
@@ -355,7 +383,7 @@ There does not appear to be a compelling reason to use the logistic method. Alth
 
 The logistic model investigated here is the same one used by Wootton \textit{et al}.\cite{wootton}. However, they specify that the best model fit was chosen by two independent statisticians based on criteria such as the effect of outliers on the model fit and fit of the model in the baseline region. This is in contrast to the objective fit obtained here by use of computational fitting routines, the only input being starting parameters to help the routine arrive at a solution. Wootton \textit{et al}. discarded the data when no suitable logistic fit could be found. If these subjects were more likely to be from one treatment group, as we found here, this would unbalance the experiment.
 
-Carmello \textit{et al}.\cite{carmello} use the log-linear interpolation method for estimating PC90. No studies using polynomial linear regression have been found.
+Carmello \textit{et al}.\cite{carmello} use the log-linear interpolation method for estimating PC90. The only similar study employing polynomial regression found was that of de Vries \textit{et al.}\cite{vries} who experiment with use of a quadratic in time to model the log parasite count, but ultimately chose a model without a quadratic term.
 
 In summary it would seem that the log-linear interpolation method seems the most suitable for estimating PC90, in terms of its simplicity and that it appears to consistently estimate sensible PC90 values as determined by graphical inspection. Perhaps estimates using the cubic method could also be easily computed and where the two methods disagree by a large amount e.g. greater than $3\sigma$ as for subject 509 here (Figures \ref{pc90-bad} and \ref{cub-loglin}), then these subjects could be flagged for closer inspection.
 
