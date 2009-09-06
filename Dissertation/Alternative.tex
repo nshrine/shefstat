@@ -1,4 +1,4 @@
-\chapter{Alternative Measures of Clearance Time}\label{analysis}
+\chapter{Alternative Measures of Clearance Time}\label{ch:alternative}
 
 \section{Alternative endpoints}
 \subsection{PC50 and PC99}
@@ -168,7 +168,9 @@ Ramsay \textit{et al.} have written a \emph{R} package, \texttt{fda}\cite{fdaR, 
 
 \subsection{Functional ANOVA}
 Once we have suitably represented our dependent data as a functional response we can perform ANOVA by sex and treatment in an analogous way to the previous analyses. The model now becomes
-$$y_{jkl}(t)=\mu(t)+S_{j}(t)+T_{k}(t)+\epsilon_{jkl}(t)\quad\quad\epsilon\sim N(0, \sigma^{2}(t))$$
+\begin{equation}
+y_{jkl}(t)=\mu(t)+S_{j}(t)+T_{k}(t)+(ST)_{jk}(t)+\epsilon_{jkl}(t)\quad\quad\epsilon\sim N(0, \sigma^{2}(t))\label{aovfda}
+\end{equation}
 where each part of the model is now a function of time. Hence, we will have 43 residual functions, a mean function for the overall mean with time, $\mu(t)$, a function for the effect of sex, $S(t)$, and for the effect of treatment, $T(t)$.
 
 The standardized residuals ($e_{jkl}(t)/\hat{\sigma}(t)$) from fitting this model are shown in Figures \ref{fdaresids} and \ref{fdahistqq}. It can be seen that they are approximately normally distributed about 0 indicating that our parameter function estimates will be unbiased.
@@ -190,18 +192,20 @@ The \texttt{fda} library provides functions for deriving a permutation $F$ test 
 \label{fdapermF}
 \end{figure}
 
-Figure \ref{fdcoef} shows the fitted coefficient functions. For the sex and treatment effects the curves show the difference from the overall mean (the black line) that can be attributed to these factors respectively. We can see that the sex has no significant effect over the whole time period, but that subjects on the combined treatment have a significant reduction in parasite count after 10 hours from first dose, reaching a maximum relative effect at 20 hours.
+Figure \ref{fdcoef} shows the fitted coefficient functions.
 \begin{figure}[p]
 \includegraphics[width=150mm]{fdcoef.eps} 
-\caption{Fitted coefficient functions for 2-way ANOVA}
+\caption{Fitted coefficient functions for 2-way ANOVA model \ref{aovfda} (page \pageref{aovfda}). From top-left, to bottom-right, the functions are $\mu(t)$, $S(t)$, $T(t)$, $ST(t)$.}
 \label{fdcoef}
 \end{figure}
-
-Figure \ref{fdfitted} shows the fitted ANOVA model.
+ The top-left panel shows the mean $\mu$ corresponding to male subjects on the single treatment with the other panels showing the deviation from this mean due to sex, treatment and the interaction of sex and treatment respectively. We can see that there is no evidence at the 5\% level over the whole time period to reject the hypothesis that sex has no effect. Between approximately 17 and 45 hours there is evidence to reject the hypothesis that treatment has no effect and between 10 and 15 hours there is evidence to reject the hypothesis that there is no interaction between sex and treatment that effects the clearance.
+ 
+Figure \ref{fdfitted} shows the fitted mean-level functions with 95\% confidence intervals\footnote{The routines for calculating the standard errors and confidence intervals of predicted functions are not yet implemented in the \emph{R} \texttt{fda} library, hence it was necessary to implement these. The code is in Appendix X}.
 \begin{figure}[p]
-\includegraphics[width=150mm]{fdfitted.eps} 
-\caption{Fitted functional ANOVA model}
+\includegraphics[width=150mm]{lprr2i.eps} 
+\caption{Fitted count-ratio functions with confidence intervals}
 \label{fdfitted}
 \end{figure}
+It can be seen that the difference between male subjects on the alone and combined drug treatment becomes large (relative to their 95\% confidence limits) between 20 and 30 hours reflecting the treatment effect shown in Figure \ref{fdcoef} between 20 and 30 hours. The difference between treatments for female subjects is larger between 10 and 30 hours reflecting the combined effect of treatment and the sex-treatment interaction: the effect is essentially an addition of the bottom two panels in Figure \ref{fdcoef}. With reference to the 95\% confidence intervals, there is good evidence to reject the hypothesis that these observations are artifacts of random variation and that there is no effect of sex and treatment. The $F$ test in Figure \ref{fdapermF} is a more formal evaluation of this evidence.
 
-%\section{Key results}
+\section{Key results}
