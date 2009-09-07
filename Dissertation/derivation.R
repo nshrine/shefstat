@@ -27,6 +27,20 @@ addPC90lines <- function(q, logplot=F, xpos=45, am=1, vjust=-0.1) {
 	q + geom_text(aes(x=xpos, y=pc90, label="PC90", vjust=vjust), data=pc90.df[am,])
 }
 
+addPClines <- function(q, percentage=90, logplot=F, xpos=45, am=1, vjust=-0.1) {
+	data <- q$data
+	if (logplot) {
+		data$parct <- exp(data$parct) - 1
+	}
+	frac <- 1 - (percentage/100)
+	pc.df <- subset(data, select=c(SUBJID, parct), subset=plantm=='PRE-DOSE')
+	pc <- ifelse(rep(logplot, nrow(pc.df)), log((pc.df$parct + 1) * frac), pc.df$parct * frac)
+	pc.df <- data.frame(pc.df, pc=pc, xpos=xpos, vjust=vjust)
+	q <- q + geom_hline(aes(yintercept=pc), data=pc.df, linetype=2)
+	label <- paste("PC", percentage)
+	q + geom_text(aes(x=xpos, y=pc, vjust=vjust), label=label, data=pc.df[am,])
+}
+
 plotraw90 <- function() {
 	ggplot90(malaria.1M, am=8, vjust=-0.1, title="Parasite counts for Centre 1 Males with PC90 level shown")
 }
