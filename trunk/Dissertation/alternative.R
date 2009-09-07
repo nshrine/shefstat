@@ -144,6 +144,35 @@ pc99interaction <- function(data) {
 	print(q3, vp=vp3)
 }
 
+extrapplot <- function() {
+	data <- with(malaria, malaria[SUBJID==98 | SUBJID==285,])
+	extrap.df <- data.frame(SUBJID=c(98,98,285,285))
+	for (s in unique(data$SUBJID)) {
+		dat <- data[data$SUBJID==s,]
+		l <- nrow(dat)
+		fit <- lm(log(1 + parct) ~ acttm, data=dat, subset=c(rep(F, l-2), c(T, T)))
+		newdat <- data.frame(acttm=c(dat$acttm[l], ifelse(s==98, 55, 85)))
+		extrap.df$acttm[extrap.df$SUBJID==s] <- newdat$acttm
+		extrap.df$parct[extrap.df$SUBJID==s] <- predict(fit, newdata=newdat)
+		pc99 <- log(1 + (0.01 * dat$pre[1]))
+		print((pc99 - coef(fit)[1])/coef(fit)[2])
+	}
+	minlim.df <- data.frame(SUBJID=c(98,285), x=c(48.0833, 48.1))
+	q <- rawggplot(data)
+	q <- getlogplot(q)
+	q <- addPClines(q, percentage=99, logplot=T, xpos=10)
+	q <- q + geom_line(data=extrap.df, linetype=2, colour="blue")
+	q <- q + geom_vline(aes(xintercept=x), data=minlim.df, linetype=2, colour="blue")
+	q + scale_y_continuous(limits=c(4,12)) + opts(legend.position="none") + facet_wrap(~SUBJID, scales="free") + opts(title="PC99 estimation beyond last datum")
+}
+
+plot477 <- function() {
+	q <- rawggplot(malaria[malaria$SUBJID==477,])
+	q <- getlogplot(q)
+	q <- addPClines(q, percentage=99, logplot=T, xpos=10)
+	q + opts(legend.position="none", title="Estimation of PC99 for subject 477")
+}
+
 prr24.plot <- function(data) {
 	q <- qplot(Treatment, log(PRR24), data=data, geom="blank", colour=Treatment, xlab="95% normal confidence interval for mean", ylab="log PRR24")
 	q <- q + geom_point(position=position_jitter(w=0.1))
@@ -205,6 +234,16 @@ getfRegress <- function(data.smooth, smoothing=10) {
 	fr
 }
 
+getfRegress2 <- function(fd, x, smoothing=10) {
+	y <- eval.fd(x, fd)
+	xfdlist <- getxfdlist()
+	betalist <- getbetalist(fd, smoothing)
+	fr <- fRegress(fd, xfdlist, betalist)
+	#fr$SigmaE <- getSigmaE(fr, x, y)
+	#fr$betastderrlist <- getfStderr(fr, x, y)$betastderrlist
+	fr
+}
+
 getSigmaE <- function(fit, x, y) {
 	errmat <- y - eval.fd(x, fit$yhatfdobj$fd)
 	errmat %*% t(errmat) / dim(y)[2]
@@ -241,8 +280,8 @@ getfResid <- function(fit, data.smooth) {
 	resids.long
 }
 
-plotfSmooth <- function() {
-	qplot(pt, y, data=lprr2.fdSmooth.long, colour=Treatment, linetype=Sex, group=Subject, geom='line', stat='smooth', xlab="Time (hours)", ylab="log ratio of parasite count to pre-dose", main="Cubic spline smoothing")
+plotfSmooth <- function(data.long=lprr2.fdSmooth.long) { 
+	qplot(pt, y, data=data.long, colour=Treatment, linetype=Sex, group=Subject, geom='line', stat='smooth', xlab="Time (hours)", ylab="log ratio of parasite count to pre-dose", main="Cubic spline smoothing")
 }
 
 plotfresids <- function(resids.df) {

@@ -102,6 +102,13 @@ getAboveBelow <- function(data, PC=90) {
 	c(upper, lower)
 }
 
+getabsAboveBelow <- function(data, pc) {
+	above.pc <- which(data$parct > pc)
+	upper <- above.pc[length(above.pc)]
+	lower <- upper + 1
+	c(upper, lower)
+}
+
 lmloglin <- function(data, PC=90) {
 	lm(log(1 + parct) ~ acttm, data=data, subset=getAboveBelow(data, PC))
 }
@@ -119,4 +126,11 @@ getPC.loglin <- function(data, PC=90) {
 	B0 <- coef(fit)[1]
 	B1 <- coef(fit)[2]
 	(pc - B0) / B1
+}
+
+getPC.3000 <- function(data, pc=3000) {
+	fit <- lm(log(1 + parct) ~ acttm, data=data, subset=getabsAboveBelow(data, pc))
+	B0 <- coef(fit)[1]
+	B1 <- coef(fit)[2]
+	(log(1 + pc) - B0) / B1
 }
