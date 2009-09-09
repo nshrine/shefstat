@@ -178,7 +178,7 @@ comparePC90 <- function(dat, pc90, logfit=T, ...) {
 	q <- addPC90lines(q, logplot=T)
 	q <- addcubicfit(q, colour="blue")
 	if (logfit) {
-		q <- addlogfit(q, colour="red", ...)
+		tryCatch(q <- addlogfit(q, colour="red", ...), error=function(e) {})
 	}
 	q <- addloglin(q, colour="green")
 	addPC90vlines(q, pc90) + facet_wrap(~SUBJID, ncol=2)
@@ -288,3 +288,17 @@ comparelog <- function(data, title="", centre="", r1=4, r2=4, points=T, lines=T)
     q <- q + facet_wrap(~SUBJID, nrow=r2, scales="free_y")
     print(q, vp=vp2)
 }
+
+# q1 <- comparePC90(subset(malaria, subset=SUBJID %in% subjs.fit & CENTREID=='Centre 1' & SEX=='Female'), PC90.reshape)
+# q1 <- q1 + opts(title="Centre 1, Female")
+# q2 <- comparePC90(subset(malaria, subset=SUBJID %in% c(subjs.nofit,183) & CENTREID=='Centre 1' & SEX=='Female'), PC90.reshape, F)
+#rror in data.frame(pc90.df, pc90 = pc90, xpos = xpos, vjust = vjust) : 
+# arguments imply differing number of rows: 0, 1
+# q2 <- comparePC90(subset(malaria, subset=SUBJID %in% subjs.nofit & CENTREID=='Centre 1' & SEX=='Female'), PC90.reshape, F)
+# q2 <- q2 + opts(legend.position="none") + facet_wrap(~SUBJID, ncol=1)
+# q2 <- q2 + opts(title="No logistic fit")
+# print(q1, vp=vp1)
+# q1 <- q1 + facet_wrap(~SUBJID, ncol=3)
+# print(q1, vp=vp1)
+# print(q2, vp=vp2)
+# export.eps("Afits1F.eps")
