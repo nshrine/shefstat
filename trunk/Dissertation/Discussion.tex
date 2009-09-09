@@ -1,0 +1,19 @@
+\chapter{Discussion}\label{ch:discussion}
+The were two primary questions addressed in this dissertation.
+\begin{enumerate}
+\item Given profiles of parasite counts per microlitre of blood with time from first dose of an antimalarial treatment, how do we derive an estimate of the time taken for 90\% of the parasites to be cleared from the blood?
+\item Given our estimated times for parasite clearance, how do we determine if the average clearance time for subjects on one antimalarial treatment is significantly different to the average clearance time for subjects on an alternative treatment?
+\end{enumerate}
+The first question is not really one that can be formulated as a statistical hypothesis test, but is more a question of making a sensible and consistent estimate. The second question can be answered by the identification of a suitable test statistic.
+
+The following discussion is primarily concerned with how these questions have been answered, but also goes on to look at some of the wider issues raised concerning analysis of data of this type.
+
+\section{Derivation of clearance times}
+
+\subsection{The nature of the problem}
+In order to estimate the time for the parasite count to reach 90\% of its pre-dose level we need to know the nature of how the parasite count changes with time. Whether it falls monotonically, for example, follows a linear, or more complicated trend. The observed behaviours were summarised in section \ref{sec:behaviours} and can be seen in Figures \ref{raw1} and \ref{raw2} on pages \pageref{raw1} and \pageref{raw2}. One problem with this data is that we do not know how much of the erratic variation in parasite count per microlitre recorded genuinely reflects a sharp change in the parasite load of the subject and how much is due to error in the counting procedure. It is reported for patients taking antimalarial drugs that ``\textit{parasitemia may rise alarmingly in the hours following treatment}'' \cite{white}. However, it was reported by our contact at GSK that there may be a large variability in parasite counts simply due to the choice of the ``suitable'' area of the blood sample slide chosen by microscopists for parasite counting. Nevertheless, it seems that in the region around the PC90 level that the fall in parasite count is fairly smooth and not nearly as erratic as at earlier times. This can be seen in Figure \ref{comprawlog} on \pageref{comprawlog}. Hence, it seems that estimation between data recording times is more predictable in the PC90 region than at earlier times and that early erratic variation in the count is irrelevant. In this respect PC90 would seem a sensible choice of endpoint.
+\subsection{Choice of interpolation method}
+\subsubsection*{Criticism of the choice of logistic modelling}
+We were told by GSK that logistic modelling had already been used for PC90 estimation for this data and suggested aims for this dissertation were the investigation of the logistic approach such as how to choose appropriate starting parameters for the fitting. This was done, however it was found that the logistic model simply did not have the appropriate shape for modelling the parasite-count profiles of some subjects. 
+
+\section{Analysis of clearance times}

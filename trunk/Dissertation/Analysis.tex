@@ -37,7 +37,7 @@ All		& 17.7  & 21.6 &  12.8 & 9.4  &  8.9  &  4.9  \\
 It can be seen that PC90 is generally shorter for subjects on the single drug (``alone'') treatment than those on the combined drug treatment across both centres. However, male patients have a higher median PC90 on the combined treatment. Standard deviations are notably higher for the single treatment. There do not seem to be any clear differences between centres. Females have longer PC90 times than males on the alone treatment with the opposite trend on the combined treatment.
 
 \section{Graphical comparison}
-The PC90 data from Table \ref{derivedPC90} are plotted by experimental factors centre, sex and treatment in Figure \ref{pc90boxes}, summarized in two ways. Firstly, by the median and upper and lower quartiles. Secondly, the mean is shown with 95\% confidence intervals from the $t$ distribution defined by the standard error of the data%\footnote{The $t$ distribution confidence intervals are calculated using the \texttt{smean.cl.normal} \emph{R} functions from the Hmisc library\cite{Hmisc}}
+The PC90 data from Table \ref{derivedPC90} are plotted by experimental factors centre, sex and treatment in Figure \ref{pc90boxes}, summarized in two ways. Firstly, by the median and upper and lower quartiles. Secondly, the mean is shown with 95\% confidence intervals from the $t$ distribution defined by the standard error of the data%\footnote{The $t$ distribution confidence intervals are calculated using the \texttt{smean.cl.normal} \emph{R} functions from the Hmisc library \cite{Hmisc}}
 . These confidence intervals for the mean are relevant for parametric tests based on the normal distribution such as ANOVA and give an indication of differences that may be significant.
 \begin{figure}[h]
 \includegraphics[width=150mm]{pc90boxes.eps} 
@@ -73,11 +73,11 @@ The standardized residuals ($e/\hat{\sigma}$) obtained from fitting model \ref{f
 \end{figure}
 
 It can be seen that the residuals are approximately normally distributed, but perhaps slightly right skewed. In the plot of the residuals by experimental factor (bottom-left) the standard deviation of the residuals is shown, which when they are standardized, should be approximately 1 and independent of factor. We can see that this is so for centre and sex, but there is heteroscedasticity between treatments with the residuals for the single-drug treatment showing a larger variance than for the combined-drug treatment.
-%($p<0.05$ under a Breusch-Pagan test for heteroscedasticity\cite{breusch} as implemented by the \texttt{bptest} \emph{R} function\cite{lmtest}).
+%($p<0.05$ under a Breusch-Pagan test for heteroscedasticity \cite{breusch} as implemented by the \texttt{bptest} \emph{R} function \cite{lmtest}).
 We can also see that the variance of the residuals increases with fitted PC90 value (bottom-right).
 
 \subsection{Dealing with heteroscedasticity}
-Least squares estimators are still unbiased under heteroscedasticity\cite{long}, but standard errors can be underestimated leading to incorrect inference. Two ways we can adapt our modelling to deal with heteroscedasticity are to transform the dependent variable and to use weighted least-squares fitting.
+Least squares estimators are still unbiased under heteroscedasticity \cite{long}, but standard errors can be underestimated leading to incorrect inference. Two ways we can adapt our modelling to deal with heteroscedasticity are to transform the dependent variable and to use weighted least-squares fitting.
 
 \subsubsection*{Transforming the dependent variable}
 If we apply a square-root transformation to PC90 we obtain the residuals for the ANOVA model shown in Figure \ref{aovsqrtres}.
@@ -88,7 +88,7 @@ If we apply a square-root transformation to PC90 we obtain the residuals for the
 \end{figure}
 It can be seen that this transformation reduces the correlation of the variance of the residuals with fitted PC90. Other transformations, such as logarithmic or square, did not prove as suitable as a square-root transformation. The Box-Cox method, whereby the transformation giving the highest likelihood is found, suggests transforming the dependent variable by raising it to the power 0.3 is optimal. This did not appear to give a noticeable improvement over the square-root transformation (power 0.5) in residual plots however.
 
-It can be seen that, even after our square-root transformation, the residuals for subjects on the combined treatment have a smaller variance than for those on the single treatment. Bartlett's test for equality of variances\cite{montgomery} between the 8 ($2^{3}$) centre-sex-treatment groups returns $p<0.05$.  One common method of dealing with heteroscedastic residuals between groups is to use weighted least-squares.
+It can be seen that, even after our square-root transformation, the residuals for subjects on the combined treatment have a smaller variance than for those on the single treatment. Bartlett's test for equality of variances \cite{montgomery} between the 8 ($2^{3}$) centre-sex-treatment groups gives evidence to reject the hypothesis that the variance is equal in all groups ($p<0.05$).  One common method of dealing with heteroscedastic residuals between groups is to use weighted least-squares.
 
 \subsubsection*{Weighted least-squares}
 In this case, to remedy the heteroscedasticity between treatment groups, we weight the fitting by the variance within treatment groups such that error term in model \ref{full} becomes 
@@ -105,6 +105,7 @@ where the weights $w_{k}=\sigma_{k}^{-2}$. The residuals from fitting this funct
 \caption{Residuals after applying weighted least squares}
 \label{aovresw}
 \end{figure}
+
 The residuals now have approximately equal variance with respect to factor and fitted PC90, but they appear to be right-skewed.
 
 If we apply the square-root transformation followed by the treatment-variance weighted least-squares fit we obtain the residuals shown in Figure \ref{aovsqrtresw}.
@@ -113,6 +114,7 @@ If we apply the square-root transformation followed by the treatment-variance we
 \caption{Residuals after applying square-root transformation and weighted least squares}
 \label{aovsqrtresw}
 \end{figure}
+
 This seems to give a more symmetric distribution of residuals but is perhaps a bit light-tailed.
 Despite this, none of the distributions of residuals show evidence of significant departures from normality by a Shapiro-Wilk test and there also now seems to be no significant difference in the variance of the residuals between experimental groups.
 
@@ -188,7 +190,7 @@ As the effect of centre is negligible we refit the data with the reduced model
 \sqrt{\mathrm{PC}90_{jkl}}=\mu+S_j+T_k+(ST)_{jk}+\epsilon_{jkl}\quad\quad\epsilon_{jkl}\sim N(0,\sigma^{2}\sigma_{k}^2)\label{reduced}
 \end{equation}
 using weighted least-squares. The residuals for this fit are shown in Figure \ref{aov2rwt}.
-\begin{figure}[h]
+\begin{figure}[p]
 \includegraphics[width=150mm]{aov2rwt.eps} 
 \caption{Residuals for the reduced model}
 \label{aov2rwt}
@@ -199,7 +201,7 @@ It can be seen that they are approximately normal and homoscedastic. The ANOVA t
 %Treatment      1  5.152   5.152  5.6831 0.02209 *
 %Sex:Treatment  1  5.166   5.166  5.6994 0.02191 *
 %Residuals     39 35.353   0.906  
-\begin{table}[h]
+\begin{table}[p]
 \centering
 \caption{ANOVA table for the reduced model}\label{aovreduced}
 \begin{tabular}{l|rrrrrl}
@@ -221,7 +223,7 @@ The fitted coefficients for the reduced model are shown in Table \ref{coefreduce
 %SexFemale                 1.19286    0.66887   1.783   0.0823 .  
 %Treatmentcombi           -0.02899    0.52369  -0.055   0.9561    
 %SexFemale:Treatmentcombi -1.79917    0.75363  -2.387   0.0219 *  
-\begin{table}[h]
+\begin{table}[p]
 \centering
 \caption{Fitted coefficients for the reduced model}\label{coefreduced}
 \begin{tabular}{l|rrrc}
@@ -277,7 +279,7 @@ Female, combined treatment	& 7:05 & (4:41, 9:59) \\
 \end{tabular}
 \end{table}
 
-The mean difference in the square root of PC90 between treatment groups, with confidence intervals and $p$-values calculated by Tukey's test for comparison of means\cite{montgomery} using the \texttt{TukeyHSD} \emph{R} function are shown below.
+The mean difference in the square root of PC90 between treatment groups, with confidence intervals and $p$-values calculated by Tukey's test for comparison of means \cite{montgomery} using the \texttt{TukeyHSD} \emph{R} function are shown below.
 %                           diff   lwr   upr p adj
 %Female:alone-Male:alone    1.19 -0.25  2.64  0.14
 %Male:combi-Male:alone     -0.03 -1.51  1.45  1.00
@@ -375,7 +377,7 @@ It looks like there is a significant interaction with time of pre-dose count for
 As an additional verification of the analysis so far based on parametric methods, we can compare the results with analysis of clearance times using non-paramteric, distribution-free methods.
 \subsection{Non-parametric statistics}
 \subsubsection*{ANOVA using ranks}
-One non-paramteric alternative to two-way ANOVA is to calculate the $F$ statistics using the ranks of the data instead of the actual values of the dependent variable\cite{conover}. The results of ANOVA using ranks are shown in Table \ref{aovranks} with the $p$-values from the parametric analysis (Table \ref{aovreduced} on page \pageref{aovreduced}) shown for comparison.
+One non-paramteric alternative to two-way ANOVA is to calculate the $F$ statistics using the ranks of the data instead of the actual values of the dependent variable \cite{conover}. The results of ANOVA using ranks are shown in Table \ref{aovranks} with the $p$-values from the parametric analysis (Table \ref{aovreduced} on page \pageref{aovreduced}) shown for comparison.
 %> summary(PC90.loglinr.rank.aov)
 %              Df Sum Sq Mean Sq F value  Pr(>F)  
 %Sex            1   78.3    78.3  0.5562 0.46025  
@@ -398,18 +400,18 @@ Total&6622&42&&&&
 P$^{\dag}$: $p$-value from parametric analysis\qquad*$<0.05$
 \end{table}
 
-It can be seen that the non-parametric method shows a significant interaction effect at the 5\% level, but not for the main treatment effect unlike the parametric analysis. It could be that there is only an effect of treatment for one sex (Figure \ref{pc90interaction} on page \pageref{pc90interaction} would suggest this), although Toothaker \textit{et al.}\cite{toothaker} note that these tests should not be used to test for main effects in the presence of an interaction and vice-versa.
+It can be seen that the non-parametric method shows a significant interaction effect at the 5\% level, but not for the main treatment effect unlike the parametric analysis. It could be that there is only an effect of treatment for one sex (Figure \ref{pc90interaction} on page \pageref{pc90interaction} would suggest this), although Toothaker \textit{et al.} \cite{toothaker} note that these tests should not be used to test for main effects in the presence of an interaction and vice-versa.
 
 \subsection{Resampling methods}\label{section:resampling}
-Another alternative to parametric ANOVA is to resample the data using either the permutation or bootstrap methods\cite{manly} and thereby determine the sampling distribution of our statistics. There are several different approaches for resampling ANOVA models with crossed factors, such as ours, by permutation\cite{manly, anderson}. Three of them are:
+Another alternative to parametric ANOVA is to resample the data using either the permutation or bootstrap methods \cite{manly} and thereby determine the sampling distribution of our statistics. There are several different approaches for resampling ANOVA models with crossed factors, such as ours, by permutation \cite{manly, anderson}. Three of them are:
 \begin{description}
-\item[Unrestricted permutation of raw data] - The raw data is randomized between all groups and the $F$ statistics recalculated for each randomization; Anderson and Braak\cite{anderson} note is an approximate test for both main effects and interactions.
+\item[Unrestricted permutation of raw data] - The raw data is randomized between all groups and the $F$ statistics recalculated for each randomization; Anderson and Braak \cite{anderson} note is an approximate test for both main effects and interactions.
 \item[Permutation of residuals] - An approximate test for an interaction effect by controlling for main effects can be performed by defining residuals
 $$r_{ijk}=y_{ijk}-\bar{y}_{i..}-\bar{y}_{.j.}+\bar{y}_{...}$$
 where $\bar{y}_{i..}$ is the mean response at level $i$ of the first factor, $\bar{y}_{.j.}$ the mean response at level $j$ of the second factor and $\bar{y}_{...}$ the overall mean. The $F$ statistics are then calculated from ANOVA using these residuals as the response.
-\item[Restricted permutation of raw data] - To test for a main effect the response can be randomized \emph{between} levels of the main effect but \emph{within} the levels of the other factors. For example, with our data, to test for a treatment main effect we would randomize the treatment of each observation but keep the sex and centre static. Only the $F$ statistic of the main effect being randomized is relevant in the ANOVA output from this method. Anderson and Braak\cite{anderson} note that this is an exact test for main effects, but is only reasonable if there is no evidence of an interaction effect.
+\item[Restricted permutation of raw data] - To test for a main effect the response can be randomized \emph{between} levels of the main effect but \emph{within} the levels of the other factors. For example, with our data, to test for a treatment main effect we would randomize the treatment of each observation but keep the sex and centre static. Only the $F$ statistic of the main effect being randomized is relevant in the ANOVA output from this method. Anderson and Braak \cite{anderson} note that this is an exact test for main effects, but is only reasonable if there is no evidence of an interaction effect.
 \end{description}
-Manly\cite{manly} finds by simulation that the $F$ statistic gives the most consistent results across all three methods, as opposed to using mean square residuals for example. Anderson and Braak\cite{anderson} note that permutation of residuals is significantly more powerful that permutation of raw data when errors are highly non-normal, for example lognormal.
+Manly \cite{manly} finds by simulation that the $F$ statistic gives the most consistent results across all three methods, as opposed to using mean square residuals for example. Anderson and Braak \cite{anderson} note that permutation of residuals is significantly more powerful that permutation of raw data when errors are highly non-normal, for example lognormal.
 
 These 3 permutation methods were implemented in \emph{R}. The results for the full 3-way ANOVA model are shown in Table \ref{aovresamp} compared to the parametric $F$ test for the square-root transformed model fitted by weighted least-squares.
 \begin{table}[h]
@@ -443,7 +445,7 @@ $Sex\times Treatment$     		& 0.049 & 0.049 			& \small{\textit{0.049}} & \small
 \end{tabular}\\
 10,000 samples for each method
 \end{table}
-It can be seen that the hypothesis tests for main effects and interactions produce the same results at the 5\% level for all the permutation techniques and the parametric model. For the permutation  methods the interaction effect is only just significant at the 5\% level. Anderson and Braak\cite{anderson} note that the parametric $F$ test is more powerful than permutation techniques when the residuals are approximately normal; as they are for our square-root transformed model fitted by weighted least-squares (Figure \ref{aov2rwt} on page \pageref{aov2rwt}).
+It can be seen that the hypothesis tests for main effects and interactions produce the same results at the 5\% level for all the permutation techniques and the parametric model. For the permutation  methods the interaction effect is only just significant at the 5\% level. Anderson and Braak \cite{anderson} note that the parametric $F$ test is more powerful than permutation techniques when the residuals are approximately normal; as they are for our square-root transformed model fitted by weighted least-squares (Figure \ref{aov2rwt} on page \pageref{aov2rwt}).
 
 \subsubsection*{Non-parametric confidence intervals}
 Our parametric 2-way ANOVA identified that there is only a significant difference between the clearance times of the two treatments for female patients and we derived confidence intervals for the reduction in clearance time for female patients using the combined drug treatment (page \pageref{compinf}).
