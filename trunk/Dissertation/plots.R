@@ -1,6 +1,6 @@
 # Lattice plot of raw data for each subject
 plot1 <- function() {
-    xyplot(parct ~ acttm | SUBJID, data=malaria.df, panel=pf1, par.strip.text=list(cex=0.5), ylim=c(0:15), strip=strip.custom(strip.levels=c(T, T)), xlab="Time in hours from first dose", ylab="Log(1+parasite count)")
+	xyplot(parct ~ acttm | SUBJID, data=malaria.df, panel=pf1, par.strip.text=list(cex=0.5), ylim=c(0:15), strip=strip.custom(strip.levels=c(T, T)), xlab="Time in hours from first dose", ylab="Log(1+parasite count)")
 }
 
 # Panel function for plot1
@@ -16,7 +16,7 @@ pf1 <- function(x, y) {
 
 # Lattice plot of log parasite count with logistic fit
 plot2<-function() {
-    xyplot(log(parct + 1) ~ acttm | SUBJID, data=malaria.df, panel=pf2, par.strip.text=list(cex=0.5))
+	xyplot(log(parct + 1) ~ acttm | SUBJID, data=malaria.df, panel=pf2, par.strip.text=list(cex=0.5))
 }
 
 # Panel function for plot2
@@ -54,72 +54,76 @@ logplot90 <- function(s) {
 
 # Plots a number of counts with vertical PC90 line
 plotPC90 <- function(range) {
-    for (s in PC90.df$SUBJID[range]) {
-        plot(malaria$acttm[malaria$SUBJID==s], malaria$parct[malaria$SUBJID==s], xlab="Time", ylab="Parasite count", type='l', main=s)
-        abline(v=PC90.df$PC90[PC90.df$SUBJID==s], lty=2)
-    }
+	for (s in PC90.df$SUBJID[range]) {
+	    plot(malaria$acttm[malaria$SUBJID==s], malaria$parct[malaria$SUBJID==s], xlab="Time", ylab="Parasite count", type='l', main=s)
+	    abline(v=PC90.df$PC90[PC90.df$SUBJID==s], lty=2)
+	}
 }
 
 
+# Set up the basic plot with data, scales and panels by subject
 getrawplot <- function(data) {
-    q <- ggplot(data, aes(x=acttm, y=parct))
-    q <- q + scale_x_continuous(name="Time (hours)")
-    q <- q + scale_y_continuous(formatter=function(x) return(x/1000), name="Parasite Count (1000s)")
-    l <- length(unique(data$SUBJID))
-    q + facet_wrap(~SUBJID, ncol=min(3,l), scales="free_y")
+	q <- ggplot(data, aes(x=acttm, y=parct))
+	q <- q + scale_x_continuous(name="Time (hours)")
+	q <- q + scale_y_continuous(formatter=function(x) return(x/1000), name="Parasite Count (1000s)")
+	l <- length(unique(data$SUBJID))
+	q + facet_wrap(~SUBJID, ncol=min(3,l), scales="free_y")
 }
 
+# Convert the plot q to log-linear
 getlogplot <- function(q) {
-    q <- q %+% transform(q$data, parct=log(1+parct))
-    q <- q + scale_y_continuous(name="Log (1 + parasite count)")
-    l <- length(unique(q$data$SUBJID))
-    q + facet_wrap(~SUBJID, ncol=min(3,l), scales="fixed")
+	q <- q %+% transform(q$data, parct=log(1+parct))
+	q <- q + scale_y_continuous(name="Log (1 + parasite count)")
+	l <- length(unique(q$data$SUBJID))
+	q + facet_wrap(~SUBJID, ncol=min(3,l), scales="fixed")
 }
 
+# Change point shape and line colour to reflect treatment group
 addtrtgeoms <- function(q, points=T, lines=T) {
-    # Reorder the patient factor so that "alone" treatment patients are first
-    for(subj in as.character(unique(q$data$SUBJID[q$data$trt=='A']))) {
-        q$data$SUBJID <- relevel(q$data$SUBJID, subj)
-    }
-
+	# Reorder the patient factor so that "alone" treatment patients are first
+	for(subj in as.character(unique(q$data$SUBJID[q$data$trt=='A']))) {
+		q$data$SUBJID <- relevel(q$data$SUBJID, subj)
+	}
 	if (points) {
-    	q <- q + geom_point(aes(shape=trttxt, colour=trttxt))
+		q <- q + geom_point(aes(shape=trttxt, colour=trttxt))
 	}
 	if (lines) {
-    	q <- q + geom_line(aes(colour=trttxt))
+		q <- q + geom_line(aes(colour=trttxt))
 	}
-    q + scale_shape(name="Treatment") + scale_colour_discrete("Treatment")
+	q + scale_shape(name="Treatment") + scale_colour_discrete("Treatment")
 }
 
 # Initial raw plot of data take 2
 rawggplot <- function(data, title="", points=T, lines=T) {
-    
-#    q <- qplot(acttm, parct, data=data, aes(acttm, parct), xlab="Time (hours)", ylab="Parasite Count (1000s)", main=title, geom="blank")
-    q <- getrawplot(data)
-    q <- addtrtgeoms(q, points, lines)
-    q + opts(title=title)
-    #    q <- q + scale_y_continuous(formatter=function(x) return(x/1000))
-#    l <- length(unique(data$SUBJID))
-#    ncol <- ifelse(l < 3, l, 3)
-#    q + facet_wrap(~SUBJID, ncol=ncol)
+	
+#	q <- qplot(acttm, parct, data=data, aes(acttm, parct), xlab="Time (hours)", ylab="Parasite Count (1000s)", main=title, geom="blank")
+	q <- getrawplot(data)
+	q <- addtrtgeoms(q, points, lines)
+	q + opts(title=title)
+	#    q <- q + scale_y_continuous(formatter=function(x) return(x/1000))
+#	l <- length(unique(data$SUBJID))
+#	ncol <- ifelse(l < 3, l, 3)
+#	q + facet_wrap(~SUBJID, ncol=ncol)
 #	q + geom_line(aes(colour=trttxt))
 }
 
-# Initial raw plot of data take 3
+# Plot raw data for male and female subjects side-by-side
 rawggplot3 <- function(data, title="", centre="", r1=4, r2=4, points=T, lines=T) {
-    vp1 <- viewport(width=0.45, x=0, just="left")
-    q <- getrawplot(data[data$SEX=='Male',])
-    q <- addtrtgeoms(q, points, lines)
-    q <- q + opts(title=paste(centre, "Male"), legend.position='none')
-    q <- q + facet_wrap(~SUBJID, nrow=r1, scales="free_y")
-    print(q, vp=vp1)
+	require(ggplot2)
 
-    vp2 <- viewport(width=0.55, x=1, just="right")
-    q <- getrawplot(data[data$SEX=='Female',])
-    q <- addtrtgeoms(q, points, lines)
-    q <- q + opts(title=paste(centre, "Female"))
-    q <- q + facet_wrap(~SUBJID, nrow=r2, scales="free_y")
-    print(q, vp=vp2)
+	vp1 <- viewport(width=0.45, x=0, just="left")
+	q <- getrawplot(data[data$SEX=='Male',])
+	q <- addtrtgeoms(q, points, lines)
+	q <- q + opts(title=paste(centre, "Male"), legend.position='none')
+	q <- q + facet_wrap(~SUBJID, nrow=r1, scales="free_y")
+	print(q, vp=vp1)
+
+	vp2 <- viewport(width=0.55, x=1, just="right")
+	q <- getrawplot(data[data$SEX=='Female',])
+	q <- addtrtgeoms(q, points, lines)
+	q <- q + opts(title=paste(centre, "Female"))
+	q <- q + facet_wrap(~SUBJID, nrow=r2, scales="free_y")
+	print(q, vp=vp2)
 }
 
 predoseaov <- function(data, title="") {
@@ -130,34 +134,37 @@ predoseaov <- function(data, title="") {
 	q + facet_grid(CENTREID~SEX, margins=T)
 }
 
+# Plot pre-dose counts as boxplots by centre, sex and treatment, in pairs of factors
 predoseaov2 <- function(data) {
+	require(ggplot2)
+
+	# Boxplots of pre-dose count by sex for each centre
 	vp1 <- viewport(width=1, height=0.33, y=1, just="top")
 	q1 <- qplot(SEX, parct, data=data, geom="blank", colour=SEX, xlab="Sex:Centre", ylab="")
 	q1 <- q1 + scale_colour_discrete(h.start=120)
 	q1 <- q1 + scale_y_continuous(limits=c(0,100000), formatter="comma")
 	q1 <- q1 + geom_boxplot(width=0.3, outlier.size=0)
 	q1 <- q1 + geom_point(position=position_jitter(w=0.1))
-	#q1 <- q1 + stat_summary(fun.data="mean_cl_normal", geom="crossbar", width=0.3)
-	q1 <- q1 + opts( legend.position="none")
+	q1 <- q1 + opts(legend.position="none")
 	q1 <- q1 + facet_grid(.~CENTREID)
 	print(q1, vp=vp1)
-	
+
+	# Boxplots of pre-dose count by treatment for each centre
 	vp2 <- viewport(width=1, height=0.33, y=0.5, just="centre")
 	q2 <- qplot(trttxt, parct, data=data, geom="blank", colour=trttxt, xlab="Treatment:Centre", ylab="Parasite Count")
 	q2 <- q2 + scale_y_continuous(limits=c(0,100000), formatter="comma")
 	q2 <- q2 + geom_boxplot(width=0.3, outlier.size=0)
 	q2 <- q2 + geom_point(position=position_jitter(w=0.1))
-	#q2 <- q2 + stat_summary(fun.data="mean_cl_normal", geom="crossbar", width=0.3)
-	q2 <- q2 + opts( legend.position="none")
+	q2 <- q2 + opts(legend.position="none")
 	q2 <- q2 + facet_grid(.~CENTREID)
 	print(q2, vp=vp2)
 
+	# Boxplots of pre-dose count by treatment for each sex
 	vp3 <- viewport(width=1, height=0.33, y=0, just="bottom")
 	q3 <- qplot(trttxt, parct, data=data, geom="blank", colour=trttxt, xlab="Treatment:Sex", ylab="")
 	q3 <- q3 + scale_y_continuous(limits=c(0,100000), formatter="comma")
 	q3 <- q3 + geom_boxplot(width=0.3, outlier.size=0)
 	q3 <- q3 + geom_point(position=position_jitter(w=0.1))
-	#q3 <- q3 + stat_summary(fun.data="mean_cl_normal", geom="crossbar", width=0.3)
 	q3 <- q3 + opts(legend.position="none")
 	q3 <- q3 + facet_grid(.~SEX)
 	print(q3, vp=vp3)
@@ -171,20 +178,24 @@ allaov <- function(data, title="") {
 	q + facet_grid(CENTREID~SEX, margins=T)
 }
 
+# Plot log count ratio with mean level for each treatment shown
 allaov2 <- function(data, title="Parasite reduction averaged over subjects with time from first treatment") {
-    vp1 <- viewport(width=0.7, height=0.33, x=0.5, y=1, just="top")
-    q <- qplot(pt, log((1 + parct)/pre), data=data, xlab="", ylab="", main="", geom="blank")
-    q <- q + geom_point(aes(colour=trttxt, shape=trttxt)) + scale_colour_discrete("Treatment") + scale_shape("Treatment")
-    q <- q + stat_summary(fun.y="mean", geom="line", aes(colour=trttxt)) 
-    print(q, vp=vp1)
+	# All data
+	vp1 <- viewport(width=0.7, height=0.33, x=0.5, y=1, just="top")
+	q <- qplot(pt, log((1 + parct)/pre), data=data, xlab="", ylab="", main="", geom="blank")
+	q <- q + geom_point(aes(colour=trttxt, shape=trttxt)) + scale_colour_discrete("Treatment") + scale_shape("Treatment")
+	q <- q + stat_summary(fun.y="mean", geom="line", aes(colour=trttxt)) 
+	print(q, vp=vp1)
 
-    vp2 <- viewport(height=0.33, y=0.5, just="centre")
-    q <- q + facet_grid(.~CENTREID) + opts(title="", legend.position="none") + scale_y_continuous(name="Log fraction of pre-dose count")
-    print(q, vp=vp2)
+	# Split by centre
+	vp2 <- viewport(height=0.33, y=0.5, just="centre")
+	q <- q + facet_grid(.~CENTREID) + opts(title="", legend.position="none") + scale_y_continuous(name="Log fraction of pre-dose count")
+	print(q, vp=vp2)
 
-    vp3 <- viewport(height=0.33, y=0, just="bottom")
-    q <- q + facet_grid(.~SEX) + opts(title="", legend.position="none") + scale_x_continuous(name="Time from first dose (hours)") + scale_y_continuous(name="")
-    print(q, vp=vp3)
+	# Split by sex
+	vp3 <- viewport(height=0.33, y=0, just="bottom")
+	q <- q + facet_grid(.~SEX) + opts(title="", legend.position="none") + scale_x_continuous(name="Time from first dose (hours)") + scale_y_continuous(name="")
+	print(q, vp=vp3)
 }
 
 predose.resid <- function(residuals, title="Residuals from pre-dose count ANOVA", b=20000, limits) {

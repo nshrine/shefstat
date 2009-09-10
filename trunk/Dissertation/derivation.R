@@ -45,7 +45,7 @@ plotraw90 <- function() {
 	ggplot90(malaria.1M, am=8, vjust=-0.1, title="Parasite counts for Centre 1 Males with PC90 level shown")
 }
 
-
+# Add cubic fit to plot q
 addcubicfit <- function(q, ...) {
 	q + stat_smooth(method="lm", formula=y~x+I(x^2)+I(x^3), data=uptofirstzero(q$data), fullrange=F, se=F, ...) 
 }
@@ -58,6 +58,7 @@ plotcubic <- function(subjs = c('54','80','96','98','140','150','176','182','185
 	addcubicfit(q)
 }
 
+# Add logistic fit to plot q
 addlogfit <- function(q, ...) {
 	q + stat_smooth(method="nls", formula="y ~ SSfpl(x, A, L, U, B)", se=F, ...)
 		# start="list(A=max(y), L=min(y), U=x[which.min(abs(y-((max(y)+min(y))/2)))], B=2)", se=F)
@@ -152,6 +153,7 @@ comparefits <- function(subjs) {
 	q + geom_text(aes(x=17.6,y=4,label="logistic", angle=90))
 }
 
+# Add log-linear interpolation to plot q
 addloglin <- function(q, ...) {
 	dat <- q$data
 	dat$parct <- exp(q$dat$parct) - 1
@@ -163,6 +165,7 @@ addloglin <- function(q, ...) {
 	q + geom_line(data=data, ...)
 }
 
+# Add vertical lines showing 3 PC90 estimates
 addPC90vlines <- function(q, dat, colours=c("blue", "red", "green")) {
 	dat <- subset(dat, subset=SUBJID %in% unique(q$data$SUBJID))
 #	q <- q + geom_vline(data=dat, aes(xintercept=c(PC90.cubic, PC90.logistic, PC90.loglin), linetype=..xintercept..)) 
@@ -172,6 +175,7 @@ addPC90vlines <- function(q, dat, colours=c("blue", "red", "green")) {
 	q
 }
 
+# All 3 PC90 estimation methods on same plot
 comparePC90 <- function(dat, pc90, logfit=T, ...) {
 	q <- getrawplot(dat) + geom_point(shape=1)
 	q <- getlogplot(q)
