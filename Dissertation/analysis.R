@@ -94,7 +94,10 @@ plotresids.lme <- function(model, binwidth=0.5) {
 	plotresids.lm(model, resid(model, type='pearson'), model$data, binwidth)
 }
 
-plotresids.lm <- function(model, resids, data, binwidth=0.5, trans=F, weighted=F, xlab="Fitted PC90 (hours)") { # Need to modify for lme
+# Residuals diagnostics plots for lm/aov fit
+plotresids.lm <- function(model, resids, data, binwidth=0.5, trans=F, weighted=F, xlab="Fitted PC90 (hours)") {
+	require(ggplot2)
+	require(MASS)
 	if (missing(resids)) {
 		resids <- stdres(model)
 	}
@@ -103,16 +106,12 @@ plotresids.lm <- function(model, resids, data, binwidth=0.5, trans=F, weighted=F
 	}
 	lab.txt <- "Standardized residuals"
 
-	#
 	# Histogram
-	#
 	vp1 <- viewport(width=0.5, height=0.5, x=0.25, y=0.75)
 	q <- qplot(resids, xlab=lab.txt, geom="blank") + geom_histogram(colour="black", fill="white", binwidth=binwidth) 
 	print(q, vp=vp1)
 
-	#
 	# QQ normal
-	#
 	vp2 <- viewport(width=0.5, height=0.5, x=0.75, y=0.75)
 	q <- qplot(sample=resids)
 	y <- quantile(resids, c(0.25, 0.75))
@@ -122,9 +121,7 @@ plotresids.lm <- function(model, resids, data, binwidth=0.5, trans=F, weighted=F
 	q <- q + geom_abline(intercept=int, slope=slope, linetype=2)
 	print(q, vp=vp2)
 
-	#
 	# vs factors
-	#
 	vp3 <- viewport(width=0.5, height=0.5, x=0.25, y=0.25)
 	p <- dim(data)[2] - weighted
 	data.l <- reshape(data, direction="long", varying=list(2:p), v.names="Factor")
@@ -133,16 +130,13 @@ plotresids.lm <- function(model, resids, data, binwidth=0.5, trans=F, weighted=F
 	else
 		q <- qplot(Factor, resids, data=data.l, geom="blank", ylab=lab.txt)
 	q <- q + geom_hline(aes(yintercept=0), linetype=2)
-#	q <- q + stat_boxplot(width=0.5, aes(outlier.size=0))
 	q <- q + geom_point(position=position_jitter(w=0.1))
 	if (is.factor(data$Factor))
-	    q <- q + stat_summary(fun.dat="mean_sdl", mult=1, geom="crossbar", width=0.5)
+		q <- q + stat_summary(fun.dat="mean_sdl", mult=1, geom="crossbar", width=0.5)
 	q <- q + opts(legend.position="none")
 	print(q, vp=vp3)
 
-	#
 	# vs fitted
-	#
 	vp4 <- viewport(width=0.5, height=0.5, x=0.75, y=0.25)
 	q <- qplot(fitted(model)^(1+1*trans), resids, data=data, xlab=xlab, ylab=lab.txt)
 	q <- q + geom_hline(aes(yintercept=0), linetype=2)

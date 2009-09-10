@@ -11,6 +11,8 @@
 \usepackage{longtable}
 \usepackage{rotating}
 \usepackage{array}
+\usepackage{listings}
+\usepackage{color}
 \usepackage[page,title]{appendix}
 \usepackage[onehalfspacing]{setspace}
 \newcommand{\mat}{\mathbf}
@@ -65,8 +67,11 @@ September 2009
 \include{Alternative}
 \include{Discussion}
 
-\backmatter
+{\backmatter
 \bibliographystyle{wileyj} 
-{\singlespace\bibliography{dissertation}}
+{\singlespace\bibliography{dissertation}}}
+\addappheadtotoc
+\appendix
+\appendixpage
 \include{Appendices}
 \end{document}
