@@ -1,4 +1,4 @@
-\chapter{Discussion}\label{ch:discussion}
+\chapter{Discussion and conclusions}\label{ch:discussion}
 The were two primary questions addressed in this dissertation.
 \begin{enumerate}
 \item Given profiles of parasite counts per microlitre of blood with time from first dose of an antimalarial treatment, how do we derive an estimate of the time taken for 90\% of the parasites to be cleared from the blood?
@@ -27,12 +27,33 @@ Another advantage is that linear regression can be performed analytically with n
 The advantages of linear interpolation are that it is simple and gives the estimate most influenced by the data in the region of interest. It is the method chosen by Carmello {\it et al}. \cite{carmello} and Newton {et al}. \cite{newton}. It can be seen in Figures \ref{pc90-agree} to \ref{pc90-nofit} on pages \pageref{pc90-agree} to \pageref{pc90-nofit} that is produces estimates that closely match the cubic polynomial estimates.
 
 \subsection{Assessing the accuracy of the PC90 estimates}
-Assessing the accuracy of the PC90 estimates is not straightforward in that we do not have an idea of what the typical idealised parasite count profile should look like, if there is such a thing. As mentioned already, we do not know if fluctuations from a smooth trajectory are experimental counting errors or genuine sudden changes in the parasite count, which may occur due to 
+Assessing the accuracy of the PC90 estimates is not straightforward in that we do not have an idea of what the typical idealised parasite count profile should look like, if there is such a thing. As mentioned already, we do not know if fluctuations from a smooth trajectory are experimental counting errors or genuine sudden changes in the parasite count. Either way, the accuracy of our PC90 estimate will be related to how stable, and therefore predictable, the count trajectory is around PC90.
 
-RESIDUALS AND OUTLIERS 183 and 500
+It was decided, by looking at the estimates graphically and making a judgement about where the parasite count is most likely to lie in-between the counts either side of PC90, that the log-linear interpolation method gives the most believable interpolated estimate. For example, subjects 288 and 509 in Figure \ref{pc90-bad} on page \pageref{pc90-bad}, where the cubic and logistic estimates seem to have deviated from the local trend, influenced by data far from the PC90 region. However, there is a case to be made that the cubic and logistic methods have made a better estimate, less influenced by localized variation, for subjects 490 and 500 in the same Figure.
+
+There is no evidence, using a paired $t$ test to reject the hypothesis that the cubic regression and log-linear interpolation methods produce the same estimate on average. Furthermore, if we fit a mixed effects model with subject and PC90 estimation method as random effects (centre, sex and treatment being the fixed effects), then the standard deviation of the square root of PC90 between subjects is 5 times larger than between methods (page \pageref{methods.lme}). In this respect if we believe that our methods of estimating PC90 are unbiased then the accuracy is sufficient when taken in context with the larger ``error'' due to variation between subjects in the same fixed-effects group.
+
+The logistic method gives estimates 32 and 49 minutes longer on average than the cubic and log-linear methods respectively. Examination of the fitted curves suggests that the logistic method is overpredicting the clearance times, but there does not appear to be any obvious bias in the cubic and log-linear methods.
+
+It is unclear how to quantify the error of our estimation method at this stage. One could use the standard deviation between estimation methods, but then methods could be in close agreement but all be wrong in the same way. It would seem however that the error in the estimation method is smaller than the variance between subjects. 
+
+One post-hoc method for assessing the accuracy of the estimation method is to look at the residuals from our modelling of the effect of experimental factors on PC90 and see if any outliers correspond to dubious PC90 estimates. However, our 3-way ANOVA models by centre, sex and treatment do not show any clear outliers with the largest magnitude residual being only $2.4\hat{\sigma}$. Consequently, we can derive little about the accuracy of PC90 estimation via this route.
 
 \section{Analysis of clearance times}
+\subsection{Choice of model}
+It is clear that with our continuous response variable PC90 and categorical factors centre, sex and treatment, that a 3-way ANOVA model is the logical model to investigate first. ANOVA assumes independently normally distributed, homoscedastic 
+errors. The residuals from the initial analysis were found to be correlated with fitted value and heteroscedastic between treatment groups. Accordingly a square root transformation of the PC90 dependent variable was used with least squares fitting, weighted by the inverse of the variance of the square root of PC90 of each treatment group. In this way the residuals of the ANOVA model now fulfilled, to a good approximation, the requirements of being normally distributed and homoscedastic.
 
-ANY STUDIES WITH DIFFERENT RESPONSE BETWEEN SEXES?
+\subsection{Results}
+No evidence was found to reject the hypothesis of the centre having no effect on PC90. Accordingly, centre was removed from the model and a 2-way ANOVA model by sex and treatment was fitted. It was found that there is some evidence to reject the hypothesis of there being no interaction of sex and treatment that effects PC90 ($p<0.05$). The primary results of the analysis are that there is no evidence to reject the hypothesis that PC90 is the same for male patients on either the single or combined treatment and that female subjects on the combined treatment have a mean PC90 13 hours shorter than those on the single treatment with a 95\% confidence interval of (5, 23) hours shorter.
+
+Although there was a large variation in pre-dose parasite counts (median 23427; quartiles 15314, 31098; range 8500, 196029), there was no evidence to reject the hypothesis that PC90 is independent of pre-dose parasite count (ANCOVA model with pre-dose count as covariate).
+
+The parametric ANOVA results were compared to non-parametric statistical tests using resampling methods, which gave the same results for hypothesis tests of centre, sex and treatment effects and a 95\% confidence interval for the decrease in PC90 for female subjects on the combined treatment of (6.5, 22.5) hours.
+
+\subsection{Comparison with similar studies}
+There were several studies similar to this one found in the the literature. The most directly comparable is the study of Wootton {\it et al}. \cite{wootton} who present the analysis of a clinical trial to test the effectiveness of a single drug chlorproguanil-dapsone (CPG-DDS) with its use in combination with 3 different doses of another drug, artesunate. They analyse PC90 as a primary endpoint and various secondary endpoints. They find a mean time to PC90 for subjects on CPG-DDS alone of 19.1 hours; we find a mean time to PC90 of 
+
 \section{Alternative analyses}
 svensson poo poos PC90, PC50 as not representative of time course \cite{svensson}.
+\section{Review and future recommendations}
