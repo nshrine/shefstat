@@ -45,7 +45,7 @@ showstringspaces=false,
 lineskip=-1pt}
 
 \section{Functions for PC90 estimation}
-\begin{lstlisting}[float=h,caption=Functions to find PC90 by cubic regression,label=cubics]
+\begin{lstlisting}[float=h,caption=Functions to find PC90 by cubic regression,label=R:cubics]
 # Create a list of cubic fits to data up to first zero
 cubic.fits <- function(data) {
 	require(nlme)
@@ -83,7 +83,7 @@ pc90cubic <- function(fit, data) {
 }
 \end{lstlisting}
 
-\begin{lstlisting}[float=h,caption=Functions to find PC90 by logistic regression,label=logistics]
+\begin{lstlisting}[float=h,caption=Functions to find PC90 by logistic regression,label=R:logistics]
 # Perform logistic fitting after selecting starting parameters
 logistic.fit <- function(dat) {
 	# Set alpha and lambda to max and min counts
@@ -119,7 +119,7 @@ getPC90.logistic <- function(fit, data) {
 }
 \end{lstlisting}
 
-\begin{lstlisting}[float=h,caption=Functions to find PC90 by log-linear interpolation,label=loglinear]
+\begin{lstlisting}[float=h,caption=Functions to find PC90 by log-linear interpolation,label=R:loglinear]
 # Get PCx time from log-linear interpolation
 getPC.loglin <- function(data, PC=90) {
 	pc <- log(1 + (data$parct[data$plantm=='PRE-DOSE'] * (100 - PC)/100))
@@ -152,7 +152,7 @@ getAboveBelow <- function(data, PC=90) {
 
 \clearpage
 \section{Plotting functions}
-\begin{lstlisting}[float=h,caption=Plot raw count data for male and female subjects side-by-side,label=rawggplot]
+\begin{lstlisting}[float=h,caption=Plot raw count data for male and female subjects side-by-side,label=R:rawggplot]
 # Plot raw data for male and female subjects side-by-side
 rawggplot3 <- function(data, title="", centre="", r1=4, r2=4, points=T, lines=T) {
 	require(ggplot2)
@@ -197,7 +197,7 @@ addtrtgeoms <- function(q, points=T, lines=T) {
 }
 \end{lstlisting}
 
-\begin{lstlisting}[float=h,caption=Boxplots of pre-dose count by sex\, centre and treatment,label=predoseaov]
+\begin{lstlisting}[float=h,caption=Boxplots of pre-dose count by sex\, centre and treatment,label=R:predoseaov]
 # Plot pre-dose counts as boxplots by centre, sex and treatment
 predoseaov2 <- function(data) {
 	require(ggplot2)
@@ -235,7 +235,7 @@ predoseaov2 <- function(data) {
 }
 \end{lstlisting}
 
-\begin{lstlisting}[float=h,caption=Residuals diagnostic plots for \texttt{lm,aov} fitted models,label=plotresids.lm]
+\begin{lstlisting}[float=h,caption=Residuals diagnostic plots for \texttt{lm,aov} fitted models,label=R:plotresids.lm]
 # Residuals diagnostics plots for lm/aov fit
 plotresids.lm <- function(model, resids, data, binwidth=0.5, trans=F, weighted=F, xlab="Fitted PC90 (hours)") {
 	require(ggplot2)
@@ -286,7 +286,7 @@ plotresids.lm <- function(model, resids, data, binwidth=0.5, trans=F, weighted=F
 }
 \end{lstlisting}
 
-\begin{lstlisting}[float=h,caption=Plot all 3 PC90 methods on same plot,label=comparePC90]
+\begin{lstlisting}[float=h,caption=Plot all 3 PC90 methods on same plot,label=R:comparePC90]
 # All 3 PC90 estimation methods on same plot
 comparePC90 <- function(dat, pc90, logfit=T, ...) {
 	q <- getrawplot(dat) + geom_point(shape=1)
@@ -335,4 +335,36 @@ addPC90vlines <- function(q, dat, colours=c("blue", "red", "green")) {
 	dat <- subset(dat, subset=SUBJID %in% unique(q$data$SUBJID))
 	q + geom_vline(data=dat, aes(xintercept=PC90, colour=method), linetype=2) + scale_colour_manual(values=colours)
 }
+\end{lstlisting}
+
+\begin{lstlisting}[float=h,language=SAS,caption=SAS,label=SAS]
+data subjects;
+	set Project.Msc_data;
+	x=acttm;
+	y=log(1+parct);
+	run;
+data predose;
+	set Project.Msc_data (keep=SUBJID plantm parct);
+	if plantm eq 'PRE-DOSE';
+	l90 = log(1 + (0.1 * parct));
+	run;	
+proc nlin data=subjects;
+	parms A=0 to 12 L=8 to 14 B=-0.5 to 0 by 0.1  U=5 to 20 by 5;
+	model y=A+(L/(1+exp(-B*(x-U))));
+	by SUBJID;
+	output out=nlinfit p=pred;
+	run;
+quit;
+data plotdata;
+	merge nlinfit predose;
+	by SUBJID;
+	run;
+symbol1 c=black i=none v=x;
+symbol2 c=blue i=join v=none;
+symbol3 c=black i=join l=2 v=none;
+proc gplot data=plotdata;
+	plot (y pred l90)*x / overlay;
+	by SUBJID;
+	run;
+quit;
 \end{lstlisting}

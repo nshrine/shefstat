@@ -307,7 +307,7 @@ Total&219.58&120&&&
 It can be seen that there is no evidence that the variance in PC90 between estimation methods is any larger than the variance between subjects in each centre-sex-treatment stratum. Therefore the difference between PC90 estimates is independent of other factors. If we fit a multilevel model such that our residual variance is partitioned into that between subjects and that within subjects (between methods) i.e.
 \begin{eqnarray*}
 \sqrt{\mathrm{PC}90}=\mathrm{main\ effects\ + interactions} + b_{l} + \epsilon_{lm}\\
-b_{l}\sim N(0,\sigma_{b}^{2})\quad\quad\epsilon_{lm}\sim N(0,\sigma^{2})
+b_{l}\sim N(0,\sigma_{b}^{2})\quad\quad\epsilon_{lm}\sim N(0,\sigma^{2})\label{methods.lme}
 \end{eqnarray*}
 for subject $l$ and method $m$ then we find $\sigma_{b}^{2}=1.64$ (compare with mean-square residual in Table \ref{pc90aov}) and $\sigma^{2}=0.052$. This quantifies the relative magnitudes of the between and within subjects variance, as shown in Figure \ref{methodsbysubject} on page \pageref{methodsbysubject}, and shows that the ``error'' due to between-subject variations is larger than the error due to choice of method.
 
