@@ -44,7 +44,7 @@ One post-hoc method for assessing the accuracy of the estimation method is to lo
 It is clear that with our continuous response variable PC90 and categorical factors centre, sex and treatment, that a 3-way ANOVA model is the logical model to investigate first. ANOVA assumes independently normally distributed, homoscedastic 
 errors. The residuals from the initial analysis were found to be correlated with fitted value and heteroscedastic between treatment groups. Accordingly a square root transformation of the PC90 dependent variable was used with least squares fitting, weighted by the inverse of the variance of the square root of PC90 of each treatment group. In this way the residuals of the ANOVA model now fulfilled, to a good approximation, the requirements of being normally distributed and homoscedastic.
 
-\subsection{Results}
+\subsection{Results for the treatment effect}
 No evidence was found to reject the hypothesis of the centre having no effect on PC90. Accordingly, centre was removed from the model and a 2-way ANOVA model by sex and treatment was fitted. It was found that there is some evidence to reject the hypothesis of there being no interaction of sex and treatment that effects PC90 ($p<0.05$). The primary results of the analysis are that there is no evidence to reject the hypothesis that PC90 is the same for male patients on either the single or combined treatment and that female subjects on the combined treatment have a mean PC90 13 hours shorter than those on the single treatment with a 95\% confidence interval of (5, 23) hours shorter.
 
 Although there was a large variation in pre-dose parasite counts (median 23427; quartiles 15314, 31098; range 8500, 196029), there was no evidence to reject the hypothesis that PC90 is independent of pre-dose parasite count (ANCOVA model with pre-dose count as covariate).
@@ -52,8 +52,24 @@ Although there was a large variation in pre-dose parasite counts (median 23427; 
 The parametric ANOVA results were compared to non-parametric statistical tests using resampling methods, which gave the same results for hypothesis tests of centre, sex and treatment effects and a 95\% confidence interval for the decrease in PC90 for female subjects on the combined treatment of (6.5, 22.5) hours.
 
 \subsection{Comparison with similar studies}
-There were several studies similar to this one found in the the literature. The most directly comparable is the study of Wootton {\it et al}. \cite{wootton} who present the analysis of a clinical trial to test the effectiveness of a single drug chlorproguanil-dapsone (CPG-DDS) with its use in combination with 3 different doses of another drug, artesunate. They analyse PC90 as a primary endpoint and various secondary endpoints. They find a mean time to PC90 for subjects on CPG-DDS alone of 19.1 hours; we find a mean time to PC90 of 
+There were several studies similar to this one found in the the literature. The most directly comparable is the study of Wootton {\it et al}. \cite{wootton} who present the analysis of a clinical trial to test the effectiveness of a single drug chlorproguanil-dapsone (CPG-DDS) with its use in combination with 3 different doses of another drug, artesunate. They analyse PC90 as a primary endpoint and various secondary endpoints. They find a mean time to PC90 for subjects on CPG-DDS alone of 19.1 hours; we find a mean time to PC90 of 20 hours (95\% CI: 12, 30) for female subjects on the single treatment, but only 11 hours (95\% CI: 6, 18) for male subjects on the single treatment. They find a decrease in PC90 for subjects on the combined treatment of 6.6, 10.7 and 10.3 hours for 1, 2 and 4 mg/kg of artesunate taken in combination respectively. We find a reduction in PC90 of 13 hours (95\% CI: 5, 23) for female subjects on the combined treatment, but no evidence to reject the hypothesis that male subjects on both the single and combined treatments have the same mean PC90. The improvement of the combined treatment over the single-drug treatment we observed for female subjects is comparable to that Wootton observed in their experiment for all subjects on the higher doses of artesunate. Of course, this is a superficial comparison as we do not know anything about the protocol or drugs used for our data, but it generally supports the conclusion of Wootton {\it et al} that combined drug therapy reduces the clearance time, albeit only in female subjects in our study. The do not mention any effect of sex.
+
+Other literature on antimalarial treatment did not report any difference in response between sexes \cite{carmello, newton, svensson, vries}.
+
+\subsection{Interaction of sex and treatment}
+In this study it should be noted the lack of apparent improvement for male subjects on the combined treatment is due to them having PC90 times on the single treatment that are similar to those for both male and female subjects on the combined drug treatment. The relative levels of the four sex-treatment groups can be seen in Figure \ref{pc90interaction} on page \pageref{pc90interaction}. It is fairly clear that the primary difference between the groups is that female subjects on the ``alone" single-drug treatment have higher mean clearance times than the other 3 groups, and that it is this that results in the conclusion that there is a treatment-sex interaction that affects clearance time. No similar observation has been found in the literature, which leads us to look more carefully at the validity of this conclusion. There is no obvious imbalance in the pre-dose counts between treatments, although there is a larger variance in pre-dose counts among subjects allocated to the single treatment group.
+
+Looking at Figure \ref{allaov} on page \pageref{allaov} and Figure \ref{fdfitted} on page \pageref{fdfitted} it can be seen that the mean count for female subjects on the single treatment remains at a high level for longer than male subjects on the single treatment.
+
+The sex-treatment interaction is confirmed by non-parametric ANOVA by ranks and also by resampling methods.
+
+Therefore, we can be reasonably confident that we have good evidence to reject the hypothesis of no interaction between sex and treatment if we take the data we were given at face value. It could be that there is some bias in the data between sexes due to a protocol violation. If the observed interaction is not due to a real interaction between sex and treatment then we cannot determine alternative reasons for this observation from this data alone.
 
 \section{Alternative analyses}
-svensson poo poos PC90, PC50 as not representative of time course \cite{svensson}.
+Svensson {\it et al}.  comment on analysis of antimalarial treatments by PC90 and PC50: ``
+...\textit{these parameters do not 
+describe the time course of the effect and might not be 
+adequate in describing the efficacy of fast-acting anti-malarials like the artemisinin compounds unless para- 
+sites are frequently counted} \cite{svensson}. They 
+
 \section{Review and future recommendations}
