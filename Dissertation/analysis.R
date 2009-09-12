@@ -158,6 +158,7 @@ resample.pc90 <- function(data, fit, n=1000, bootstrap=F) {
 	coef.samples	
 }
 
+# Resample the F statistic by permutation
 resample.aov <- function(fit, n=1000, bootstrap=F) {
 	model.terms <- attr(terms(fit), "term.labels")
 	p <- length(model.terms)
@@ -177,6 +178,7 @@ resample.aov <- function(fit, n=1000, bootstrap=F) {
 	F.samples	
 }
 
+# Restricted resampling of F statistic by strata
 restricted.resample.aov <-  function(fit, strata, n=1000, bootstrap=F) {
 	model.terms <- attr(terms(fit), "term.labels")
 	p <- length(model.terms)
@@ -211,6 +213,7 @@ pt.resample <- function(data, fit, n=1000, bootstrap=F) {
 	t(t(rowMeans(indicators)))
 }
 
+# Calculate resampled p-values
 pf.resample <- function(fit, n=1000, bootstrap=F) {
 	F.samples <- resample.aov(fit, n, bootstrap)
 	p <- dim(F.samples)[2]
@@ -218,6 +221,7 @@ pf.resample <- function(fit, n=1000, bootstrap=F) {
 	indicators <- apply(F.samples, 1, function(x) x > F.actual)
 	t(t(rowMeans(indicators)))
 }
+
 
 pf.restricted.resample <- function(fit, strata, n=1000, bootstrap=F) {
 	F.samples <- restricted.resample.aov(fit, strata, n, bootstrap)
@@ -247,6 +251,7 @@ sample.pc90 <- function(data, n=1000, bootstrap=F) {
 	
 }
 
+# Calculate Still and White residuals
 stillwhite.resid <- function(row, data) {
 	centre <- row['Centre'][1,1]
 	sex <- row['Sex'][1,1]
@@ -276,6 +281,7 @@ t.resample <- function(x1, x2, R=1000, bootstrap=F) {
 	mean(abs(T) > abs(Tobs))
 }
 
+# Resample 
 permute.f.ci <- function(data, k, R=1000, bootstrap=F) {
 	data$PC90.loglin[data$Treatment=='alone'] <- data$PC90.loglin[data$Treatment=='alone'] - k
 	fit <- aov(PC90.loglin ~ Centre*Sex*Treatment, data)

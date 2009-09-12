@@ -3,41 +3,42 @@
 \subsection{Malaria}
 Malaria is a serious, potentially fatal disease caused by infection of the blood by a parasitic organism. The parasite is transmitted between people by mosquito bites. Over one million people a year die of malaria and this number is rising due to increasing resistance of the parasite to antimalarial drugs \cite{who}. Malaria is also a health hazard for people travelling to areas of the world where Malaria is endemic.
 
-Treatment for malaria is by drug therapy, often using a combination of drugs. Unlike many other diseases the level of infection in cases of malaria may be quantified by counting the number of parasites present \cite{white}. Therefore, a measure of the efficacy of an antimalarial drug treatment is the reduction in the number of parasites in the blood. 
+Treatment for malaria is by drug therapy, often using a combination of drugs. Unlike many other diseases the level of infection in cases of malaria may be quantified by counting the number of parasites present \cite{white}. Therefore, a measure of the efficacy of an antimalarial drug treatment is the rate of reduction of the number of parasites in the blood. 
 
 \subsection{Clinical trials for antimalarial drug treatments}
-The World Health Organization (WHO) uses systematic reviews of randomized trials, that compare two or more treatments, as its basis for recommendation of malaria treatment \cite{who}. Many recent studies are now looking at how to treat drug-resistant malaria with combined-drug treatments, primarily in areas of the world where there is a high prevalence of drug-resistant strains of the parasite such as south-east Asia \cite{smithuis}. Based on systematic review of randomized clinical trials, the The WHO recommends Artesiminin\footnote{Artesiminin is a drug that has been used in China for thousands of years \texttt{http://en.wikipedia.org/wiki/Artemisinin}}-based combination therapy over other combination therapies or single-drug treatments \cite{who}. 
+The World Health Organization (WHO) uses systematic reviews of randomized trials, that compare two or more treatments, as its basis for recommendation of malaria treatment \cite{who}. Many recent studies are now looking at how to treat drug-resistant malaria with combined-drug treatments, primarily in areas of the world where there is a high prevalence of drug-resistant strains of the parasite such as south-east Asia \cite{smithuis}. Based on systematic review of randomized clinical trials, the The WHO recommends Artemisinin\footnote{Artemisinin is a drug that has been used in China for thousands of years \texttt{http://en.wikipedia.org/wiki/Artemisinin}}-based combination therapy over other combination therapies or single-drug treatments \cite{who}. 
 
 \subsubsection*{Protocols}
-A common technique is a randomized, double-blind trial are used where the randomization is performed by computer code \cite{bell, newton, vries}. Open label studies are also used \cite{wootton, smithuis}, perhaps with partial blinding, for example when the subjects and clinicians know which treatment is being administered, but the technicians analysing the data do not \cite{wootton}. Non-randomized studies are also used whereby patients are allocated to treatments based on symptoms and level of infection \cite{carmello}.
+A common technique is a randomized, double-blind trial where the randomization is performed by computer code \cite{bell, newton, vries}. Open label studies are also used \cite{smithuis, wootton}, perhaps with partial blinding, for example when the subjects and clinicians know which treatment is being administered, but the technicians analysing the data do not \cite{wootton}. Non-randomized studies are also used whereby patients are allocated to treatments based on symptoms and level of infection \cite{carmello}.
 
 \subsubsection*{Data collection}
-Generally the parasite count per microlitre are obtained my taking blood samples from subjects at multiple times after treatment and counting the parasites present by microscopy. The WHO recommends that all blood samples should be checked by two microscopists and that the average of the two counts be used \cite{protocolWHO}.
+Generally the parasite counts per microlitre are obtained my taking blood samples from subjects at multiple times after treatment and counting the parasites present by microscopy. The WHO recommends that all blood samples should be checked by two microscopists and that the average of the two counts be used \cite{protocolWHO}.
 
 \subsubsection*{Endpoints}
-In comparing malaria treatments various endpoints are used. One of the most common ones in the parasite clearance time (PCT), usually the time until parasites are no longer detectable on a blood film \cite{white}. Other commonly used times are PC50, PC90 and PC99 which are the time for 50\%, 90\% and 99\% of the parasites to be cleared from the blood respectively. These times are determined by comparing the parasite count before treatment (the \textit{baseline}) with the count taken at time intervals after first treatment. As the parasite count will usually fall to one of the endpoint percentages between counts being taken some method of interpolation is required to infer the time to the chosen endpoint.
+In comparing malaria treatments various endpoints are used. One of the most common ones is the parasite clearance time (PCT), usually the time until parasites are no longer detectable on a blood film \cite{white}. Other commonly used times are PC50, PC90 and PC99 which are the time for 50\%, 90\% and 99\% of the parasites to be cleared from the blood respectively. These times are determined by comparing the parasite count before treatment (the \textit{baseline}) with the count taken at time intervals after first treatment. As the parasite count will usually reach the endpoint time between counts being taken, some method of interpolation is required to infer the time to the chosen endpoint.
 
-Another endpoint used is the parasite reduction ratio (PRR), which is the reduction in the parasite count over a certain time period. White \cite{white} states that the parasite reduction ratio over 48 hours (PRR$_{48}$) is a useful index as 48 hours is the asexual lifecycle of the parasite. Carmello \textit{et al.} \cite{carmello} also use the parasite reduction rate at 24 hours (PRR$_{24}$) and the percentage of patients with no detectable parasites after 48 hours (PPUP$_{48}$).
+Another endpoint used is the parasite reduction ratio (PRR), which is the reduction in the parasite count over a certain time period. White states that the parasite reduction ratio over 48 hours (PRR$_{48}$) is a useful index as 48 hours is the asexual lifecycle of the parasite \cite{white}. Carmello \textit{et al.} also use the parasite reduction rate at 24 hours (PRR$_{24}$) and the percentage of patients with no detectable parasites after 48 hours (PPUP$_{48}$) \cite{carmello}.
 
-Sometimes symptomatic endpoints are used rather than parasite reduction levels.  Fever clearance times, the time for the axillary temperature to fall below 37.5$^\circ$C, is one such measure \cite{bell,newton}.
+Sometimes symptomatic endpoints are used rather than parasite reduction levels.  Fever clearance time i.e.\ the time for the axillary temperature to fall below 37.5$^\circ$C, is one such measure \cite{bell,newton}.
 
 \subsubsection*{Statistical methodology}
-The parasite count is usually analysed after logarithmic transformation \cite{wootton, vries, carmello}, although no explicit justification for this is given in the literature reviewed here. Times to reduce the parasite count by 50\%, 90\% and 99\% (PC$_{50}$, PC$_{90}$ and PC$_{99}$) are calculated by interpolating between parasite counts at times straddling the time of interest, either by a linear (actually log-linear) interpolation \cite{carmello, newton} or the fitting of regression model to the data such as a linear polynomial \cite{vries} or an exponential \cite{vries} or logistic non-linear model \cite{wootton}.
+The parasite count is usually analysed after logarithmic transformation \cite{vries, wootton, carmello}, although no explicit justification for this is found in the literature reviewed here. Times to reduce the parasite count by 50\%, 90\% and 99\% (PC$_{50}$, PC$_{90}$ and PC$_{99}$) are calculated by interpolating between parasite counts at times straddling the endpoint of interest, either by a linear (actually log-linear) interpolation \cite{newton, carmello} or the fitting of regression model to the data such as a linear polynomial or an exponential \cite{vries} or logistic non-linear model \cite{wootton}.
 
-Comparison of parasite clearance times is usually performed using parametric test such as $t$ test and ANOVA stratified by experimental factors \cite{vries, smithuis, wootton, carmello}. Explicit verification of normality, as required by these tests, is not found in the literature. However, some studies make use of equivalent non-parametric tests, for data they identify as non-normal, such as Mann-Whitney, Wilcoxon signed rank test \cite{carmello, newton} and Kruskall-Wallis \cite{pukri}.\label{stat-tests}
+Comparison of parasite clearance times is usually performed using parametric tests such as $t$ test or ANOVA by experimental factors \cite{smithuis, vries, wootton, carmello}. Explicit verification of normality, as required by these tests, is not found in the literature. However, some studies make use of equivalent non-parametric tests for data they identify as non-normal, such as Mann-Whitney, Wilcoxon signed rank test \cite{newton, carmello} and Kruskall-Wallis \cite{pukri}.\label{stat-tests}
 
-For categorical data, such as proportions of patients with no detectable parasites, $\chi^{2}$ tests with Yates' correction and Fisher's exact test are used in some studies \cite{newton, smithuis}.
+For categorical data, such as proportions of patients with no detectable parasites, $\chi^{2}$ tests with Yates' correction and Fisher's exact test are used in some studies \cite{smithuis, newton}.
 
-A 5\% significance level is invariably used, sometimes with a Bonferonni correction for multiple comparisons. 95\% confidence intervals are given as recommended by WHO protocol \cite{protocolWHO}. Some studies include a power calculation such as Wootton \textit{et. al} \cite{wootton} who calculate that 22 patients are required in each arm to detect a 9 hour change in clearance time with 5\% significance and 90\% power; Newton \textit{et al.} \cite{newton} give power calculations for mortality rates.
+A 5\% significance level is invariably used, sometimes with a Bonferonni correction for multiple comparisons. 95\% confidence intervals are given as recommended by WHO protocol \cite{protocolWHO}. Some studies include a power calculation such as Wootton \textit{et. al} who calculate that 22 patients are required in each arm to detect a 9 hour change in clearance time with 5\% significance and 90\% power \cite{wootton}. Newton \textit{et al.} give power calculations for mortality rates \cite{newton}.
+
 \section{The Glaxo Smithkline Clinical Trial}
 A clinical trial was conducted by Glaxo Smithkline (GSK) comparing parasite clearance times for an existing antimalarial drug against those for this drug when administered in combination with different dose levels of another antimalarial. Parasite counts per microlitre were recorded from blood samples taken prior to first dose (baseline) and then at multiple time points (1, 2, 3, 4, 6, 8, 12, 18, 24, 30, 36, 42, 48 hours) after first dose.
 
 \subsection{Data description}
-The data were received as an email attachment from our contact at Glaxo Smithkline. The attachment was a \emph{SAS} data set which was able to be read into \emph{R} by first exporting from \emph{SAS} in dbf format and then read into \emph{R} using the \texttt{read.dbf} function.
+The data were received as an email attachment from our contact at Glaxo Smithkline. The attachment was a \emph{SAS} data set which was able to be read into \emph{R}, first by exporting from \emph{SAS} in dbf format and then being read into \emph{R} using the \texttt{read.dbf} function.
 Table \ref{rdata} shows the data as an \emph{R} data frame. 
 \begin{table}[h]
 \centering
-\caption{Data as an R data frame}\label{rdata}
+\caption{Data as an \emph{R} data frame}\label{rdata}
 \begin{boxedverbatim}
 CENTREID SUBJID SEX                    plantm   acttm  parct trt
      001     54   M                  PRE-DOSE -2.8333  14092   A  
@@ -51,34 +52,35 @@ CENTREID SUBJID SEX                    plantm   acttm  parct trt
 The columns are:
 \begin{itemize}
 \item\texttt{CENTREID} - The centre at which the study was undertaken, either centre \texttt{001} or \texttt{002}.
-\item\texttt{SUBJID} - A numerical identifier for each subject (patient) participating in the trial. There are 43 subjects.
+\item\texttt{SUBJID} - A numerical identifier for each subject participating in the trial. There are 43 subjects.
 \item\texttt{SEX} - The sex of each subject, either \texttt{M} for male or \texttt{F} for female.
 \item\texttt{plantm} - The planned time of taking a blood sample for measuring parasite load, either \texttt{PRE-DOSE} i.e. before the drug treatment is administered, or \texttt{n HOURS AFTER FIRST DOSE}.
 \item\texttt{acttm} - The actual time in hours that the blood sample was taken relative to the time the treatment was administered, hence all pre-dose times are negative.
 \item\texttt{parct} - The parasite count per $\mu L$ of blood.
-\item\texttt{trt} - An indicator of which treatment was used \texttt{A} or \texttt{B}.
+\item\texttt{trt} - An indicator of which treatment was used \texttt{A} (single drug) or \texttt{B} (combined drugs).
 \item\texttt{trttxt} (not shown) - A description of treatments \texttt{A} and \texttt{B}: \texttt{alone}, meaning that a single drug was used or \texttt{combi} meaning that a combination treatment was used.
 \end{itemize}
 
-As this data was released by GSK purely for training purposes only the minimum data was disclosed to allow a methodological study of estimating and analysing parasite clearance times. Hence, we have no information on the actual drug combination used, nor the dosage. We know nothing more about the subject than their sex, nor how they were allocated to treatment groups.
+As this data was released by GSK purely for training purposes, only the minimum information was disclosed to allow a methodological study of estimating and analysing parasite clearance times. Hence, we have no information on the actual drugs used, nor the dosage. We know nothing more about the subject than their sex, nor how they were allocated to treatment groups or the protocol used.
 
 \section{Project Aims}
 \subsection{Derivation of parasite clearance times}
 It was stated by GSK that the endpoint of primary importance in this trial was PC90 i.e. the time for the parasite count to be reduced 90\% from its baseline ``PRE-DOSE'' level. Accordingly, one of the aims of this project is to investigate methods for estimating the time to PC90 with a view to the method being able to be applied to large number of patients in a clinical trial setting automatically i.e. giving an estimate from the data via a computer function without human input being required for every estimate.
 
-It was stated by our contact at GSK that an approach based on logistic regression had already been used for PC90 estimation on this data. A logistic curve was fitted to the log-transformed parasite counts ($y$) over time. The simple logistic curve used has the following form: 
+It was stated by our contact at GSK that an approach based on logistic regression had already been used for PC90 estimation with this data. A logistic curve was fitted to the log-transformed parasite counts ($y$) over time. The simple logistic curve used has the following form: 
 $$
 y=\alpha+\frac{\lambda}{1+e^{-\beta(x-\mu)}}
 $$
 where $\alpha$ is the lower asymptote, $\alpha+\lambda$ is the upper asymptote, $\mu$ is the time of maximum rate of reduction (i.e. point of inflexion) and $x$ is time from first dose (in hours), $\beta$ is the fitted coefficient for time; $y = log(1 + P_{(time=x)})$ (P is parasite count), hence $P = e^{y}-1$. They stated that model fit and so consequent validity of derived PC90 estimates were then reviewed.
 
-In this study this method based on logistic regression is evaluated and compared to other methods chosen by investigating the form of the parasite count with time from first dose and behaviour around the PC90 region of interest. The aim is to determine the most accurate, precise and practical method of determining the time to PC90 in terms of being implemented in software for automatic PC90 estimation given such data.
+In this study, this method based on logistic regression is evaluated and compared to other methods chosen by investigating the form of the parasite count with time from first dose and behaviour around the PC90 region of interest. The aim is to determine the most accurate, precise and practical method of determining the time to PC90 in terms of being implemented in software for automatic PC90 estimation given such data as input.
 
 \subsection{Analysis of parasite clearance times}
-The PC90 parasite clearance times will then be analysed in order to determine the level of evidence that use of the combined drug treatment speeds up eradication of malaria parasites from the blood and, if so, estimate the average decrease in clearance times with the appropriate confidence intervals.
+The PC90 parasite clearance times, estimated by the method identified as most suitable, will then be analysed in order to determine the level of evidence that use of the combined drug treatment speeds up eradication of malaria parasites from the blood. If a difference in clearance time due to treatment or other factors (centre and sex) is detected then estimates of the average change in clearance times with the appropriate confidence intervals are calculated.
 
-In order to determine the effect of the factors centre, sex and treatment on the clearance time, the appropriate statistical test must be chosen after checking the form of the distribution of the data. This may be parametric tests such as ANOVA or non-parametric; some of the common ones by researchers for this kind of data were summarised on page \pageref{stat-tests}.
+In order to determine the effect of the factors centre, sex and treatment on the clearance time, the appropriate statistical test is chosen after checking the form of the distribution of the data. This may be parametric tests such as ANOVA or non-parametric; some of the common tests used by researchers for this kind of data were summarised on page \pageref{stat-tests}.
 
+Alternative endpoints such as PC50 and PC99 are analysed to give secondary tests of treatment effect. Finally, the technique of \emph{functional data analysis} for modelling the count profile as a whole is investigated. 
 \section{Dissertation overview}
 \begin{description}
 \item[Chapter \ref{ch:intro}, Introduction] --- An overview of clinical trials for antimalarial drug treatments is given with a summary of the statistical techniques used in the literature for the kind of parasite count data that is analysed in this dissertation. A description of the data received from GSK is given. The two main aims of this study are outlined.
@@ -101,6 +103,9 @@ The effect of the treatment and sex and centre factors are quantified with appro
 
 The relatively new statistical technique of \emph{functional data analysis} is employed to develop a functional model of the parasite clearance profiles for the sex and treatment groups. The effect of treatment on the speed of parasite reduction over time is also investigated using functional data analysis. 
  
-\item[Chapter \ref{ch:discussion}] --- 
+\item[Chapter \ref{ch:discussion}, Discussion and conclusions] --- The merits of the three PC90 estimates are discussed as well as how to evaluate the accuracy of the estimates.
 
+The results of the analysis for determination of treatment effect is discussed and broadly compared to previous similar studies, bearing in mind we know nothing about the drugs or protocol used for our data.  
+
+Conclusions on the appropriate statistical methodology identified for this data are given with recommendations for possible future analysis.
 \end{description}

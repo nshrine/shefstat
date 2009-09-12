@@ -146,12 +146,82 @@ getAboveBelow <- function(data, PC=90) {
 
 \clearpage
 \section{Resampling functions}
+\nopagebreak
+\begin{lstlisting}[float=h,caption=Functions for resampling $F$ statistic,label=R:Fresamp]
+# Resample the F statistic by permutation
+resample.aov <- function(fit, n=1000, bootstrap=F) {
+	model.terms <- attr(terms(fit), "term.labels")
+	p <- length(model.terms)
+	F.samples <- matrix(nrow=n, ncol=p, dimnames=list(sample=1:n, term=model.terms))
+	data <- fit$model
+	response.sample <- data[,1]
+
+	F.values <- summary(fit)[[1]][4]
+	F.samples[1,] <- F.values[1:p,1]
+	for (i in 2:n) {
+		data[,1] <- sample(response.sample, length(response.sample), replace=bootstrap)
+		fit.resample <- update(fit, data=data)
+		F.values <- summary(fit.resample)[[1]][4]
+		F.samples[i,] <- F.values[1:p,1]
+	}
+	F.samples	
+}
+
+# Restricted resampling of F statistic by strata
+restricted.resample.aov <-  function(fit, strata, n=1000, bootstrap=F) {
+	model.terms <- attr(terms(fit), "term.labels")
+	p <- length(model.terms)
+	F.samples <- matrix(nrow=n, ncol=p, dimnames=list(sample=1:n, term=model.terms))
+	data <- fit$model
+	randomize.within <- lapply(strata, function(x) data[,x])
+
+	F.values <- summary(fit)[[1]][4]
+	F.samples[1,] <- F.values[1:p,1]
+	for (i in 2:n) {
+		resample.list <- as.list(by(data, randomize.within, function(x) {
+			x[,1] <- sample(x[,1], length(x[,1]), replace=bootstrap)
+			x
+		}))
+		for (strata.sample in resample.list) {
+			data[dimnames(strata.sample)[[1]],] <- strata.sample
+		}
+		# Checksum on strata for code verification
+		# by(data, randomize.within, function(x) print(sum(x$PC90.loglin)))
+		fit.resample <- update(fit, data=data)
+		F.values <- summary(fit.resample)[[1]][4]
+		F.samples[i,] <- F.values[1:p,1]
+	}
+	F.samples	
+}
+\end{lstlisting}
+
+\begin{lstlisting}[float=h,caption=Functions to calculate resampled $p$-values and resampling residuals,label=R:resampmisc]
+# Calculate resampled p-values
+pf.resample <- function(fit, n=1000, bootstrap=F) {
+	F.samples <- resample.aov(fit, n, bootstrap)
+	p <- dim(F.samples)[2]
+	F.actual <- summary(fit)[[1]][4][1:p,1]
+	indicators <- apply(F.samples, 1, function(x) x > F.actual)
+	t(t(rowMeans(indicators)))
+}
+
+# Calculate Still and White residuals
+stillwhite.resid <- function(row, data) {
+	centre <- row['Centre'][1,1]
+	sex <- row['Sex'][1,1]
+	trt <- row['Treatment'][1,1]
+	Xcst <- row['PC90'][1,1]
+	Xstar <- with(data, Xcst - mean(PC90[Centre==centre]) - mean(PC90[Sex==sex]) - mean(PC90[Treatment==trt]) + mean(PC90))
+	Xstar
+}
+\end{lstlisting}
 
 \clearpage
 \section{Functional data analysis}
 
 \clearpage
 \section{Plotting functions}
+\samepage
 \begin{lstlisting}[float=h,caption=Plot raw count data for male and female subjects side-by-side,label=R:rawggplot]
 # Plot raw data for male and female subjects side-by-side
 rawggplot3 <- function(data, title="", centre="", r1=4, r2=4, points=T, lines=T) {
@@ -337,34 +407,34 @@ addPC90vlines <- function(q, dat, colours=c("blue", "red", "green")) {
 }
 \end{lstlisting}
 
-\begin{lstlisting}[float=h,language=SAS,caption=SAS,label=SAS]
-data subjects;
-	set Project.Msc_data;
-	x=acttm;
-	y=log(1+parct);
-	run;
-data predose;
-	set Project.Msc_data (keep=SUBJID plantm parct);
-	if plantm eq 'PRE-DOSE';
-	l90 = log(1 + (0.1 * parct));
-	run;	
-proc nlin data=subjects;
-	parms A=0 to 12 L=8 to 14 B=-0.5 to 0 by 0.1  U=5 to 20 by 5;
-	model y=A+(L/(1+exp(-B*(x-U))));
-	by SUBJID;
-	output out=nlinfit p=pred;
-	run;
-quit;
-data plotdata;
-	merge nlinfit predose;
-	by SUBJID;
-	run;
-symbol1 c=black i=none v=x;
-symbol2 c=blue i=join v=none;
-symbol3 c=black i=join l=2 v=none;
-proc gplot data=plotdata;
-	plot (y pred l90)*x / overlay;
-	by SUBJID;
-	run;
-quit;
-\end{lstlisting}
+%\begin{lstlisting}[float=h,language=SAS,caption=SAS,label=SAS]
+%data subjects;
+%	set Project.Msc_data;
+%	x=acttm;
+%	y=log(1+parct);
+%	run;
+%data predose;
+%	set Project.Msc_data (keep=SUBJID plantm parct);
+%	if plantm eq 'PRE-DOSE';
+%	l90 = log(1 + (0.1 * parct));
+%	run;	
+%proc nlin data=subjects;
+%	parms A=0 to 12 L=8 to 14 B=-0.5 to 0 by 0.1  U=5 to 20 by 5;
+%	model y=A+(L/(1+exp(-B*(x-U))));
+%	by SUBJID;
+%	output out=nlinfit p=pred;
+%	run;
+%quit;
+%data plotdata;
+%	merge nlinfit predose;
+%	by SUBJID;
+%	run;
+%symbol1 c=black i=none v=x;
+%symbol2 c=blue i=join v=none;
+%symbol3 c=black i=join l=2 v=none;
+%proc gplot data=plotdata;
+%	plot (y pred l90)*x / overlay;
+%	by SUBJID;
+%	run;
+%quit;
+%\end{lstlisting}

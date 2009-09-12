@@ -302,7 +302,7 @@ Female: combi - single	& -1.83 & (-3.34,  -0.32) & 0.012 &*\\
 Therefore, we can summarize the relative effects of the single and combined treatments:
 \begin{description}
 \item[Male subjects] - There is no evidence of a difference in mean clearance times between the two treatments for male subjects.
-\item[Female subjects] - The mean clearance time for female subjects on the combined treatment is 13 hours shorter than for those on the single treatment with a 95\% confidence interval\footnote{How calculated?} of (5, 23) hours.
+\item[Female subjects] - The mean clearance time for female subjects on the combined treatment is 13.1 hours shorter than for those on the single treatment with a 95\% confidence interval\footnote{The confidence intervals for the difference between groups in the original untransformed scale are obtained by sampling 10,000 values from each of $[N(\mu_{a},s_{a}^{2})]^{2}$ and $[N(\mu_{b},s_{b}^{2})]^{2}$, where $a$ and $b$ specify the groups and $\mu$ and $\sigma$ are the mean and standard error of the groups, and then taking the percentiles of the distribution of the differences between samples.} of (5.0, 22.7) hours.
 \end{description}
 It should be noted that these are confidence intervals for the estimate of the mean clearance time for the population. Prediction intervals for the expected clearance time of any one subject are considerably wider i.e. 95\% prediction intervals are: Male, single (0, 44) hours; Female, single (1, 62) hours; Male, combined (3, 24) hours; Female, combined (1, 19) hours.
 
@@ -341,37 +341,37 @@ F, combi	 	& 7:05 & (4:41, 9:59) &7:16&(4:44, 10:21) & 7:49 & (5:21, 10:46)\\
 \end{table}
 
 \section{Dependence of clearance time on pre-dose parasite count}
-\subsubsection*{Pre-dose count}
+\subsubsection*{Pre-dose count}\label{sec:predoseancova}
 We might expect that subjects with a higher pre-dose parasite count would have a longer clearance time. To investigate this, the clearance time (PC90) is plotted against pre-dose parasite count in Figure \ref{predose-ancova}. There is no clear trend in clearance time with pre-dose parasite, nor when the data is split by centre, sex and treatment. Statistical tests such as Spearman's rho and ANCOVA (adding pre-dose count as a covariate to the ANOVA model) do not give any evidence of correlation of clearance time with pre-dose parasite count.
-\begin{figure}[h]
+\begin{figure}[p]
 \includegraphics[width=150mm]{predose-ancova.eps} 
 \caption{Dependence of clearance time on pre-dose parasite count}
 \label{predose-ancova}
 \end{figure}
 
 The fitted ANCOVA model is a modification of the reduced ANOVA model \ref{reduced} on page \pageref{reduced} adding the pre-dose parasite count as a covariate with all interactions with sex and treatment. This ANCOVA model is compared to the ANOVA model in Figure \ref{compancova}. It can be seen that the ANCOVA model isn't a significant improvement.
-\begin{figure}
-\includegraphics[width=150mm]{compancova.eps} 
-\caption{Comparison of ANOVA and ANCOVA models}
-\label{compancova}
-\end{figure}
 
-\subsubsection*{Time of pre-dose count}
+\subsubsection*{Time of pre-dose count}\label{sec:pretimeancova}
 The clearance time is plotted against the time before first dose at which the pre-dose count was recorded in Figure \ref{pretime-ancova}. Although it looks like there is some positive correlation between the time of pre-dose recording and clearance times, statistical tests show no evidence to reject the hypothesis that the effect of pre-dose recording time is negligible.
-\begin{figure}
+\begin{figure}[p]
 \includegraphics[width=150mm]{pretime-ancova.eps} 
 \caption{Dependence of clearance time on the time before first dose that the pre-dose parasite count was recorded}
 \label{pretime-ancova}
 \end{figure}
 
 The ANCOVA model with time of pre-dose count as a covariate is compared to the ANOVA model in Figure \ref{compancova2}.
-\begin{figure}
+It looks like there is a significant interaction with time of pre-dose count for female subjects, but this is mainly attributed to a single high-leverage datum and the coefficient in the ANCOVA model isn't highly significant ($p$=0.077). It could be that we simply don't have high enough power in this experiment to detect this interaction.
+
+\begin{figure}[p]
+\includegraphics[width=150mm]{compancova.eps} 
+\caption{Comparison of ANOVA and ANCOVA models}
+\label{compancova}
+\end{figure}
+\begin{figure}[p]
 \includegraphics[width=150mm]{compancova2.eps} 
 \caption{Comparison of ANOVA and ANCOVA models}
 \label{compancova2}
 \end{figure}
-It looks like there is a significant interaction with time of pre-dose count for female subjects, but this is mainly attributed to a single high-leverage datum and the coefficient in the ANCOVA model isn't highly significant ($p$=0.077). It could be that we simply don't have high enough power in this experiment to detect this interaction.
-
 \clearpage
 \section{Non-parametric methods}
 As an additional verification of the analysis so far based on parametric methods, we can compare the results with analysis of clearance times using non-paramteric, distribution-free methods.
@@ -464,7 +464,7 @@ and accordingly subtract $k$ from the clearance times for the single treatment b
 \item If the $p$-value is $<0.05$ and we are looking for the lower limit of the 95\% confidence interval or $p>0.05$ and we are looking for the upper limit, increase $k$ and go to step \ref{start}. If $p>0.05$ and we are looking for the lower limit or $p<0.05$ and we are looking for the upper limit, decrease $k$ and go to step \ref{start}.
 \item At $p\approx 0.05$ we have estimates of our 95\% confidence limits.
 \end{enumerate}
-This algorithm was implemented in \emph{R}, giving a 95\% confidence interval for the improvement in mean clearance time of the combined treatment over the single treatment for female subjects of (6.5, 22.5) hours, corresponding to $p$-values of 0.0510 and 0.0496 respectively, achieved by repeated samples of 10,000. This gives reasonable agreement with the interval of (5, 23) hours obtained by the parametric ANOVA method.
+This algorithm was implemented in \emph{R}, giving a 95\% confidence interval for the improvement in mean clearance time of the combined treatment over the single treatment for female subjects of (6.5, 22.5) hours, corresponding to $p$-values of 0.0510 and 0.0496 respectively, achieved by repeated samples of 10,000. This gives reasonable agreement with the interval of (5.0, 22.7) hours obtained by the parametric ANOVA method.
 
 \section{Key results}
 The log-linear method was identified in chapter \ref{ch:derivation} as the most suitable estimate of PC90, the time for 90\% of parasites present before treatment to be cleared from the blood. Accordingly, these PC90 values, one for each of the 43 subjects were analysed, primarily for their dependence on experimental factors centre, sex and treatment. The key findings of this analysis were:
@@ -476,7 +476,7 @@ The log-linear method was identified in chapter \ref{ch:derivation} as the most 
 \item 3-way ANOVA by centre, sex and treatment, after the appropriate variance stabilising measures gives no evidence to reject the hypothesis that centre has no effect on PC90.
 \item 2-way ANOVA by sex and treatment shows good evidence to reject the hypothesis that treatment has no effect on PC90 and the hypothesis that there is no interaction of sex and treatment that effects PC90 ($p<0.05$ for both).
 \item There is no evidence to reject the hypothesis that there is no difference in mean PC90 clearance times between treatments for male subjects.
-\item There is good evidence ($p<0.05$) to reject the hypothesis that there is no difference in PC90 clearance times between treatments for female subjects. The mean difference is 13 hours shorter for the combined treatment with a 95\% confidence interval of (5, 23) hours.
+\item There is good evidence ($p<0.05$) to reject the hypothesis that there is no difference in PC90 clearance times between treatments for female subjects. The mean difference is 13.1 hours shorter for the combined treatment with a 95\% confidence interval of (5.0, 22.7) hours.
 \item PC90 estimates using the cubic polynomial regression method lead to the same conclusions regarding treatment effect as the log-linear interpolated estimates. The logistic regression estimates are generally compatible with observed discrepancies most likely due to missing data for the logistic method.
 \item There is no evidence to reject the hypotheses that the PC90 clearance time is independent of the pre-dose parasite count and independent of the time at which the pre-dose count was taken.
 \item Non-parametric methods support the findings of the parametric analysis in that only the difference between treatments for female subjects is significant. An appropriate resampling method estimates a 95\% confidence interval for the decrease in PC90 clearance time for female subjects on the combined treatment of (6.5, 22.5) hours.
