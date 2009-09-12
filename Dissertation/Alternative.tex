@@ -248,7 +248,7 @@ Figure \ref{fdcoef} shows the fitted coefficient functions.
 \end{figure}
  The top-left panel shows the mean $\mu$ corresponding to male subjects on the single treatment with the other panels showing the deviation from this mean due to sex, treatment and the interaction of sex and treatment respectively. We can see that there is no evidence at the 5\% level over the whole time period to reject the hypothesis that sex has no effect. Between approximately 17 and 45 hours there is evidence to reject the hypothesis that treatment has no effect and between 10 and 15 hours there is evidence to reject the hypothesis that there is no interaction between sex and treatment that effects the parasite count.
  
-Figure \ref{fdfitted} shows the fitted mean-level functions with 95\% confidence intervals\footnote{The routines for calculating the standard errors and confidence intervals of predicted functions are not yet implemented in the \emph{R} \texttt{fda} library, hence it was necessary to implement these. The code is in Appendix X}.
+Figure \ref{fdfitted} shows the fitted mean-level functions with 95\% confidence intervals\footnote{The routines for calculating the standard errors and confidence intervals of predicted functions are not yet implemented in the \emph{R} \texttt{fda} library, hence it was necessary to implement these (Listing \ref{R:fdaresid} in Appendix \ref{A:fda}).}.
 \begin{figure}[p]
 \includegraphics[width=150mm]{lprr2i.eps} 
 \caption{Fitted count-ratio functions with confidence intervals}

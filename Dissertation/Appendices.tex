@@ -1,3 +1,4 @@
+\begin{singlespace}
 \chapter{Complete plots of data}
 \section{Raw parasite counts}
 \begin{sidewaysfigure}
@@ -34,6 +35,8 @@ frame=single,
 framesep=6pt,
 tabsize=2,
 basicstyle=\small\ttfamily,
+%breakautoindent=false,
+%breakindent=0pt,
 %keywordstyle=\bfseries,
 %keywordstyle=\color{blue},
 %commentstyle=\itshape\color{red},
@@ -44,8 +47,9 @@ breaklines=true,
 showstringspaces=false,
 lineskip=-1pt}
 
+This appendix contains a subset of the \emph{R} code written for this dissertation. The code to show the key algorithms used in numerical calculations is shown and a sample of plotting routines for demonstrating how to create figures of the style presented in this dissertation.
 \section{Functions for PC90 estimation}
-\begin{lstlisting}[float=h,caption=Functions to find PC90 by cubic regression,label=R:cubics]
+\begin{lstlisting}[caption=Functions to find PC90 by cubic regression,label=R:cubics]
 # Create a list of cubic fits to data up to first zero
 cubic.fits <- function(data) {
 	require(nlme)
@@ -66,6 +70,7 @@ uptofirstzero <- function(data) {
 	new.df
 }
 
+
 # Find the PC90 time from a cubic fit
 pc90cubic <- function(fit, data) {
 	coefs <- coef(fit)
@@ -83,7 +88,7 @@ pc90cubic <- function(fit, data) {
 }
 \end{lstlisting}
 
-\begin{lstlisting}[float=h,caption=Functions to find PC90 by logistic regression,label=R:logistics]
+\begin{lstlisting}[caption=Functions to find PC90 by logistic regression,label=R:logistics]
 # Perform logistic fitting after selecting starting parameters
 logistic.fit <- function(dat) {
 	# Set alpha and lambda to max and min counts
@@ -119,7 +124,7 @@ getPC90.logistic <- function(fit, data) {
 }
 \end{lstlisting}
 
-\begin{lstlisting}[float=h,caption=Functions to find PC90 by log-linear interpolation,label=R:loglinear]
+\begin{lstlisting}[caption=Functions to find PC90 by log-linear interpolation,label=R:loglinear]
 # Get PCx time from log-linear interpolation
 getPC.loglin <- function(data, PC=90) {
 	pc <- log(1 + (data$parct[data$plantm=='PRE-DOSE'] * (100 - PC)/100))
@@ -144,10 +149,8 @@ getAboveBelow <- function(data, PC=90) {
 }
 \end{lstlisting}
 
-\clearpage
 \section{Resampling functions}
-\nopagebreak
-\begin{lstlisting}[float=h,caption=Functions for resampling $F$ statistic,label=R:Fresamp]
+\begin{lstlisting}[caption=Functions for resampling $F$ statistic,label=R:Fresamp]
 # Resample the F statistic by permutation
 resample.aov <- function(fit, n=1000, bootstrap=F) {
 	model.terms <- attr(terms(fit), "term.labels")
@@ -195,7 +198,7 @@ restricted.resample.aov <-  function(fit, strata, n=1000, bootstrap=F) {
 }
 \end{lstlisting}
 
-\begin{lstlisting}[float=h,caption=Functions to calculate resampled $p$-values and resampling residuals,label=R:resampmisc]
+\begin{lstlisting}[caption=Functions to calculate resampled $p$-values and resampling residuals,label=R:resampmisc]
 # Calculate resampled p-values
 pf.resample <- function(fit, n=1000, bootstrap=F) {
 	F.samples <- resample.aov(fit, n, bootstrap)
@@ -217,12 +220,134 @@ stillwhite.resid <- function(row, data) {
 \end{lstlisting}
 
 \clearpage
-\section{Functional data analysis}
+\section{Functional data analysis}\label{A:fda}
+\begin{lstlisting}[caption=Functions for cubic spline smoothing,label=R:fdsmooth]
+# Get spline basis, cubic by default
+getBasis <- function(knots, norder=4) {
+	require(fda)
+	nbasis <- length(knots) + norder - 2
+	create.bspline.basis(range(knots), nbasis, norder, knots)
+}
 
-\clearpage
+# Get spline smoothed functional data
+getFdsmooth <- function(x, y, smoothing=10) {
+	# x <- malaria.fda.df$pt
+	cubic.basis <- getBasis(x)
+	cubic.fdPar <- fdPar(cubic.basis, 2, smoothing)
+	# y <- as.matrix(malaria.fda.df$lparct)
+	smooth.basis(x, y, cubic.fdPar)
+}
+\end{lstlisting}
+
+Some of the code in the following listings is based on examples from Giles Hooker's Applied Functional Data Analysis course at Cornell University.\\
+\texttt{http://www.bscb.cornell.edu/~hooker/FDA2008/}
+\begin{lstlisting}[caption=Functions for fda regression,label=R:fregress]
+# Perform regression
+getfRegress <- function(data.smooth, smoothing=10) {
+	require(fda)
+
+	fd <- data.smooth$fd
+	x <- data.smooth$argvals
+	y <- data.smooth$y
+
+	# Get the factors as a list of fda objects
+	xfdlist <- getxfdlist()
+	# Get the coefficient fdas to be fitted
+	betalist <- getbetalist(fd, smoothing)
+
+	# Do the regression and add the standard errors for the coefficients
+	fr <- fRegress(fd, xfdlist, betalist, y2cMap=data.smooth$y2cMap)
+	fr$SigmaE <- getSigmaE(fr, x, y)
+	fr$betastderrlist <- getfStderr(fr, x, y)$betastderrlist
+	fr
+}
+
+# Get factor fdas for regression
+getxfdlist <- function() {
+	pt.cbasis <- create.constant.basis(range(malaria.fda.df$pt))
+	constfd=fd(matrix(1, 1, 43), pt.cbasis)
+	Sexfd=fd(matrix(as.numeric(malaria.fda.df$Sex) - 1, 1, 43), pt.cbasis)
+	Treatmentfd=fd(matrix(as.numeric(malaria.fda.df$Treatment) - 1, 1, 43), pt.cbasis)
+	Interactionfd=fd(matrix((as.numeric(malaria.fda.df$Sex) - 1)*(as.numeric(malaria.fda.df$Treatment) -1), 1, 43), pt.cbasis)
+	list(constfd, Sexfd, Treatmentfd, Interactionfd)
+}
+
+# Get paramater fdas for regression
+getbetalist <- function(fd, smoothing=10) {
+	betaifdPar <- fdPar(fd$basis, 2, smoothing)
+	list(betaifdPar, betaifdPar, betaifdPar, betaifdPar)
+}
+
+# Get var-covar matrix
+getSigmaE <- function(fit, x, y) {
+	yobs <- eval.fd(x, fit$yhatfdobj$fd)
+	e <- y - yobs
+	e %*% t(e) / dim(y)[2]
+}
+
+# Get the standard error of the coefficients
+getfStderr <- function(fit, x, y) {
+	sigmaE <- getSigmaE(fit, x, y)
+	fRegress.stderr(fit, fit$y2cMap, sigmaE)
+}
+\end{lstlisting}
+
+\begin{lstlisting}[caption=Functions to calculate fda regression standardized residuals and confidence intervals for fitted values,label=R:fdaresid]
+# Get the standardized residuals for fda regression
+getfResid <- function(fit, data.smooth) {
+	x <- data.smooth$argvals
+	n <- dim(data.smooth$y)[2]
+	errmat <- data.smooth$y - eval.fd(x, fit$yhatfdobj$fd)
+	resids.df <- data.frame(pt=x, as.data.frame(errmat))
+	p <- n + 1
+	resids.long <- reshape(resids.df, direction='long', varying=list(2:p))
+	names(resids.long)[2:3] <- c("Subject","e")
+	resids.long$s <- rep(sqrt(diag(fit$SigmaE)), n)
+	resids.long$sr <- with(resids.long, e/s)
+	resids.long$Sex <- factor("Male","Female")
+	resids.long$Treatment <- factor("alone","combi")
+	for (i in 1:n) {
+		resids.long$Sex[resids.long$Subject==i] <- PC90.df$Sex[PC90.df$Subject==i]
+		resids.long$Treatment[resids.long$Subject==i] <- PC90.df$Treatment[PC90.df$Subject==i]
+	}
+	resids.long
+}
+
+# Calculate confidence intervals for fitted fda mean function
+getfdpred <- function(t, fit, conf=0.95) {
+	require(fda)
+
+	# Get matrix of factor levels for each sex/treatment group
+	x <- t(sapply(getPredxfdlist(), function(x) x$coef))
+	# Get vector of coefficients
+	Beta <- as.matrix(sapply(fit$betaestlist, function(x) eval.fd(t, x$fd)))
+	# Get fitted values
+	pred <- t(x) %*% Beta
+
+	# Calculate residuals and residual variance
+	yobs <- eval.fd(fit$yfdPar$fd, t)
+	yfit <- eval.fd(fit$yhatfdobj$fd, t)
+	e <- yobs - yfit
+	n <- length(e)
+	p <- length(Beta)
+	s2 <- e %*% t(e) / (n - p)
+
+	# Calculate variance of predictions
+	X <- model.matrix(fit)
+	varpred <- as.numeric(s2) * t(x) %*% solve(t(X) %*% X) %*% x
+
+	# Return predictions at times specified with CIs specified
+	pval <- (1 - conf) / 2
+	limit <- sqrt(diag(varpred)) * abs(qt(pval, n - p))
+	matrix(c(rep(t, p), pred, pred-limit, pred+limit), p, p,
+		dimnames=list(NULL, c("t", "pred", "lwr", "upr")))
+}
+\end{lstlisting}
+
 \section{Plotting functions}
-\samepage
-\begin{lstlisting}[float=h,caption=Plot raw count data for male and female subjects side-by-side,label=R:rawggplot]
+The figures in this dissertation were plotted using Hadley Wickham's \texttt{ggplot2} \emph{R} library.\\
+\texttt{http://had.co.nz/ggplot2/}
+\begin{lstlisting}[caption=Plot raw count data for male and female subjects side-by-side,label=R:rawggplot]
 # Plot raw data for male and female subjects side-by-side
 rawggplot3 <- function(data, title="", centre="", r1=4, r2=4, points=T, lines=T) {
 	require(ggplot2)
@@ -267,7 +392,7 @@ addtrtgeoms <- function(q, points=T, lines=T) {
 }
 \end{lstlisting}
 
-\begin{lstlisting}[float=h,caption=Boxplots of pre-dose count by sex\, centre and treatment,label=R:predoseaov]
+\begin{lstlisting}[caption=Boxplots of pre-dose count by sex\, centre and treatment,label=R:predoseaov]
 # Plot pre-dose counts as boxplots by centre, sex and treatment
 predoseaov2 <- function(data) {
 	require(ggplot2)
@@ -305,7 +430,7 @@ predoseaov2 <- function(data) {
 }
 \end{lstlisting}
 
-\begin{lstlisting}[float=h,caption=Residuals diagnostic plots for \texttt{lm,aov} fitted models,label=R:plotresids.lm]
+\begin{lstlisting}[caption=Residuals diagnostic plots for \texttt{lm,aov} fitted models,label=R:plotresids.lm]
 # Residuals diagnostics plots for lm/aov fit
 plotresids.lm <- function(model, resids, data, binwidth=0.5, trans=F, weighted=F, xlab="Fitted PC90 (hours)") {
 	require(ggplot2)
@@ -356,7 +481,7 @@ plotresids.lm <- function(model, resids, data, binwidth=0.5, trans=F, weighted=F
 }
 \end{lstlisting}
 
-\begin{lstlisting}[float=h,caption=Plot all 3 PC90 methods on same plot,label=R:comparePC90]
+\begin{lstlisting}[caption=Plot all 3 PC90 methods on same plot,label=R:comparePC90]
 # All 3 PC90 estimation methods on same plot
 comparePC90 <- function(dat, pc90, logfit=T, ...) {
 	q <- getrawplot(dat) + geom_point(shape=1)
@@ -407,7 +532,64 @@ addPC90vlines <- function(q, dat, colours=c("blue", "red", "green")) {
 }
 \end{lstlisting}
 
-%\begin{lstlisting}[float=h,language=SAS,caption=SAS,label=SAS]
+\begin{lstlisting}[caption=Functional data analysis plots,label=R:fdaplot]
+# Plot coefficients from fda regression with CIs
+plotfdcoefs <- function(fit, nx=201) {
+	require(fda)
+	require(ggplot2)
+	
+	rngx <- fit$yfdPar$fd$basis$range
+	x <- seq(rngx[1], rngx[2], length=nx)
+	coef.names <- c("Mean (male, alone)", "Sex (female)", "Treatment (combi)", "Sex:Treatment (female, combi)")
+	plot.df <- data.frame()
+	for (i in 1:4) {
+		y <- eval.fd(x, fit$betaestlist[[i]]$fd)
+		s <- eval.fd(x, fit$betastderrlist[[i]])[,1]
+		plot.df <- rbind(plot.df, data.frame(x=x, y=y, upper=y+1.96*s, lower=y-1.96*s, coef=coef.names[i]))
+	}
+	q <- qplot(x, y, data=plot.df, geom='line', colour=coef, size=1, xlab="Time (hours)", ylab="log ratio of parasite count to pre-dose", main="Fitted coefficient functions with 95% confidence intervals")
+	q <- q + geom_line(aes(y=upper), linetype=2) + geom_line(aes(y=lower), linetype=2)
+	q <- q + geom_hline(yintercept=0, linetype=2)
+	q + facet_wrap(~coef, ncol=2) + opts(legend.position='none')
+}
+
+# Plot F statistic fda
+plotFperm <- function(fperm, x, y1, y2) {
+	require(ggplot2)
+	
+	time <- fperm$argvals
+	q <- qplot(time, fperm$Fvals, colour='red', size=1, geom='line', xlab='Time (hours)', ylab='F-statistic', main='Permutation F-test')
+	q <- q + geom_line(aes(y=fperm$qvals.pts), linetype=3, colour='blue')
+	q <- q + geom_hline(yintercept=fperm$qval, linetype=2, colour='blue')
+	q <- q + geom_text(aes(x=x, y=y1, label="maximum 0.05 critical value"), size=4, colour='blue')
+	q <- q + geom_text(aes(x=x, y=y2, label="pointwise 0.05 critical value"), size=4, colour='blue')
+	q + opts(legend.position='none')
+}
+
+
+# Get data for plotting predictions and CIs over time range
+getfdpreddata <- function(fit, nt=201, level.names=c("Male, alone", "Female, alone", "Male, combi", "Female, combi")) {
+	rngt <- fit$yfdPar$fd$basis$range
+	t <- seq(rngt[1], rngt[2], length=nt)
+	data.df <- data.frame(getfdpred(t[1], fit))
+	for (i in 2:nt)
+		data.df <- rbind(data.df, getfdpred(t[i], fit))
+	data.df$level <- rep(level.names, nt)
+	data.df
+}
+
+# Plot fitted function with CIs
+plotfdpred <- function(data) {
+	require(ggplot2)
+	q <- qplot(t, pred, data=data, ymin=lwr, ymax=upr, geom='errorbar', colour=Treatment, xlab="Time (hours)", ylab="log ratio of parasite count to predose", main="95% confidence intervals for functional model")
+	#q + geom_line(aes(y=lwr), linetype=2) + geom_line(aes(y=upr), linetype=2)
+	#q + geom_errorbar(aes(ymin=lwr, ymax=upr, colour=Treatment))
+	q <- q + geom_line(size=1)
+	q + facet_grid(~Sex)
+}
+\end{lstlisting}
+
+%\begin{lstlisting}[language=SAS,caption=SAS,label=SAS]
 %data subjects;
 %	set Project.Msc_data;
 %	x=acttm;
@@ -438,3 +620,4 @@ addPC90vlines <- function(q, dat, colours=c("blue", "red", "green")) {
 %	run;
 %quit;
 %\end{lstlisting}
+\end{singlespace}
