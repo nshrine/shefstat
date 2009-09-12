@@ -190,11 +190,14 @@ prr12.plot <- function(data) {
 }
 
 
+# Get spline basis, cubic by default
 getBasis <- function(knots, norder=4) {
+	require(fda)
 	nbasis <- length(knots) + norder - 2
 	create.bspline.basis(range(knots), nbasis, norder, knots)
 }
 
+# Get spline smoothed functional data
 getFdsmooth <- function(x, y, smoothing=10) {
 	# x <- malaria.fda.df$pt
 	cubic.basis <- getBasis(x)
@@ -208,6 +211,7 @@ misc <- function() {
 	malaria.fda.df$prr <- sweep(malaria.fda.df$prr, 2, predose, "/")
 }
 
+# Get factor fdas for regression
 getxfdlist <- function() {
 	pt.cbasis <- create.constant.basis(range(malaria.fda.df$pt))
 	constfd=fd(matrix(1, 1, 43), pt.cbasis)
@@ -217,11 +221,13 @@ getxfdlist <- function() {
 	list(constfd, Sexfd, Treatmentfd, Interactionfd)
 }
 
+# Get paramater fdas for regression
 getbetalist <- function(fd, smoothing=10) {
 	betaifdPar <- fdPar(fd$basis, 2, smoothing)
 	list(betaifdPar, betaifdPar, betaifdPar, betaifdPar)
 }
 
+# Perform regression
 getfRegress <- function(data.smooth, smoothing=10) {
 	fd <- data.smooth$fd
 	x <- data.smooth$argvals
