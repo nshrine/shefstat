@@ -229,11 +229,18 @@ getbetalist <- function(fd, smoothing=10) {
 
 # Perform regression
 getfRegress <- function(data.smooth, smoothing=10) {
+	require(fda)
+
 	fd <- data.smooth$fd
 	x <- data.smooth$argvals
 	y <- data.smooth$y
+
+	# Get the factors as a list of fda objects
 	xfdlist <- getxfdlist()
+	# Get the coefficient fdas to be fitted
 	betalist <- getbetalist(fd, smoothing)
+
+	# Do the regression and add the standard errors for the coefficients
 	fr <- fRegress(fd, xfdlist, betalist, y2cMap=data.smooth$y2cMap)
 	fr$SigmaE <- getSigmaE(fr, x, y)
 	fr$betastderrlist <- getfStderr(fr, x, y)$betastderrlist
@@ -250,11 +257,14 @@ getfRegress2 <- function(fd, x, smoothing=10) {
 	fr
 }
 
+# Get var-covar matrix
 getSigmaE <- function(fit, x, y) {
-	errmat <- y - eval.fd(x, fit$yhatfdobj$fd)
-	errmat %*% t(errmat) / dim(y)[2]
+	yobs <- eval.fd(x, fit$yhatfdobj$fd)
+	e <- y - yobs
+	e %*% t(e) / dim(y)[2]
 }
 
+# Get the standard error of the coefficients
 getfStderr <- function(fit, x, y) {
 	sigmaE <- getSigmaE(fit, x, y)
 	fRegress.stderr(fit, fit$y2cMap, sigmaE)
@@ -267,6 +277,7 @@ getFperm <- function(data.smooth, smoothing=10) {
 	Fperm.fd(fd, xfdlist, betalist)
 }
 
+# Get the standardized residuals for fda regression
 getfResid <- function(fit, data.smooth) {
 	x <- data.smooth$argvals
 	n <- dim(data.smooth$y)[2]
@@ -308,7 +319,10 @@ plotbetas <- function(fit) {
 	legend(0, -6, lty=c(1,1,1,2), col=c(1,2,4,1), legend=c("Mean (Male, single)","Female","Combined treatment","95% CIs"))
 }
 
+# Plot coefficients from fda regression with CIs
 plotfdcoefs <- function(fit, nx=201) {
+	require(fda)
+	require(ggplot2)
 	rngx <- fit$yfdPar$fd$basis$range
 	x <- seq(rngx[1], rngx[2], length=nx)
 	coef.names <- c("Mean (male, alone)", "Sex (female)", "Treatment (combi)", "Sex:Treatment (female, combi)")
@@ -324,7 +338,9 @@ plotfdcoefs <- function(fit, nx=201) {
 	q + facet_wrap(~coef, ncol=2) + opts(legend.position='none')
 }
 
+# Plot F statistic fda
 plotFperm <- function(fperm, x, y1, y2) {
+	require(ggplot2)
 	time <- fperm$argvals
 	q <- qplot(time, fperm$Fvals, colour='red', size=1, geom='line', xlab='Time (hours)', ylab='F-statistic', main='Permutation F-test')
 	q <- q + geom_line(aes(y=fperm$qvals.pts), linetype=3, colour='blue')
@@ -348,6 +364,7 @@ model.matrix.fRegress <- function(obj) {
 	
 }
 
+# Get data for plotting predictions and CIs over time range
 getfdpreddata <- function(fit, nt=201, level.names=c("Male, alone", "Female, alone", "Male, combi", "Female, combi")) {
 	rngt <- fit$yfdPar$fd$basis$range
 	t <- seq(rngt[1], rngt[2], length=nt)
@@ -358,25 +375,37 @@ getfdpreddata <- function(fit, nt=201, level.names=c("Male, alone", "Female, alo
 	data.df
 }
 
+# Calculate confidence intervals for fitted fda mean function
 getfdpred <- function(t, fit, conf=0.95) {
 	require(fda)
+
+	# Get matrix of factor levels for each sex/treatment group
 	x <- t(sapply(getPredxfdlist(), function(x) x$coef))
+	# Get vector of coefficients
 	Beta <- as.matrix(sapply(fit$betaestlist, function(x) eval.fd(t, x$fd)))
-	pred <- t(x)%*%Beta
+	# Get fitted values
+	pred <- t(x) %*% Beta
+
+	# Calculate residuals and residual variance
 	yobs <- eval.fd(fit$yfdPar$fd, t)
 	yfit <- eval.fd(fit$yhatfdobj$fd, t)
 	e <- yobs - yfit
 	n <- length(e)
 	p <- length(Beta)
-	s2 <- e%*%t(e) / (n-p)
+	s2 <- e %*% t(e) / (n - p)
+
+	# Calculate variance of predictions
 	X <- model.matrix(fit)
-	varpred <- as.numeric(s2) * t(x)%*%solve(t(X)%*%X)%*%x
-	pval <- (1-conf)/2
-	limit <- sqrt(diag(varpred)) * abs(qt(pval, n-p))
+	varpred <- as.numeric(s2) * t(x) %*% solve(t(X) %*% X) %*% x
+
+	# Return predictions at times specified with CIs specified
+	pval <- (1 - conf) / 2
+	limit <- sqrt(diag(varpred)) * abs(qt(pval, n - p))
 	matrix(c(rep(t, p), pred, pred-limit, pred+limit), p, p,
-		dimnames=list(NULL, c("t","pred","lwr","upr")))
+		dimnames=list(NULL, c("t", "pred", "lwr", "upr")))
 }
 
+# Plot fitted function with CIs
 plotfdpred <- function(data) {
 	require(ggplot2)
 	q <- qplot(t, pred, data=data, ymin=lwr, ymax=upr, geom='errorbar', colour=Treatment, xlab="Time (hours)", ylab="log ratio of parasite count to predose", main="95% confidence intervals for functional model")
