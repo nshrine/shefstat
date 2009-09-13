@@ -65,7 +65,7 @@ plotPC90 <- function(range) {
 getrawplot <- function(data) {
 	q <- ggplot(data, aes(x=acttm, y=parct))
 	q <- q + scale_x_continuous(name="Time (hours)")
-	q <- q + scale_y_continuous(formatter=function(x) return(x/1000), name="Parasite Count (1000s)")
+	q <- q + scale_y_continuous(formatter=function(x) return(x/1000), name=expression("Parasite Count / "*mu*"L  (1000s)"))
 	l <- length(unique(data$SUBJID))
 	q + facet_wrap(~SUBJID, ncol=min(3,l), scales="free_y")
 }
@@ -108,17 +108,17 @@ rawggplot <- function(data, title="", points=T, lines=T) {
 }
 
 # Plot raw data for male and female subjects side-by-side
-rawggplot3 <- function(data, title="", centre="", r1=4, r2=4, points=T, lines=T) {
+rawggplot3 <- function(data, title="", centre="", w1=0.45, w2=0.55, r1=4, r2=4, points=T, lines=T) {
 	require(ggplot2)
 
-	vp1 <- viewport(width=0.45, x=0, just="left")
+	vp1 <- viewport(width=w1, x=0, just="left")
 	q <- getrawplot(data[data$SEX=='Male',])
 	q <- addtrtgeoms(q, points, lines)
 	q <- q + opts(title=paste(centre, "Male"), legend.position='none')
 	q <- q + facet_wrap(~SUBJID, nrow=r1, scales="free_y")
 	print(q, vp=vp1)
 
-	vp2 <- viewport(width=0.55, x=1, just="right")
+	vp2 <- viewport(width=w2, x=1, just="right")
 	q <- getrawplot(data[data$SEX=='Female',])
 	q <- addtrtgeoms(q, points, lines)
 	q <- q + opts(title=paste(centre, "Female"))
@@ -151,7 +151,7 @@ predoseaov2 <- function(data) {
 
 	# Boxplots of pre-dose count by treatment for each centre
 	vp2 <- viewport(width=1, height=0.33, y=0.5, just="centre")
-	q2 <- qplot(trttxt, parct, data=data, geom="blank", colour=trttxt, xlab="Treatment:Centre", ylab="Parasite Count")
+	q2 <- qplot(trttxt, parct, data=data, geom="blank", colour=trttxt, xlab="Treatment:Centre", ylab=expression("Parasite Count / "*mu*"L"))
 	q2 <- q2 + scale_y_continuous(limits=c(0,100000), formatter="comma")
 	q2 <- q2 + geom_boxplot(width=0.3, outlier.size=0)
 	q2 <- q2 + geom_point(position=position_jitter(w=0.1))

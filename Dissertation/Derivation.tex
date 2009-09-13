@@ -181,7 +181,7 @@ Figure \ref{methodsbysubject} shows the distribution of PC90 estimates between a
 \item[Between subjects] - shows the distributions of residuals of PC90 values from the stratum mean i.e. the distribution of PC90 estimates about the mean at each unique centre-sex-treatment combination to which each subject belongs. In this way the distribution of the between-subjects ``error'' is shown.
 \item[Within subjects] removes the effect of correlation between estimates made on the same subject by showing the distribution of the residuals of the PC90 estimate from the subject mean. In this way the distribution of within-subjects ``error'' is shown.
 \end{description}
-\begin{figure}[ht]
+\begin{figure}[t]
 \includegraphics[width=150mm]{methodsbysubject.eps} 
 \caption{Comparison of PC90 estimates between and within subjects}
 \label{methodsbysubject}
@@ -265,6 +265,7 @@ As the distributions of differences are all approximately normally distributed, 
 \item[Cubic and log-linear interpolation methods] - A paired $t$ test excluding subject 509 gives no evidence to reject the hypothesis that the cubic and log-linear interpolation methods give the same PC90 estimates.
 \item[Logistic and log-linear interpolation methods] - A paired $t$ test excluding subjects 183 and 509 gives good evidence to reject the hypothesis that the logistic and log-linear methods produce the same PC90 estimates ($P<0.0005$). On average the logistic method produces PC90 estimates 49 minutes longer than the log-linear interpolation method with a 95\% confidence interval of (25, 73) minutes.
 \end{description}
+
 \subsubsection*{ANOVA}
 The results of 4-way ANOVA on the 121 PC90 estimates (3 estimates for each of 43 subjects, minus 8 where no logistic estimate could be made), classified by estimation method, centre, sex and treatment with all interactions are shown in Table \ref{pc90aov}. A square-root transformation of the P90 dependent variable was used for variance stabilisation; it will be shown in chapter \ref{ch:analysis} that this is appropriate for this data. Only the results for the effect of the PC90 method used and its 2-way interactions are shown here so as not to pre-empt the analysis of chapter \ref{ch:analysis}. 3-way and higher interactions were all non-significant.
 %> summary(PC90methods.within.aov)

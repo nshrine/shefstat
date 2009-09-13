@@ -1,7 +1,7 @@
 \chapter{Exploratory Data Analysis}\label{ch:data}
 
 \section{Raw count profiles}
-Figures \ref{raw1} and \ref{raw2} show the parasite counts plotted against time in hours. The data is as received from GSK. The number above each plot is the patient identifier. Note that the vertical scales vary for each plot in order to show the main features of the data and hence the parasite counts are not directly comparable.
+Figures \ref{raw1} and \ref{raw2} show the measured parasite count per microlitre of blood plotted against time in hours. The data is as received from GSK. The number above each plot is the patient identifier. Note that the vertical scales vary for each plot in order to show the main features of the data and hence the parasite counts are not directly comparable.
 %\begin{figure}[h]
 %\centering
 %\includegraphics[width=150mm]{raw1f.eps}
@@ -26,12 +26,12 @@ Figures \ref{raw1} and \ref{raw2} show the parasite counts plotted against time 
 \begin{sidewaysfigure}[p]
 \centering
 \includegraphics[height=150mm]{raw1.eps}
-\caption{Parasite count for centre 1}\label{raw1}
+\caption{Parasite counts per \micro\liter\ of blood for centre 1 subjects}\label{raw1}
 \end{sidewaysfigure} 
 \begin{sidewaysfigure}[p]
 \centering
 \includegraphics[height=150mm]{raw2.eps}
-\caption{Parasite count for centre 2}\label{raw2}
+\caption{Parasite counts per \micro\liter\ of blood  for centre 2 subjects}\label{raw2}
 \end{sidewaysfigure} 
 
 \subsection{Main features of the data}\label{sec:behaviours}
@@ -56,20 +56,23 @@ One of the first questions addressed was whether the parasite count is a true co
 \begin{enumerate}
  \item A microscopist would choose ``suitable area'' of a slide of blood and work from left to right counting parasites ($N_p$) and white blood cells ($N_w$).
 \item If by the time they have counted around 200 white blood cells they have seen less than 10 parasites then they continue counting until they have counted around 500 white blood cells.
-\item The number of white blood cells in a $\mu L$ of blood ($\rho_w$) is automatically counted by a machine.
+\item The number of white blood cells in a \micro\liter\ of blood ($\rho_w$) is automatically counted by a machine.
 \end{enumerate}
-Accordingly the number of parasites in a $\mu L$ of blood (\texttt{parct}) is given by:
+Accordingly the number of parasites in a \micro\liter\ of blood (\texttt{parct}) is given by:
 $$\mathtt{parct}=\frac{N_p}{N_w}\rho_w$$
 and thus we cannot treat this derived measurement as a count for modeling purposes.
+\begin{description}
+\item[Note]--- Whenever the term ``count'' or ``parasite count'' is used in this dissertation, in the text or in plot axes, it should always be interpreted as a derived count per \micro\liter\; it is never an actual raw count.
+\end{description}
 
 \subsection{The Pre-dose parasite count}
-%We were also informed that the white blood cell count is right skewed and so we might expect that the parasite count per $\mu L$ will be also.
+%We were also informed that the white blood cell count is right skewed and so we might expect that the parasite count per \micro\liter\ will be also.
 %Table \ref{predose} shows the pre-treatment parasite counts in the subjects from each test centre and of each sex. It can be seen that for 3 cases the mean is larger than the median meaning that the distributions are right skewed. This is to be expected for non-negative data such as this. When model fitting to this data we may have to choose some transformation of the parasite count such as taking logarithms.
 Figure \ref{preaov} shows the pre-dose parasite counts grouped by sex, centre and treatment. There does not seem to be an obvious dependence of the level of the pre-dose parasite count on sex, centre or treatment, although there appears to be a greater dispersion of the count for patients on the single treatment.
 \begin{figure}[p]
 \begin{center}
 \includegraphics[width=150mm]{preaov.eps}
-\caption{Pre-dose parasite counts by sex, centre and treatment, with box plots showing median and quartiles.}
+\caption{Pre-dose parasite counts per \micro\liter\ by sex, centre and treatment, with box plots showing median and quartiles.}
 \label{preaov}
 \end{center}
 \end{figure}
@@ -223,7 +226,7 @@ We can attempt to get some insight into the interaction of sex and treatment eff
 \section{Key findings}
 Our initial findings after exploratory graphical and preliminary ANOVA analyses are:
 \begin{itemize}
-\item The parasite data appears to be right-skewed and a logarithmic transformation seems to be appropriate to remedy this. Wootton \textit{et al.} \cite{wootton} chose a logarithmic transformation of the parasite count in their study of similar data.
+\item The parasite data appears to be right-skewed and a logarithmic transformation seems to be appropriate to remedy this. Wootton \textit{et al.} chose a logarithmic transformation of the parasite count in their study of similar data \cite{wootton}.
 \item The pre-dose parasite count does not seem to be related to sex, centre or intended treatment or combinations of these.
 \item The parasite count after treatment shows dependence on the treatment with possibly some interaction with the sex of the subject at early time points.
 \end{itemize}
