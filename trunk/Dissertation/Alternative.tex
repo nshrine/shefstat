@@ -198,11 +198,11 @@ Functional data analysis (FDA) is a relatively new technique whereby the data is
 The parasite count data in this study is a good candidate for functional data analysis in that the response for each replicate of experimental factors centre, sex and treatment can be described as a smooth function of parasite count with time. We already used cubic and logistic functions in order to extract a single response variable, the PC90 clearance time, but now we can go on to explore the nature of a functional response.
 
 Many familiar statistical summaries and techniques have functional equivalents. Means and standard deviations can be expressed as mean functions and standard deviation functions for example. Regression and ANOVA can be performed with functional dependent and independent variables yielding residual, $F$ statistic and coefficient functions.
+
 \subsection{Basis functions}
 The first step in FDA is to identify an appropriate smoothing function for our data known as a \emph{basis function}. For periodic data fourier functions are normally used, for non-periodic data the most commonly used basis functions are cubic splines \cite{fdaweb}. Fitting a cubic spline requires choice of \emph{breakpoints} between which we fit cubic polynomials. The simplest choice of breakpoints with longitudinal data is to choose the times at which the data were taken. We also specify a smoothness parameter that limits the size of higher derivatives and hence the sharpness of the curve.
 
 \subsubsection*{Fitting a basis function to the parasite count data}
-
 We want to compare the development of parasite count with time between subjects using a scale that is independent of the absolute count. Hence we will use the fraction of the pre-dose parasite count. We determined that a logarithmic transform of the count is appropriate for this data and hence we will use as our time-dependent variable $y(t)$
 $$y(t)=\log (1+P(t))-\log(1+P_{0})$$
 which is the logarithm of the ratio of the parasite count at time $t$, $P(t)$, to the pre-dose parasite count $P_{0}$. 1 is added to both so that the logarithm of 0 count is 0.
@@ -233,10 +233,10 @@ The standardized residuals ($e_{jkl}(t)/\hat{\sigma}(t)$) from fitting this mode
 \label{fdahistqq}
 \end{figure}
 
-The \texttt{fda} library provides functions for deriving a permutation $F$ test similar to the methods used in section \ref{section:resampling}. The results of this permutation $F$ test for our 2-way ANOVA are shown in Figure \ref{fdapermF}. It can be seen that the null hypothesis of no difference of sex or treatment groups is not rejected up to 10 hours from first dose, then there is evidence after 10 hours to reject the null hypothesis, with no evidence for rejection after about 30 hours. This can be explained by the parasite count being independent of sex and treatment allocation at the start, with significant differences in the count trajectories developing between the groups as time goes on, with them eventually returning to parity as clearance is finally achieved for all subjects.
+The \texttt{fda} library provides functions for deriving a permutation $F$ test similar to the methods used in section \ref{section:resampling}. The results of this permutation $F$ test for our 2-way ANOVA are shown in Figure \ref{fdapermF}. The pointwise critical value is relevant if we look at any one time, but for making simultaneous hypothesis tests over all times we should use the maximum critical value shown. It can be seen that the null hypothesis of no difference of sex or treatment groups is not rejected up to 10 hours from first dose, then there is evidence after 10 hours to reject the null hypothesis, with no evidence for rejection after about 30 hours. This can be explained by the parasite count being independent of sex and treatment allocation at the start, with significant differences in the count trajectories developing between the groups as time goes on, with them eventually returning to parity as clearance is finally achieved for all subjects.
 \begin{figure}[p]
 \includegraphics[width=150mm]{fdapermF.eps} 
-\caption{$F$ statistic function for 2-way functional ANOVA}
+\caption{$F$ statistic function for 2-way functional ANOVA. The critical value at each time is shown and the critical value for the maximum $F$ statistic over all times.}
 \label{fdapermF}
 \end{figure}
 
