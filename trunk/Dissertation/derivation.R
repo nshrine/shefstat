@@ -9,8 +9,8 @@ ggplot90 <- function(data, title="", pc90lines, xpos=45, am=1, vjust=-0.1) {
 #	q + geom_text(aes(x=xpos, y=pc90, label="PC90", vjust=vjust), data=pc90lines[am,])
 }
 
-gglog90 <- function(data, title="", xpos=45, am=1, vjust=-0.1) {
-	q <- rawggplot(data, title)
+gglog90 <- function(data, title="", xpos=45, am=1, vjust=-0.1, ...) {
+	q <- rawggplot(data, title, ...)
 	q <- getlogplot(q)
 	addPC90lines(q, logplot=T, xpos=xpos, am=am, vjust=-0.1)
 }
@@ -50,13 +50,6 @@ addcubicfit <- function(q, ...) {
 	q + stat_smooth(method="lm", formula=y~x+I(x^2)+I(x^3), data=uptofirstzero(q$data), fullrange=F, se=F, ...) 
 }
 
-plotcubic <- function(subjs = c('54','80','96','98','140','150','176','182','185','187','197','203')) {
-    q <- rawggplot(subset(malaria, subset=SUBJID %in% subjs), title="Cubic fit to log parasite count up to first 0 reading", lines=F)
-#	q <- q + opts(legend.position="bottom")
-	q <- getlogplot(q)
-	q <- addPC90lines(q, logplot=T, am=10)
-	addcubicfit(q)
-}
 
 # Add logistic fit to plot q
 addlogfit <- function(q, ...) {
@@ -67,9 +60,9 @@ addlogfit <- function(q, ...) {
 addlogparms <- function(q, fits) {
 	subjs <- unique(q$data$SUBJID)
 	fits <- subset(fits, subset=SUBJID %in% subjs)
-	q <- q + geom_segment(data=fits, aes(x=min(x), y=A, xend=U, yend=A), colour='red', size=1)
-	q <- q + geom_segment(data=fits, aes(x=U, y=L, xend=max(x), yend=L), colour='red', size=1)
-	q <- q + geom_segment(data=fits, aes(x=U, y=L, xend=U, yend=A), colour='red', size=1)
+	q <- q + geom_segment(data=fits, aes(x=min(acttm), y=A, xend=U, yend=A), colour='red', linetype=2)
+	q <- q + geom_segment(data=fits, aes(x=U, y=L, xend=max(acttm), yend=L), colour='red', linetype=2)
+	q <- q + geom_segment(data=fits, aes(x=U, y=L, xend=U, yend=A), colour='red', linetype=2)
 	q + geom_text(data=fits, x=40, y=4, aes(label=round(-1/B, 1)), colour='blue')
 }
 
@@ -125,6 +118,11 @@ plotresids <- function(data, model, resids, fits, ...) {
 
 	vp1 <- viewport(width=0.5, height=0.5, x=0.75, y=0.75)
 	q1 <- qplot(sample=resids, stat="qq")
+	y <- quantile(resids, c(0.25, 0.75))
+	x <- qnorm(c(0.25, 0.75))
+	slope <- diff(y)/diff(x)
+	int <- y[1L] - slope * x[1L]
+	q1 <- q1 + geom_abline(intercept=int, slope=slope, linetype=2)
 	print(q1, vp=vp1)
 
 	vp2 <- viewport(width=0.5, height=0.5, x=.25, y=0.25)
@@ -306,3 +304,50 @@ comparelog <- function(data, title="", centre="", r1=4, r2=4, points=T, lines=T)
 # print(q1, vp=vp1)
 # print(q2, vp=vp2)
 # export.eps("Afits1F.eps")
+
+compdiffs <- function(data) {
+	title <- 'cubic - logistic'
+	vp1 <- viewport(width=0.5, x=0, height=0.33, y=1, just=c("left","top"))
+	dat <- data[data$methods==title,]
+	q <- gethist(dat, title)
+	print(q, vp=vp1)
+
+	vp2 <- viewport(width=0.5, x=1, height=0.33, y=1, just=c("right","top"))
+	q <- getqq(dat, title)
+	print(q, vp=vp2)
+
+	title <- 'logistic - loglin'
+	vp3 <- viewport(width=0.5, x=0, height=0.33, y=0.5, just=c("left","centre"))
+	dat <- data[data$methods==title,]
+	q <- gethist(dat, title)
+	print(q, vp=vp3)
+
+	vp4 <- viewport(width=0.5, x=1, height=0.33, y=0.5, just=c("right","centre"))
+	q <- getqq(dat, title)
+	print(q, vp=vp4)
+
+	title <- 'cubic - loglin'
+	vp5 <- viewport(width=0.5, x=0, height=0.33, y=0, just=c("left","bottom"))
+	dat <- data[data$methods==title,]
+	q <- gethist(dat, title)
+	print(q, vp=vp5)
+
+	vp6 <- viewport(width=0.5, x=1, height=0.33, y=0, just=c("right","bottom"))
+	q <- getqq(dat, title)
+	print(q, vp=vp6)
+}
+
+gethist <- function(dat, title) {
+	q <- qplot(PC90.diff, geom='blank', data=dat, xlab="Difference in PC90 estimate (hours)", main=title)
+	q <- q + geom_histogram(colour="black", fill="white", binwidth=1) 
+	q + geom_vline(xintercept=0, linetype=2)
+}
+
+getqq <- function(dat, title) {
+	q <- qplot(sample=PC90.diff, data=dat, stat="qq", main=title)
+	y <- quantile(dat$PC90.diff, c(0.25, 0.75))
+	x <- qnorm(c(0.25, 0.75))
+	slope <- diff(y)/diff(x)
+	int <- y[1L] - slope * x[1L]
+	q + geom_abline(intercept=int, slope=slope, linetype=2)
+}

@@ -343,7 +343,7 @@ plotFperm <- function(fperm, x, y1, y2) {
 	require(ggplot2)
 	time <- fperm$argvals
 	q <- qplot(time, fperm$Fvals, colour='red', size=1, geom='line', xlab='Time (hours)', ylab='F-statistic', main='Permutation F-test')
-	q <- q + geom_line(aes(y=fperm$qvals.pts), linetype=3, colour='blue')
+	q <- q + geom_line(aes(y=fperm$qvals.pts), linetype=2, size=0.5, colour='blue')
 	q <- q + geom_hline(yintercept=fperm$qval, linetype=2, colour='blue')
 	q <- q + geom_text(aes(x=x, y=y1, label="maximum 0.05 critical value"), size=4, colour='blue')
 	q <- q + geom_text(aes(x=x, y=y2, label="pointwise 0.05 critical value"), size=4, colour='blue')

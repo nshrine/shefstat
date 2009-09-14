@@ -24,7 +24,7 @@ $$\log(1+P_{t})=\beta_0+\beta_1t+\beta_2t^2+\beta_3t^3+\epsilon\quad\quad\epsilo
 where $\log(1+P_{t})$ is used so that the dependent variable is zero at zero parasite count.
 
 Figure \ref{cubics} shows the cubic fits to the log parasite count for centre 1, male subjects. It can be seen that the model describes the data fairly well, but it looks as if the combined treatment data is more closely modelled, with the single treatment data showing more dispersion about the fitted model. 
-\begin{figure}[h]
+\begin{figure}[p]
 \includegraphics[width=150mm]{cubics.eps} 
 \caption{Cubic fits to log parasite count up to first zero reading}\label{cubics}
 \end{figure}
@@ -236,27 +236,32 @@ It can be seen that the choice of method only seems to have a significant effect
 To perform a statistical comparison between the PC90 estimation methods we want to test the null hypothesis that the difference between PC90 estimated by each method is zero. In order to do this we need to look at the distribution of the differences between PC90 estimates and accordingly choose an appropriate statistical test.
 
 \subsubsection*{Distributions of differences}
+The distribution of the difference between PC90 estimated by the cubic and logistic methods is shown in Figure \ref{comparediffs}.
 \begin{description}
-\item[Cubic and logistic methods] - The distribution of the difference between PC90 estimated by the cubic and logistic methods is shown in Figure \ref{cub-log}. Apart from one outlying datum it can be seen that the differences are approximately normally distributed. The outlying value corresponds to subject 183, which we can see in Figure \ref{pc90-bad} gives a very different estimate by the two methods due to the parasite count being fairly constant around the PC90 level.
-\item[Cubic and log-linear interpolation methods] - The distribution of the difference between PC90 estimated by the cubic and log-linear interpolation methods is shown in Figure \ref{cub-loglin}.
-Again the distribution is approximately normally distributed apart from a single outlying value corresponding to subject 509. We can see in Figure \ref{pc90-bad} that again this corresponds to estimates made in a region where the parasite count is flat.
-\item[Logistic and log-linear interpolation methods] - The distribution of the difference between PC90 estimated by the logistic and log-linear interpolation methods is shown in Figure \ref{log-loglin}. The two outlying values correspond to subjects 183 and 509 again.
+\item[Cubic and logistic methods] - Apart from one outlying datum it can be seen that the differences are approximately normally distributed. The outlying value corresponds to subject 183, which we can see in Figure \ref{pc90-bad} gives a very different estimate by the two methods due to the parasite count being fairly constant around the PC90 level.
+\item[Cubic and log-linear interpolation methods] - Again the distribution is approximately normally distributed apart from a single outlying value corresponding to subject 509. We can see in Figure \ref{pc90-bad} that again this corresponds to estimates made in a region where the parasite count is flat.
+\item[Logistic and log-linear interpolation methods] - The two outlying values correspond to subjects 183 and 509 again.
 \end{description}
 As the distributions of differences are all approximately normally distributed, apart from a few anomalous estimates as described, we can used paired-sample $t$ tests to test our null hypothesis.
+%\begin{figure}[p]
+%\includegraphics[width=150mm]{cub-log.eps} 
+%\caption{Distribution of the difference between PC90 estimated by the cubic and logistic methods}
+%\label{cub-log}
+%\end{figure}
+%\begin{figure}[p]
+%\includegraphics[width=150mm]{cub-loglin.eps} 
+%\caption{Distribution of the difference between PC90 estimated by the cubic and log-linear interpolation methods}
+%\label{cub-loglin}
+%\end{figure}
+%\begin{figure}[p]
+%\includegraphics[width=150mm]{log-loglin.eps} 
+%\caption{Distribution of the difference between PC90 estimated by the logistic and log-linear interpolation methods}
+%\label{log-loglin}
+%\end{figure}
 \begin{figure}[p]
-\includegraphics[width=150mm]{cub-log.eps} 
-\caption{Distribution of the difference between PC90 estimated by the cubic and logistic methods}
-\label{cub-log}
-\end{figure}
-\begin{figure}[p]
-\includegraphics[width=150mm]{cub-loglin.eps} 
-\caption{Distribution of the difference between PC90 estimated by the cubic and log-linear interpolation methods}
-\label{cub-loglin}
-\end{figure}
-\begin{figure}[p]
-\includegraphics[width=150mm]{log-loglin.eps} 
-\caption{Distribution of the difference between PC90 estimated by the logistic and log-linear interpolation methods}
-\label{log-loglin}
+\includegraphics[width=150mm]{comparediffs.eps} 
+\caption{Distribution of the difference between PC90 estimated by the cubic, logistic and log-linear methods}
+\label{comparediffs}
 \end{figure}
 
 \subsubsection*{Paired $t$ tests}
@@ -386,7 +391,7 @@ The logistic model investigated here is the same one used by Wootton \textit{et 
 
 Carmello \textit{et al}. use the log-linear interpolation method for estimating PC90 \cite{carmello}. The only similar study employing polynomial regression found was that of de Vries \textit{et al.} who experiment with use of a quadratic in time to model the log parasite count, but ultimately chose a model without a quadratic term \cite{vries}.
 
-In summary it would seem that the log-linear interpolation method seems the most suitable for estimating PC90, in terms of its simplicity and that it appears to consistently estimate sensible PC90 values as determined by graphical inspection. Perhaps estimates using the cubic method could also be easily computed and where the two methods disagree by a large amount e.g. greater than $3\sigma$ as for subject 509 here (Figures \ref{pc90-bad} and \ref{cub-loglin}), then these subjects could be flagged for closer inspection.
+In summary it would seem that the log-linear interpolation method seems the most suitable for estimating PC90, in terms of its simplicity and that it appears to consistently estimate sensible PC90 values as determined by graphical inspection. Perhaps estimates using the cubic method could also be easily computed and where the two methods disagree by a large amount e.g. greater than $3\sigma$ as for subject 509 here (Figures \ref{pc90-bad} and \ref{comparediffs}), then these subjects could be flagged for closer inspection.
 
 In the analysis that follows the PC90 estimates obtained using the log-linear interpolation are used.
 %\subsection{Other possible methods}
