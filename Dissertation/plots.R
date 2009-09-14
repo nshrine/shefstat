@@ -94,11 +94,13 @@ addtrtgeoms <- function(q, points=T, lines=T) {
 }
 
 # Initial raw plot of data take 2
-rawggplot <- function(data, title="", points=T, lines=T) {
+rawggplot <- function(data, title="", points=T, lines=T, ncol) {
 	
 #	q <- qplot(acttm, parct, data=data, aes(acttm, parct), xlab="Time (hours)", ylab="Parasite Count (1000s)", main=title, geom="blank")
 	q <- getrawplot(data)
 	q <- addtrtgeoms(q, points, lines)
+	if (!missing(ncol))
+		q <- q + facet_wrap(~SUBJID, ncol=ncol)
 	q + opts(title=title)
 	#    q <- q + scale_y_continuous(formatter=function(x) return(x/1000))
 #	l <- length(unique(data$SUBJID))
@@ -170,7 +172,7 @@ predoseaov2 <- function(data) {
 	print(q3, vp=vp3)
 }
 
-allaov <- function(data, title="") {
+allaov1 <- function(data, title="") {
 	q <- qplot(pt, log((1 + parct)/pre), data=data, xlab="Time from first dose (hours)", ylab="Log fraction of pre-dose count", main=title, geom="blank")
 	q <- q + geom_point(aes(colour=trttxt, shape=trttxt)) + scale_colour_discrete("Treatment") + scale_shape("Treatment")
 #	q <- q + scale_y_continuous(formatter=function(x) return(x/1000)) #+ opts(axis.text.x = theme_text(angle=90))
@@ -185,7 +187,7 @@ allaov2 <- function(data, title="Parasite reduction averaged over subjects with 
 	q <- qplot(pt, log((1 + parct)/pre), data=data, xlab="", ylab="", main="", geom="blank")
 	q <- q + geom_point(aes(colour=trttxt, shape=trttxt)) + scale_colour_discrete("Treatment") + scale_shape("Treatment")
 	q <- q + stat_summary(fun.y="mean", geom="line", aes(colour=trttxt)) 
-	print(q, vp=vp1)
+	print(q + opts(title="All"), vp=vp1)
 
 	# Split by centre
 	vp2 <- viewport(height=0.33, y=0.5, just="centre")

@@ -131,7 +131,7 @@ plotresids.lm <- function(model, resids, data, binwidth=0.5, trans=F, weighted=F
 		q <- qplot(Factor, resids, data=data.l, geom="blank", ylab=lab.txt)
 	q <- q + geom_hline(aes(yintercept=0), linetype=2)
 	q <- q + geom_point(position=position_jitter(w=0.1))
-	if (is.factor(data$Factor))
+	if (is.factor(data.l$Factor))
 		q <- q + stat_summary(fun.dat="mean_sdl", mult=1, geom="crossbar", width=0.5)
 	q <- q + opts(legend.position="none")
 	print(q, vp=vp3)
