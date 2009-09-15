@@ -1,7 +1,7 @@
 \chapter{Exploratory Data Analysis}\label{ch:data}
 
 \section{Raw count profiles}
-Figures \ref{raw1} and \ref{raw2} show the measured parasite count per microlitre of blood plotted against time in hours. The data is as received from GSK. The number above each plot is the patient identifier. Note that the vertical scales vary for each plot in order to show the main features of the data and hence the parasite counts are not directly comparable.
+Figures \ref{raw1} and \ref{raw2} show the measured parasite count per microlitre of blood plotted against time in hours. The data is as received from GSK. The subject identifier is shown above each plot. The colour indicates the treatment group, either ``alone" (single-drug treatment) or ``combi" (combined-drug treatment). Note that the vertical scales vary for each plot in order to show the main features of the data and hence the parasite counts are not directly comparable between subjects in these plots.
 %\begin{figure}[h]
 %\centering
 %\includegraphics[width=150mm]{raw1f.eps}
@@ -39,36 +39,37 @@ Generally, there appears to be a drop in the parasite count from an initial high
 
 To briefly summarise, the main behaviours observed are:
 \begin{itemize}
-\item A relatively steep monotonic drop in the count e.g. centre 1 female subjects 182 and 264, centre 1 male subjects 187, 162, 54, 176 and 185 (Figure \ref{raw1}), centre 2 female subjects 462, 523 and 525 and centre 2 male subjects 509, 469 and 511 (Figure \ref{raw2}).
+\item A relatively steep monotonic drop in the count e.g. centre 1 male subjects 187, 162, 54, 176 and 185, centre 1 female subjects 182 and 264  (Figure \ref{raw1}), centre 2 male subjects 509, 469 and 511 and centre 2 female subjects 462, 523 and 525 (Figure \ref{raw2}).
 
-A variation of this type has the parasite count increasing after the first dose before falling e.g. subjects 197 and 203 and subjects 262 and 294 (Figure \ref{raw1}). White \cite{white} notes that ``\textit{parasitemia may rise alarmingly in the hours following treatment}'' and gives reasons therein.
-\item A more erratic and slower drop in the parasite count e.g. centre 1 female subjects 285 and 96, centre 1 male subjects 295 and 140 (Figure \ref{raw1}) and centre 2 female subjects 521, 502 and 505 (Figure \ref{raw2}). 
-\item The parasite count seems to fluctuate about a constant level before falling e.g. centre 1 female subjects 150 and 101 and centre 1 male subjects 224, 98, 80 and 218 (Figure \ref{raw1}). 
+A variation of this type has the parasite count increasing after the first dose before falling e.g. male subjects 262 and 294 and female subjects 197 and 203 (Figure \ref{raw1}). White notes that ``\textit{parasitemia may rise alarmingly in the hours following treatment}'' and gives reasons therein \cite{white}.
+\item A more erratic and slower drop in the parasite count e.g. centre 1 male subjects 295 and 140, centre 1 female subjects 285 and 96 (Figure \ref{raw1}) and centre 2 female subjects 521, 502 and 505 (Figure \ref{raw2}). 
+\item The parasite count seems to fluctuate about a constant level before falling e.g. centre 1 male subjects 224, 98, 80 and 218 and centre 1 female subjects 150 and 101 (Figure \ref{raw1}). 
 \end{itemize}
-There are some profiles that we might suspect contain anomalous data such as subject 500 in Figure \ref{raw2} where there are two unusually high values compared to the main trend. We might suspect that some inconsistency in the counting procedure explains this behaviour rather than the patient's parasite count jumping by a large amount on these occasions. Looking at how the parasite count was obtained should give an insight into potential sources of inconsistency.
+There are some profiles that we might suspect contain anomalous data such as subject 500 in Figure \ref{raw2} where there are two unusually high values compared to the main trend. We might suspect that some inconsistency in the counting procedure explains this behaviour rather than the subject's parasite count jumping by a large amount on these occasions. Looking at how the parasite count was obtained should give an insight into potential sources of inconsistency.
+
 \subsection{Implications for modeling}
-It can be seen from the parasite count profiles in Figures \ref{raw1} and \ref{raw2} that no simple linear model will closely approximate the behaviour of all patients' counts over the whole time range. However, as we are primarily interested in estimating the time to reduction of the parasite count by 90\% it is only really in this region that it is critical to find a good model. It may be that the erratic behaviour of some parasite counts at short times after first dose is of little relevance. With this in mind, one possible approach may be to use a logarithmic transform of the parasite count thereby emphasising the behaviour at low counts.
+It can be seen from the parasite count profiles in Figures \ref{raw1} and \ref{raw2} that no simple model will closely approximate the behaviour of all subjects' counts over the whole time range. However, as we are primarily interested in estimating the time to reduction of the parasite count by 90\% it is really only in this region that it is critical to find a good model. It may be that the erratic behaviour of some parasite counts at short times after first dose is of little relevance. With this in mind, one possible approach may be to use a logarithmic transform of the parasite count thereby emphasising the behaviour at low counts.
 
 \section{Properties of the Parasite Count}
 
 \subsection{Derivation of the Parasite Count}
-One of the first questions addressed was whether the parasite count is a true count, and thus Poisson statistics would be applicable, or whether it is a derived measurement. Our contact informed us that the method used to arrive at the parasite count values given is broadly as follows.
+One of the first questions to be addressed is whether the parasite count is a true count, and thus Poisson statistics are applicable, or whether it is a derived measurement. Our contact informed us that the method used to arrive at the parasite counts per \micro\litre\ given is broadly as follows:
 \begin{enumerate}
  \item A microscopist would choose ``suitable area'' of a slide of blood and work from left to right counting parasites ($N_p$) and white blood cells ($N_w$).
-\item If by the time they have counted around 200 white blood cells they have seen less than 10 parasites then they continue counting until they have counted around 500 white blood cells.
+\item If by the time they have counted around 200 white blood cells, they have seen less than 10 parasites then they continue counting until they have counted around 500 white blood cells.
 \item The number of white blood cells in a \micro\liter\ of blood ($\rho_w$) is automatically counted by a machine.
 \end{enumerate}
 Accordingly the number of parasites in a \micro\liter\ of blood (\texttt{parct}) is given by:
 $$\mathtt{parct}=\frac{N_p}{N_w}\rho_w$$
 and thus we cannot treat this derived measurement as a count for modeling purposes.
 \begin{description}
-\item[Note]--- Whenever the term ``count'' or ``parasite count'' is used in this dissertation, in the text or in plot axes, it should always be interpreted as a derived count per \micro\liter\; it is never an actual raw count.
+\item[Note]--- Whenever the term ``count'' or ``parasite count'' is used in this dissertation, in the text or in plot axes, it should always be interpreted as a derived count rate per \micro\liter; it is never an actual raw count.
 \end{description}
 
 \subsection{The Pre-dose parasite count}
 %We were also informed that the white blood cell count is right skewed and so we might expect that the parasite count per \micro\liter\ will be also.
 %Table \ref{predose} shows the pre-treatment parasite counts in the subjects from each test centre and of each sex. It can be seen that for 3 cases the mean is larger than the median meaning that the distributions are right skewed. This is to be expected for non-negative data such as this. When model fitting to this data we may have to choose some transformation of the parasite count such as taking logarithms.
-Figure \ref{preaov} shows the pre-dose parasite counts grouped by sex, centre and treatment. There does not seem to be an obvious dependence of the level of the pre-dose parasite count on sex, centre or treatment, although there appears to be a greater dispersion of the count for patients on the single treatment.
+Figure \ref{preaov} shows the pre-dose parasite counts grouped by sex, centre and treatment. There does not seem to be an obvious dependence of the level of the pre-dose parasite count on sex, centre or treatment, although there appears to be a greater dispersion of the count for subjects on the single treatment.
 \begin{figure}[p]
 \begin{center}
 \includegraphics[width=150mm]{preaov.eps}
@@ -77,7 +78,7 @@ Figure \ref{preaov} shows the pre-dose parasite counts grouped by sex, centre an
 \end{center}
 \end{figure}
 
-If we perform 3-way ANOVA of the pre-dose parasite count by sex, centre and treatment with all interactions we obtain the residuals shown in Figure \ref{preaovres}. It can be seen that they are right-skewed and heteroscedastic with unstable variance between groups and correlated with fitted parasite count.
+If we perform 3-way ANOVA of the pre-dose parasite count by sex, centre and treatment with all interactions we obtain the residuals shown in Figure \ref{preaovres}. It can be seen that they are right-skewed and heteroscedastic with unstable variance between groups and variance correlated with fitted parasite count.
 \begin{figure}[p]
 \begin{center}
 \includegraphics[width=150mm]{preaovres.eps}
@@ -86,7 +87,7 @@ If we perform 3-way ANOVA of the pre-dose parasite count by sex, centre and trea
 \label{preaovres}
 \end{figure} 
 
-If we repeat the ANOVA but with the logarithm of the pre-dose parasite count we find that the residuals are approximately normally distributed and homoscedastic as shown in Figure \ref{logpreaovres}.
+If we repeat the ANOVA but with the logarithm of the pre-dose count, we find that the residuals are approximately normally distributed and homoscedastic as shown in Figure \ref{logpreaovres}.
 \begin{figure}[p]
 \begin{center}
 \includegraphics[width=150mm]{logpreaovres.eps}
@@ -124,7 +125,7 @@ Total&17.99&42&&&
 \hspace{20em}*$<0.05$
 \end{table}
 
-It can be seen that there is no evidence to reject the hypotheses that none of the factors centre, sex or treatment are related to the pre-dose parasite count, although there is some marginal evidence ($p\approx 0.05$) to reject the hypothesis of no 3-way interaction being present. The Kruskal-Wallis non-parametric equivalent test also does not reveal any evidence to reject the null hypothesis of the same median pre-dose count in all groups.
+It can be seen that there is no evidence to reject the hypotheses that the factors centre, sex and treatment are unrelated to the pre-dose parasite count, although there is some marginal evidence ($p\approx 0.05$) to reject the hypothesis of no 3-way interaction being present. The Kruskal-Wallis non-parametric equivalent test also does not reveal any evidence to reject the null hypothesis of the same median pre-dose count in all groups.
 % \begin{table}[h]
 % \centering
 % \caption{Pre-dose parasite counts}\label{predose}
@@ -146,8 +147,8 @@ Figure \ref{allaov} shows the progression of the parasite count for all patients
 \caption{Parasite count as proportion of pre-dose count with time from first dose with mean levels shown}
 \label{allaov}
 \end{figure}
-The vertical axis is the logarithm of the fraction of the pre-dose parasite count:
-$$y=log\left(\frac{1+P_t}{P_0}\right)$$
+The vertical axis is the logarithm of the ratio of the parasite count to the pre-dose count:
+$$y=\log\left(\frac{1+P_t}{P_0}\right)$$
 where $t$ is the time from first dose and $P_0$ is the pre-dose count. $1+P_t$ is used to avoid problems with taking the logarithm when the parasite count goes to 0. The progression with time is also shown split by centre and then by sex.
 
 With regard to Figure \ref{allaov}, the behaviour as indicated by the average response lines can be summarised as follows:
@@ -157,9 +158,9 @@ With regard to Figure \ref{allaov}, the behaviour as indicated by the average re
 \item There doesn't seem to be as remarkable a difference between male and female subjects on the combined-drug treatment with parasite counts starting to show an appreciable fall off after about 5 hours in both cases.
 \item There is not a readily noticeable difference between centres.
 \end{itemize}
-In summary it appears from this first rough comparison that the combined treatment is more effective in terms of clearance times than the single treatment. This improvement over the single treatment seems more marked for female patients, but primarily because the single treatment seems to be less effective for female patients with the combined treatment fall-off profile being similar for both sexes.
+In summary it appears from this first rough comparison that the combined treatment is more effective in terms of clearance times than the single treatment. This improvement over the single treatment seems more marked for female patients, but primarily because the single treatment seems to be less effective for female patients with the combined treatment profile being similar for both sexes.
 
-If we repeat the 3-way ANOVA as for the pre-dose counts but with the logarithm of the counts at 6, 12, 18 an 24 hours from first dose then we find the residuals are normally distributed to a good approximation. The ANOVA analysis shows strong evidence of a dependence of the count on the treatment, which can be seen graphically in Figure \ref{allaov}. We also find at 6 and 12 hours evidence of an interaction between sex and treatment, $P<0.05$ and $P<0.01$ respectively, bearing in mind we are making multiple hypothesis tests and therefore should be more hesitant to draw any early conclusions. At 18 and 24 hours there is no evidence of an interaction with sex, only a treatment effect $P<0.0001$.
+If we repeat the 3-way ANOVA as for the pre-dose counts, but with the logarithm of the counts at 6, 12, 18 and 24 hours from first dose, then we find the residuals are normally distributed to a good approximation. The ANOVA analysis shows strong evidence of a dependence of the count on treatment, which can be seen graphically in Figure \ref{allaov}. We also find at 6 and 12 hours evidence of an interaction between sex and treatment, $P<0.05$ and $P<0.01$ respectively, bearing in mind we are making multiple hypothesis tests and therefore should be more hesitant to draw any early conclusions. At 18 and 24 hours there is no evidence of an interaction with sex, only a treatment effect $P<0.0001$.
 
 The results of the ANOVA analysis at 6 and 24 hours are shown in Tables \ref{aov6} and \ref{aov24}.
 %> summary(t6.aov)
@@ -222,12 +223,13 @@ Total&576.3&42&&&
 \hspace{20em}***$<0.0001$
 \end{table}
    
-We can attempt to get some insight into the interaction of sex and treatment effects by looking at the bottom panel of Figure \ref{allaov}. It appears that there is a greater difference between the treatments for female subjects than for male, with the single-drug treatment parasite count remaining relatively high for female subjects.
+%We can attempt to get some insight into the interaction of sex and treatment effects by looking at the bottom panel of Figure \ref{allaov}. It appears that there is a greater difference between the treatments for female subjects than for male, with the single-drug treatment parasite count remaining relatively high for female subjects.
+
 \section{Key findings}
 Our initial findings after exploratory graphical and preliminary ANOVA analyses are:
 \begin{itemize}
-\item The parasite data appears to be right-skewed and a logarithmic transformation seems to be appropriate to remedy this. Wootton \textit{et al.} chose a logarithmic transformation of the parasite count in their study of similar data \cite{wootton}.
-\item The pre-dose parasite count does not seem to be related to sex, centre or intended treatment or combinations of these.
+\item The parasite data appears to be right-skewed and a logarithmic transformation seems to be appropriate to remedy this. A logarithmic transform is often found to be appropriate for parasite count data such as this \cite{vries, wootton}.
+\item The pre-dose parasite count does not seem to be related to sex, centre or intended treatment or combinations of these. This suggests that the subjects were allocated randomly to treatment groups.
 \item The parasite count after treatment shows dependence on the treatment with possibly some interaction with the sex of the subject at early time points.
 \end{itemize}
 
