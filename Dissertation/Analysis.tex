@@ -1,5 +1,5 @@
 \chapter{Analysis of Parasite Clearance Times}\label{ch:analysis}
-The derived PC90 values using the log-linear interpolation method are shown in Table \ref{derivedPC90}
+The derived PC90 values using the log-linear interpolation method are shown in Table \ref{derivedPC90}.
 \begin{table}[h]
 \centering
 \caption{Derived PC90 values in hours}\label{derivedPC90}
@@ -37,7 +37,7 @@ All		& 17.7  & 21.6 &  12.8 & 9.4  &  8.9  &  4.9  \\
 It can be seen that PC90 is generally shorter for subjects on the single drug (``alone'') treatment than those on the combined drug treatment across both centres. However, male patients have a higher median PC90 on the combined treatment. Standard deviations are notably higher for the single treatment. There do not seem to be any clear differences between centres. Females have longer PC90 times than males on the alone treatment with the opposite trend on the combined treatment.
 
 \section{Graphical comparison}
-The PC90 data from Table \ref{derivedPC90} are plotted by experimental factors centre, sex and treatment in Figure \ref{pc90boxes}, summarized in two ways. Firstly, by the median and upper and lower quartiles. Secondly, the mean is shown with 95\% confidence intervals from the $t$ distribution defined by the standard error of the data%\footnote{The $t$ distribution confidence intervals are calculated using the \texttt{smean.cl.normal} \emph{R} functions from the Hmisc library \cite{Hmisc}}
+The PC90 data from Table \ref{derivedPC90} are plotted by factors centre, sex and treatment in Figure \ref{pc90boxes}, summarized in two ways. Firstly, by the median and upper and lower quartiles. Secondly, the mean is shown with 95\% confidence intervals from the $t$ distribution defined by the standard error of the data%\footnote{The $t$ distribution confidence intervals are calculated using the \texttt{smean.cl.normal} \emph{R} functions from the Hmisc library \cite{Hmisc}}
 . These confidence intervals for the mean are relevant for parametric tests based on the normal distribution such as ANOVA and give an indication of differences that may be significant.
 \begin{figure}[h]
 \includegraphics[width=150mm]{pc90boxes.eps} 
@@ -47,12 +47,12 @@ The PC90 data from Table \ref{derivedPC90} are plotted by experimental factors c
 
 It can be seen in Figure \ref{pc90boxes} that there doesn't seem to be any notable difference in clearance times between centres. Female subjects seem to have a larger variance in clearance times and perhaps a slightly longer clearance time on average. The difference in clearance times due to the treatment chosen seems to have the largest influence with a larger spread in clearance times for subjects on the ``alone'' single-drug treatment with a potentially significant decrease in mean clearance time for the subjects on the combined-drug treatment.
 
-An additional observation is that the distributions seem bimodal in the cases of the Centre 1, Female and alone subjects. Looking at the plots of PC90 derivation in the previous chapter, it is not clear why this is. It does not seem to be due to the fitting method but is a real feature of the clearance times.
+An additional observation is that the distributions seem bimodal in the cases of the centre 1, female and alone treatment subjects. Looking at the plots of PC90 derivation in the previous chapter (Figures \ref{pc90-agree} to \ref{pc90-nofit}), it is not clear why this is. There does not seem to be an indication that this would arise due to the fitting method and hence it is likely to be a real feature of the clearance times.
 
-In Figure \ref{pc90interaction} the data is split two ways in each plot to look for interaction effects between the factors. Again, the mean and 95\% confidence intervals for the mean are shown.
+In Figure \ref{pc90interaction} the data is split by pairs of factors in each plot to look for interaction effects between the factors. Again, the mean and 95\% confidence intervals for the mean are shown.
 \begin{figure}[h]
 \includegraphics[width=150mm]{pc90interaction.eps} 
-\caption{PC90 two-way interactions with 95\% confidence intervals for the means}
+\caption{PC90 with 95\% confidence intervals for the means plotted by pairs of factors to look for two-way interactions}
 \label{pc90interaction}
 \end{figure}
 It can be seen that there doesn't seem to be any interaction between sex and centre or treatment and centre i.e. the left and right panels of the top two plots look essentially the same. However, it appears that the combined treatment only decreases the mean clearance time for female subjects.
@@ -63,21 +63,21 @@ It can be seen that there doesn't seem to be any interaction between sex and cen
 &\mathrm{PC}90_{ijkl}=\mu+C_i+S_j+T_k+(CS)_{ij}+(CT)_{ik}+(ST)_{jk}+(CST)_{ijk}+\epsilon_{ijkl}&\nonumber\\
 &\epsilon_{ijkl}\sim N(0,\sigma^2)&\label{full}
 \end{eqnarray}
-where PC$90_{ijkl}$ is the clearance time for subject $l$ in centre $i$, of sex $j$ on treatment $k$; $C_i$ is the effect of the centre, $S_j$ the effect of the sex; $T_k$ the treatment effect; $CS_{ij}$ the interaction effect of centre and sex and so on ($i,j,k=1,2$). Using a corner-point constraint, $\mu$ corresponds to $E[\mathrm{PC}90]$ for a centre 1, male on the single-drug treatment, with all other terms in the model representing the difference from this mean.
+where PC$90_{ijkl}$ is the clearance time for subject $l$ in centre $i$, of sex $j$ on treatment $k$; $C_i$ is the effect of the centre, $S_j$ the effect of the sex; $T_k$ the treatment effect; $(CS)_{ij}$ the interaction effect of centre and sex and so on ($i,j,k=1,2$). Using a corner-point constraint, $\mu$ corresponds to the expected PC90 for a centre 1, male on the single-drug treatment, with all other terms in the model representing the difference from this mean.
 
 The standardized residuals ($e/\hat{\sigma}$) obtained from fitting model \ref{full} are plotted in Figure \ref{aovloglinres}.
 \begin{figure}[ht]
 \includegraphics[width=150mm]{aovloglinres.eps} 
-\caption{Residuals from fitting a 3-way ANOVA model with interactions to PC90}
+\caption{Residuals for 3-way ANOVA model for PC90 with all interactions}
 \label{aovloglinres}
 \end{figure}
 
-It can be seen that the residuals are approximately normally distributed, but perhaps slightly right skewed. In the plot of the residuals by experimental factor (bottom-left) the standard deviation of the residuals is shown, which when they are standardized, should be approximately 1 and independent of factor. We can see that this is so for centre and sex, but there is heteroscedasticity between treatments with the residuals for the single-drug treatment showing a larger variance than for the combined-drug treatment.
-%($p<0.05$ under a Breusch-Pagan test for heteroscedasticity \cite{breusch} as implemented by the \texttt{bptest} \emph{R} function \cite{lmtest}).
+It can be seen that the residuals are approximately normally distributed, but perhaps slightly right skewed. In the plot of the residuals by experimental factor (bottom-left) the standard deviation of the residuals is shown as the upper and lower edges of the rectangles. The standard deviation of standardized residuals should be approximately 1 and independent of factor. We can see that this is so for centre and sex, but there is heteroscedasticity between treatments with the residuals for the single-drug treatment showing a larger variance than for the combined-drug treatment.
+%($P<0.05$ under a Breusch-Pagan test for heteroscedasticity \cite{breusch} as implemented by the \texttt{bptest} \emph{R} function \cite{lmtest}).
 We can also see that the variance of the residuals increases with fitted PC90 value (bottom-right).
 
 \subsection{Dealing with heteroscedasticity}
-Least squares estimators are still unbiased under heteroscedasticity \cite{long}, but standard errors can be underestimated leading to incorrect inference. Two ways we can adapt our modelling to deal with heteroscedasticity are to transform the dependent variable and to use weighted least-squares fitting.
+Least squares estimators are still unbiased under heteroscedasticity, but standard errors can be underestimated leading to incorrect inference \cite{long}. Two ways we can adapt our modelling to deal with heteroscedasticity are to transform the dependent variable and to use weighted least-squares fitting.
 
 \subsubsection*{Transforming the dependent variable}
 If we apply a square-root transformation to PC90 we obtain the residuals for the ANOVA model shown in Figure \ref{aovsqrtres}.
@@ -88,7 +88,7 @@ If we apply a square-root transformation to PC90 we obtain the residuals for the
 \end{figure}
 It can be seen that this transformation reduces the correlation of the variance of the residuals with fitted PC90. Other transformations, such as logarithmic or square, did not prove as suitable as a square-root transformation. The Box-Cox method, whereby the transformation giving the highest likelihood is found, suggests transforming the dependent variable by raising it to the power 0.3 is optimal. This did not appear to give a noticeable improvement over the square-root transformation (power 0.5) in residual plots however.
 
-It can be seen that, even after our square-root transformation, the residuals for subjects on the combined treatment have a smaller variance than for those on the single treatment. Bartlett's test for equality of variances \cite{montgomery} between the 8 ($2^{3}$) centre-sex-treatment groups gives evidence to reject the hypothesis that the variance is equal in all groups ($p<0.05$).  One common method of dealing with heteroscedastic residuals between groups is to use weighted least-squares.
+It can be seen that, even after our square-root transformation, the residuals for subjects on the combined treatment have a smaller variance than for those on the single treatment. Bartlett's test for equality of variances \cite{montgomery} between the 8 ($2^{3}$) centre-sex-treatment groups gives evidence to reject the hypothesis that the variance is equal in all groups ($P<0.05$).  One common method of dealing with heteroscedastic residuals between groups is to use weighted least-squares.
 
 \subsubsection*{Weighted least-squares}
 In this case, to remedy the heteroscedasticity between treatment groups, we weight the fitting by the variance within treatment groups such that error term in model \ref{full} becomes 
@@ -100,21 +100,19 @@ where $\sigma_{k=1}^{2}$ is the variance of subjects on the single treatment, $\
 S=\sum_{ijkl} w_{k}(\mathrm{PC}90_{ijkl} - \widehat{\mathrm{PC}90_{ijk}})^{2}
 \end{equation*}
 where the weights $w_{k}=\sigma_{k}^{-2}$. The residuals from fitting this function using the \texttt{weights} parameter of the \emph{R} linear least-squares \texttt{lm} function are shown in Figure \ref{aovresw}.
-\begin{figure}[h]
+\begin{figure}[p]
 \includegraphics[width=150mm]{aovresw.eps} 
 \caption{Residuals after applying weighted least squares}
 \label{aovresw}
 \end{figure}
-
 The residuals now have approximately equal variance with respect to factor and fitted PC90, but they appear to be right-skewed.
 
 If we apply the square-root transformation followed by the treatment-variance weighted least-squares fit we obtain the residuals shown in Figure \ref{aovsqrtresw}.
-\begin{figure}[h]
+\begin{figure}[p]
 \includegraphics[width=150mm]{aovsqrtresw.eps} 
 \caption{Residuals after applying square-root transformation and weighted least squares}
 \label{aovsqrtresw}
 \end{figure}
-
 This seems to give a more symmetric distribution of residuals but is perhaps a bit light-tailed.
 Despite this, none of the distributions of residuals show evidence of significant departures from normality by a Shapiro-Wilk test and there also now seems to be no significant difference in the variance of the residuals between experimental groups.
 
@@ -183,14 +181,14 @@ It can be seen that there is no evidence to reject the hypothesis that the centr
 %\end{table}
 
 %It can be seen that the $p$-values obtained by the parametric and non-parametric methods are in general agreement, although the F test seems more conservative than the non-parametric tests. In all 3 cases it can be seen that there is no evidence to reject the hypothesis that the effect of the centre is negligible.
-\pagebreak
+
 \subsubsection*{Fitting a reduced model}
 As the effect of centre is negligible we refit the data with the reduced model
 \begin{equation}
 \sqrt{\mathrm{PC}90_{jkl}}=\mu+S_j+T_k+(ST)_{jk}+\epsilon_{jkl}\quad\quad\epsilon_{jkl}\sim N(0,\sigma^{2}\sigma_{k}^2)\label{reduced}
 \end{equation}
 using weighted least-squares. The residuals for this fit are shown in Figure \ref{aov2rwt}.
-\begin{figure}[p]
+\begin{figure}[ht]
 \includegraphics[width=150mm]{aov2rwt.eps} 
 \caption{Residuals for the reduced model}
 \label{aov2rwt}
@@ -201,7 +199,7 @@ It can be seen that they are approximately normal and homoscedastic. The ANOVA t
 %Treatment      1  5.152   5.152  5.6831 0.02209 *
 %Sex:Treatment  1  5.166   5.166  5.6994 0.02191 *
 %Residuals     39 35.353   0.906  
-\begin{table}[p]
+\begin{table}[h]
 \centering
 \caption{ANOVA table for the reduced model}\label{aovreduced}
 \begin{tabular}{l|rrrrrl}
@@ -223,7 +221,7 @@ The fitted coefficients for the reduced model are shown in Table \ref{coefreduce
 %SexFemale                 1.19286    0.66887   1.783   0.0823 .  
 %Treatmentcombi           -0.02899    0.52369  -0.055   0.9561    
 %SexFemale:Treatmentcombi -1.79917    0.75363  -2.387   0.0219 *  
-\begin{table}[p]
+\begin{table}[h]
 \centering
 \caption{Fitted coefficients for the reduced model}\label{coefreduced}
 \begin{tabular}{l|rrrc}
@@ -279,6 +277,8 @@ Female, combined treatment	& 7:05 & (4:41, 9:59) \\
 \end{tabular}
 \end{table}
 
+It should be noted that these are confidence intervals for the estimate of the mean clearance time for the population. Prediction intervals for the expected clearance time of any one subject are considerably wider i.e. 95\% prediction intervals are: Male, single (0, 44) hours; Female, single (1, 62) hours; Male, combined (3, 24) hours; Female, combined (1, 19) hours.
+
 The mean difference in the square root of PC90 between treatment groups, with confidence intervals and $p$-values calculated by Tukey's test for comparison of means \cite{montgomery} using the \texttt{TukeyHSD} \emph{R} function are shown below.
 %                           diff   lwr   upr p adj
 %Female:alone-Male:alone    1.19 -0.25  2.64  0.14
@@ -299,15 +299,19 @@ Female: combi - single	& -1.83 & (-3.34,  -0.32) & 0.012 &*\\
 *$<0.05$
 \end{table}
 
+It can be seen that there is evidence to reject the hypothesis of no difference between treatment groups for female subjects.
+
+\newpage
 Therefore, we can summarize the relative effects of the single and combined treatments:
 \begin{description}
 \item[Male subjects] - There is no evidence of a difference in mean clearance times between the two treatments for male subjects.
-\item[Female subjects] - The mean clearance time for female subjects on the combined treatment is 13.1 hours shorter than for those on the single treatment with a 95\% confidence interval\footnote{The confidence intervals for the difference between groups in the original untransformed scale are obtained by sampling 10,000 values from each of $[N(\mu_{a},s_{a}^{2})]^{2}$ and $[N(\mu_{b},s_{b}^{2})]^{2}$, where $a$ and $b$ specify the groups and $\mu$ and $\sigma$ are the mean and standard error of the groups, and then taking the percentiles of the distribution of the differences between samples.} of (5.0, 22.7) hours.
+\item[Female subjects] - The mean clearance time for female subjects on the combined treatment is 13.1 hours shorter than for those on the single treatment with a 95\% confidence interval of (5.0, 22.7) hours.
 \end{description}
-It should be noted that these are confidence intervals for the estimate of the mean clearance time for the population. Prediction intervals for the expected clearance time of any one subject are considerably wider i.e. 95\% prediction intervals are: Male, single (0, 44) hours; Female, single (1, 62) hours; Male, combined (3, 24) hours; Female, combined (1, 19) hours.
+
+The confidence intervals for the difference between groups in hours (i.e. the original scale before the square-root transformation used for the regression) are obtained by sampling 10,000 values from each of $[N(m_{a},s_{a}^{2})]^{2}$ and $[N(m_{b},s_{b}^{2})]^{2}$, where $a$ and $b$ specify the groups and $m$ and $s$ are the estimated mean and standard error of the groups. The percentiles of the distribution of the differences between these two samples are then taken.
 
 \subsection{Comparison with other PC90 estimation methods}
-The graphical investigation and model fitting procedure was repeated with the PC90 estimates obtained using the cubic polynomial and logistic regression techniques. The same overall trend and patterns of residuals were observed, leading to selection of the same optimal model (Equation \ref{reduced}). The fitted coefficients are compared in Table \ref{compmeth}. 
+The graphical investigation and model fitting procedure was repeated with the PC90 estimates obtained using the cubic polynomial and logistic regression techniques. The same overall trend and patterns of residuals were observed, leading to selection of the same optimal model (Equation \ref{reduced} on page \pageref{reduced}). The fitted coefficients are compared in Table \ref{compmeth}. 
 \begin{table}[h]
 \centering
 \caption{Comparison of fitted models by 2 PC90 estimation methods}\label{compmeth}
@@ -342,7 +346,7 @@ F, combi	 	& 7:05 & (4:41, 9:59) &7:16&(4:44, 10:21) & 7:49 & (5:21, 10:46)\\
 
 \section{Dependence of clearance time on pre-dose parasite count}
 \subsubsection*{Pre-dose count}\label{sec:predoseancova}
-We might expect that subjects with a higher pre-dose parasite count would have a longer clearance time. To investigate this, the clearance time (PC90) is plotted against pre-dose parasite count in Figure \ref{predose-ancova}. There is no clear trend in clearance time with pre-dose parasite, nor when the data is split by centre, sex and treatment. Statistical tests such as Spearman's rho and ANCOVA (adding pre-dose count as a covariate to the ANOVA model) do not give any evidence of correlation of clearance time with pre-dose parasite count.
+We might expect that subjects with a higher pre-dose parasite count would have a longer clearance time. To investigate this, the PC90 clearance time is plotted against pre-dose parasite count in Figure \ref{predose-ancova}. There is no obvious trend in clearance time with pre-dose parasite, nor when the data is split by centre, sex and treatment. Statistical tests such as Spearman's rho and ANCOVA (adding pre-dose count as a covariate to the ANOVA model) do not give any evidence of correlation of clearance time with pre-dose parasite count.
 \begin{figure}[p]
 \includegraphics[width=150mm]{predose-ancova.eps} 
 \caption{Dependence of clearance time on pre-dose parasite count}
@@ -352,7 +356,7 @@ We might expect that subjects with a higher pre-dose parasite count would have a
 %The fitted ANCOVA model is a modification of the reduced ANOVA model \ref{reduced} on page \pageref{reduced} adding the pre-dose parasite count as a covariate with all interactions with sex and treatment. This ANCOVA model is compared to the ANOVA model in Figure \ref{compancova}. It can be seen that the ANCOVA model isn't a significant improvement.
 
 \subsubsection*{Time of pre-dose count}\label{sec:pretimeancova}
-The clearance time is plotted against the time before first dose at which the pre-dose count was recorded in Figure \ref{pretime-ancova}. Although it looks like there is some positive correlation between the time of pre-dose recording and clearance times, statistical tests show no evidence to reject the hypothesis that the effect of pre-dose recording time is negligible.
+The clearance time is plotted against the time before first dose at which the pre-dose count was recorded in Figure \ref{pretime-ancova}. Although it looks like there is some positive correlation between the time of pre-dose recording and clearance times, statistical tests reveal no evidence to reject the hypothesis that the effect of pre-dose recording time is negligible. It could be that we do not have enough power with this sample to detect an effect if there is one. 
 \begin{figure}[p]
 \includegraphics[width=150mm]{pretime-ancova.eps} 
 \caption{Dependence of clearance time on the time before first dose that the pre-dose parasite count was recorded}
@@ -404,17 +408,17 @@ P$^{\dag}$: $p$-value from parametric analysis\qquad*$<0.05$
 It can be seen that the non-parametric method shows a significant interaction effect at the 5\% level, but not for the main treatment effect unlike the parametric analysis. It could be that there is only an effect of treatment for one sex (Figure \ref{pc90interaction} on page \pageref{pc90interaction} would suggest this), although Toothaker \textit{et al.} \cite{toothaker} note that these tests should not be used to test for main effects in the presence of an interaction and vice-versa.
 
 \subsection{Resampling methods}\label{section:resampling}
-Another alternative to parametric ANOVA is to resample the data using either the permutation or bootstrap methods \cite{manly} and thereby determine the sampling distribution of our statistics. There are several different approaches for resampling ANOVA models with crossed factors, such as ours, by permutation \cite{manly, anderson}. Three of them are:
+Another alternative to parametric ANOVA is to resample the data using either the permutation or bootstrap methods and thereby determine the sampling distribution of our statistics \cite{manly}. There are several different approaches for resampling ANOVA models with crossed factors, such as ours, by permutation \cite{manly, anderson}. Three of them are:
 \begin{description}
-\item[Unrestricted permutation of raw data] - The raw data is randomized between all groups and the $F$ statistics recalculated for each randomization; Anderson and Braak \cite{anderson} note is an approximate test for both main effects and interactions.
+\item[Unrestricted permutation of raw data] - The raw data is randomized between all groups and the $F$ statistics recalculated for each randomization. Anderson and Braak note that this is an approximate test for both main effects and interactions \cite{anderson}.
 \item[Permutation of residuals] - An approximate test for an interaction effect by controlling for main effects can be performed by defining residuals
 $$r_{ijk}=y_{ijk}-\bar{y}_{i..}-\bar{y}_{.j.}+\bar{y}_{...}$$
 where $\bar{y}_{i..}$ is the mean response at level $i$ of the first factor, $\bar{y}_{.j.}$ the mean response at level $j$ of the second factor and $\bar{y}_{...}$ the overall mean. The $F$ statistics are then calculated from ANOVA using these residuals as the response.
-\item[Restricted permutation of raw data] - To test for a main effect the response can be randomized \emph{between} levels of the main effect but \emph{within} the levels of the other factors. For example, with our data, to test for a treatment main effect we would randomize the treatment of each observation but keep the sex and centre static. Only the $F$ statistic of the main effect being randomized is relevant in the ANOVA output from this method. Anderson and Braak \cite{anderson} note that this is an exact test for main effects, but is only reasonable if there is no evidence of an interaction effect.
+\item[Restricted permutation of raw data] - To test for a main effect the response can be randomized \emph{between} levels of the main effect but \emph{within} the levels of the other factors. For example, to test for a treatment main effect with our data, we would randomize the treatment of each observation but keep the sex and centre static. Only the $F$ statistic of the main effect being randomized is relevant in the ANOVA output from this method. Anderson and Braak note that this is an exact test for main effects, but is only reasonable if there is no evidence of an interaction effect \cite{anderson}.
 \end{description}
-Manly \cite{manly} finds by simulation that the $F$ statistic gives the most consistent results across all three methods, as opposed to using mean square residuals for example. Anderson and Braak \cite{anderson} note that permutation of residuals is significantly more powerful that permutation of raw data when errors are highly non-normal, for example lognormal.
+Manly finds by simulation that the $F$ statistic gives the most consistent results across all three methods, as opposed to using mean square residuals for example \cite{manly}. Anderson and Braak note that permutation of residuals is significantly more powerful that permutation of raw data when errors are highly non-normal, for example lognormal \cite{anderson}.
 
-These 3 permutation methods were implemented in \emph{R}. The results for the full 3-way ANOVA model are shown in Table \ref{aovresamp} compared to the parametric $F$ test for the square-root transformed model fitted by weighted least-squares.
+These 3 permutation methods were implemented in \emph{R}\footnote{The code is listed in Appendix \ref{R:resamp} on page \pageref{R:resamp}.}. The results for the full 3-way ANOVA model are shown in Table \ref{aovresamp} compared to the parametric $F$ test for the square-root transformed model fitted by weighted least-squares.
 \begin{table}[h]
 \centering
 \caption{$p$-values for 3-way ANOVA $F$ statistic determined by resampling.\\Values not relevant to test in \small{\textit{small italics}}.}\label{aovresamp}
@@ -446,7 +450,7 @@ $Sex\times Treatment$     		& 0.049 & 0.049 			& \small{\textit{0.049}} & \small
 \end{tabular}\\
 10,000 samples for each method
 \end{table}
-It can be seen that the hypothesis tests for main effects and interactions produce the same results at the 5\% level for all the permutation techniques and the parametric model. For the permutation  methods the interaction effect is only just significant at the 5\% level. Anderson and Braak \cite{anderson} note that the parametric $F$ test is more powerful than permutation techniques when the residuals are approximately normal; as they are for our square-root transformed model fitted by weighted least-squares (Figure \ref{aov2rwt} on page \pageref{aov2rwt}).
+It can be seen that the hypothesis tests for main effects and interactions produce the same results at the 5\% level for all the permutation techniques and the parametric model. For the permutation  methods the interaction effect is only just significant at the 5\% level. Anderson and Braak \cite{anderson} note that the parametric $F$ test is more powerful than permutation techniques when the residuals are approximately normal, as they are for our square-root transformed model fitted by weighted least-squares (Figure \ref{aov2rwt} on page \pageref{aov2rwt}).
 
 \subsubsection*{Non-parametric confidence intervals}
 Our parametric 2-way ANOVA identified that there is only a significant difference between the clearance times of the two treatments for female patients and we derived confidence intervals for the reduction in clearance time for female patients using the combined drug treatment (page \pageref{compinf}).
@@ -462,7 +466,7 @@ and accordingly subtract $k$ from the clearance times for the single treatment b
 \item Calculate the statistic $T_{obs}=\mu_{s}-\mu_{c}$.\label{fstat}
 \item Permute the clearance times between treatments $N-1$ times and at each permutation calculate $T^{*}_{i}=\mu_{s}^{*}-\mu_{c}^{*}$.
 \item Calculate the $p$-value of our $T_{obs}$ statistic from step \ref{fstat} by its percentile in the set of $N$ values comprised of $T_{obs}$ and $T_{i=1,...,N-1}^{*}$ from the $N-1$ permutations.
-\item If the $p$-value is $<0.05$ and we are looking for the lower limit of the 95\% confidence interval or $p>0.05$ and we are looking for the upper limit, increase $k$ and go to step \ref{start}. If $p>0.05$ and we are looking for the lower limit or $p<0.05$ and we are looking for the upper limit, decrease $k$ and go to step \ref{start}.
+\item If the $p$-value is $<0.05$ and we are looking for the lower limit of the 95\% confidence interval or $p>0.05$ and we are looking for the upper limit, increase $k$ and go to step \ref{start}. If $p>0.05$ and we are looking for the lower limit or $P<0.05$ and we are looking for the upper limit, decrease $k$ and go to step \ref{start}.
 \item At $p\approx 0.05$ we have estimates of our 95\% confidence limits.
 \end{enumerate}
 This algorithm was implemented in \emph{R}, giving a 95\% confidence interval for the improvement in mean clearance time of the combined treatment over the single treatment for female subjects of (6.5, 22.5) hours, corresponding to $p$-values of 0.0510 and 0.0496 respectively, achieved by repeated samples of 10,000. This gives reasonable agreement with the interval of (5.0, 22.7) hours obtained by the parametric ANOVA method.
@@ -475,9 +479,9 @@ The log-linear method was identified in chapter \ref{ch:derivation} as the most 
 \item Analysis of residuals from 3-way ANOVA of PC90 by centre, sex and treatment indicates that a square root transformation of PC90 is required to stabilise the variance of the residuals with magnitude of PC90.
 \item Fitting by weighted least-squares is required to stabilise the variance of the ANOVA residuals between treatment groups. Accordingly, the least-squares fitting is weighted by the variance within the two treatment groups. 
 \item 3-way ANOVA by centre, sex and treatment, after the appropriate variance stabilising measures gives no evidence to reject the hypothesis that centre has no effect on PC90.
-\item 2-way ANOVA by sex and treatment shows good evidence to reject the hypothesis that treatment has no effect on PC90 and the hypothesis that there is no interaction of sex and treatment that effects PC90 ($p<0.05$ for both).
+\item 2-way ANOVA by sex and treatment shows good evidence to reject the hypothesis that treatment has no effect on PC90 and the hypothesis that there is no interaction of sex and treatment that effects PC90 ($P<0.05$ for both).
 \item There is no evidence to reject the hypothesis that there is no difference in mean PC90 clearance times between treatments for male subjects.
-\item There is good evidence ($p<0.05$) to reject the hypothesis that there is no difference in PC90 clearance times between treatments for female subjects. The mean difference is 13.1 hours shorter for the combined treatment with a 95\% confidence interval of (5.0, 22.7) hours.
+\item There is good evidence ($P<0.05$) to reject the hypothesis that there is no difference in PC90 clearance times between treatments for female subjects. The mean difference is 13.1 hours shorter for the combined treatment with a 95\% confidence interval of (5.0, 22.7) hours.
 \item PC90 estimates using the cubic polynomial regression method lead to the same conclusions regarding treatment effect as the log-linear interpolated estimates. The logistic regression estimates are generally compatible with observed discrepancies most likely due to missing data for the logistic method.
 \item There is no evidence to reject the hypotheses that the PC90 clearance time is independent of the pre-dose parasite count and independent of the time at which the pre-dose count was taken.
 \item Non-parametric methods support the findings of the parametric analysis in that only the difference between treatments for female subjects is significant. An appropriate resampling method estimates a 95\% confidence interval for the decrease in PC90 clearance time for female subjects on the combined treatment of (6.5, 22.5) hours.

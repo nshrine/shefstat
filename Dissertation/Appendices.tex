@@ -1,31 +1,42 @@
 \begin{singlespace}
 \chapter{Complete plots of data}
-\section{Raw parasite counts}
+
+\section{Raw parasite counts}\label{A:lograwcount}
+On the following pages are the plots of the log parasite count per \micro\liter\ for all subjects with PC90 level shown. Each page contains the data for 1 centre and sex.
 \begin{sidewaysfigure}
+\centering
 \includegraphics[height=150mm]{Araw1M.eps}
 \end{sidewaysfigure}
 \begin{sidewaysfigure}
+\centering
 \includegraphics[height=150mm]{Araw1F.eps}
 \end{sidewaysfigure}
 \begin{sidewaysfigure}
+\centering
 \includegraphics[height=150mm]{Araw2M.eps}
 \end{sidewaysfigure}
 \begin{sidewaysfigure}
+\centering
 \includegraphics[height=150mm]{Araw2F.eps}
 \end{sidewaysfigure}
 
 \clearpage
-\section{Model fits}
+\section{Model fits}\label{A:modelfits}
+On the following pages are the model fits used for PC90 estimation for all subjects, with the PC90 time estimated by each method shown as a vertical line. Each page contains the data for 1 centre and sex.
 \begin{sidewaysfigure}
+\centering
 \includegraphics[height=150mm]{Afits1M.eps}
 \end{sidewaysfigure}
 \begin{sidewaysfigure}
+\centering
 \includegraphics[height=150mm]{Afits1F.eps}
 \end{sidewaysfigure}
 \begin{sidewaysfigure}
+\centering
 \includegraphics[height=150mm]{Afits2M.eps}
 \end{sidewaysfigure}
 \begin{sidewaysfigure}
+\centering
 \includegraphics[height=150mm]{Afits2F.eps}
 \end{sidewaysfigure}
 
@@ -48,7 +59,8 @@ showstringspaces=false,
 lineskip=-1pt}
 
 This appendix contains a subset of the \emph{R} code written for this dissertation. The code to show the key algorithms used in numerical calculations is shown and a sample of plotting routines for demonstrating how to create figures of the style presented in this dissertation.
-\section{Functions for PC90 estimation}
+
+\section{Functions for PC90 estimation}\label{R:PC90}
 \begin{lstlisting}[caption=Functions to find PC90 by cubic regression,label=R:cubics]
 # Create a list of cubic fits to data up to first zero
 cubic.fits <- function(data) {
@@ -149,7 +161,7 @@ getAboveBelow <- function(data, PC=90) {
 }
 \end{lstlisting}
 
-\section{Resampling functions}
+\section{Resampling functions}\label{R:resamp}
 \begin{lstlisting}[caption=Functions for resampling $F$ statistic,label=R:Fresamp]
 # Resample the F statistic by permutation
 resample.aov <- function(fit, n=1000, bootstrap=F) {
@@ -220,7 +232,7 @@ stillwhite.resid <- function(row, data) {
 \end{lstlisting}
 
 \clearpage
-\section{Functional data analysis}\label{A:fda}
+\section{Functional data analysis}\label{R:fda}
 \begin{lstlisting}[caption=Functions for cubic spline smoothing,label=R:fdsmooth]
 # Get spline basis, cubic by default
 getBasis <- function(knots, norder=4) {
@@ -240,7 +252,7 @@ getFdsmooth <- function(x, y, smoothing=10) {
 \end{lstlisting}
 
 Some of the code in the following listings is based on examples from Giles Hooker's Applied Functional Data Analysis course at Cornell University.\\
-\texttt{http://www.bscb.cornell.edu/~hooker/FDA2008/}
+\url{http://www.bscb.cornell.edu/~hooker/FDA2008/}
 \begin{lstlisting}[caption=Functions for fda regression,label=R:fregress]
 # Perform regression
 getfRegress <- function(data.smooth, smoothing=10) {
@@ -344,9 +356,9 @@ getfdpred <- function(t, fit, conf=0.95) {
 }
 \end{lstlisting}
 
-\section{Plotting functions}
+\section{Plotting functions}\label{R:plot}
 The figures in this dissertation were plotted using Hadley Wickham's \texttt{ggplot2} \emph{R} library.\\
-\texttt{http://had.co.nz/ggplot2/}
+\url{http://had.co.nz/ggplot2/}
 \begin{lstlisting}[caption=Plot raw count data for male and female subjects side-by-side,label=R:rawggplot]
 # Plot raw data for male and female subjects side-by-side
 rawggplot3 <- function(data, title="", centre="", r1=4, r2=4, points=T, lines=T) {

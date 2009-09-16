@@ -75,7 +75,7 @@ ancova.interactions <- function(pretime=F) {
 		#q <- q + scale_x_continuous(limits=c(0,100000), formatter="comma")
 	}
 	q <- q + opts( legend.position="none")
-	print(q, vp=vp0)
+	print(q + opts(title="All"), vp=vp0)
 	
 	vp1 <- viewport(width=1, height=0.25, y=0.75, just="top")
 	q1 <- q + facet_grid(.~Centre)

@@ -351,3 +351,21 @@ getqq <- function(dat, title) {
 	int <- y[1L] - slope * x[1L]
 	q + geom_abline(intercept=int, slope=slope, linetype=2)
 }
+
+allfits <- function(centre, sex, width=0.6, ncol=3, height=1, y=1, just=c('right','top'), wy, ...) {
+	subjs.fit <- paste("Subject", subjs.fit)
+	subjs.nofit <- paste("Subject", subjs.nofit)
+
+	q1 <- comparePC90(subset(malaria2, subset=SUBJID %in% subjs.fit & CENTREID==centre & SEX==sex), PC90.reshape2, ...)
+	q1 <- q1 + opts(title=paste(centre, ",", sex))
+	q1 <- q1 + facet_wrap(~SUBJID, ncol=ncol)
+
+	q2 <- comparePC90(subset(malaria2, subset=SUBJID %in% subjs.nofit & CENTREID==centre & SEX==sex), PC90.reshape2, F)
+	q2 <- q2 + opts(legend.position="none") + facet_wrap(~SUBJID, ncol=1)
+	q2 <- q2 + opts(title="No logistic fit")
+	
+	vp1 <- viewport(width=width, x=0, just='left')
+	vp2 <- viewport(width=ifelse(missing(wy), 1-width, wy), x=1, height=height, y=y, just=just)
+	print(q1, vp=vp1)
+	print(q2, vp=vp2)
+}
