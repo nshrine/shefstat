@@ -243,12 +243,33 @@ Figure \ref{fdcoef} shows the fitted coefficient functions.
 The top-left panel shows the function for the mean $\mu$ corresponding to male subjects on the single treatment with the other panels showing the deviation from this mean due to sex, treatment and the interaction of sex and treatment respectively. We can see that there is evidence at the 5\% level between 10 and 15 hours to reject the hypothesis that there is no interaction between sex and treatment that effects the parasite count. We cannot easily draw conclusions about the sex and treatment main effects separately as there is an interaction effect and hence the main effects act at different levels dependent on each other. However, it seems that after 20 hours the interaction becomes negligible and that the treatment effect acts more evenly on both sexes.
 
 \newpage
-Figure \ref{fdfitted} shows the fitted mean-level functions with 95\% confidence intervals. The routine for calculating the standard errors and confidence intervals of predicted functions are not yet implemented in the \emph{R} \texttt{fda} library, hence it was necessary to implement this\footnote{Listing \ref{R:fdaresid} in Appendix \ref{R:fda}, page \pageref{R:fdaresid}.}.
+The routine for calculating the standard errors and confidence intervals of fitted functions is not yet implemented in the \emph{R} \texttt{fda} library, hence it was necessary to calculate confidence intervals for the fitted response $\hat{y}(t)$ as follows.
+
+The $4\times 1$ vector of predicted mean responses (log count ratios) for each of the four sex-treatment groups with time $t$ is
+$$\hat{\mat{y}}(t)=\mat{x}_{0}^{T}\hat{\mat{\beta}}(t)=\{\hat{y}_{MA}(t),\ \hat{y}_{FA}(t),\ \hat{y}_{MC}(t),\ \hat{y}_{FC}(t)\}^{T}$$
+where $\hat{\mat{\beta}}(t)$ is the $4\times 1$ vector of fitted coefficients at time $t$, $\hat{y}_{MA}(t)$ is the mean response of male-alone subjects at time $t$ and so on ($_{F}$=female, $_{C}$=combi) and $\mat{x}_{0}$ is
+$$\mat{x}_{0}=\left(\begin{array}{cccc}
+1  &  1  &  1  &  1 \\
+0  &  1  &  0  &  1 \\
+0  &  0  & 1  &  1 \\
+0  &  0  &  0  &  1\end{array}\right)$$
+where the rows correspond to the 4 factors mean, sex, treatment and interaction and the columns the 4 sex-treatment groups. The estimated residual variance $\sigma^{2}(t)$ at time $t$ is given by
+\begin{eqnarray*}
+\mat{e}(t)&=&\mat{y}(t)-\mat{X}\!\hat{\mat{\beta}}(t)\\
+\sigma^{2}(t)&=&\frac{\mat{e}^{T}\!\mat{e}}{n-p}
+\end{eqnarray*}
+where $\mat{X}$ is our $43\times 4$ design matrix and accordingly $n-p=39$. The variance of the estimated group means is
+$$\mathrm{var}\ \hat{\mat{y}}(t)=\sigma^{2}(t)\ \mat{x}_{0}^{T}(\mat{X}^{T}\!\mat{X})^{-1}\mat{x}_{0}$$
+which for ANOVA is a diagonal matrix and hence 95\% confidence intervals for the mean response functions are given by
+$$\hat{\mat{y}}(t)\pm t_{0.025,n-p}\sqrt{\mathrm{diag}\{\mathrm{var}\ \hat{\mat{y}}(t)\}}$$
+
+This algorithm was implemented in \emph{R}\footnote{Listing \ref{R:fdaresid} in Appendix \ref{R:fda}, page \pageref{R:fdaresid}.} giving the 95\% confidence intervals shown plotted with the fitted count-ratio functions in Figure \ref{fdfitted}.
 \begin{figure}[p]
 \includegraphics[width=150mm]{lprr2i.eps} 
 \caption{Fitted count-ratio functions with confidence intervals}
 \label{fdfitted}
 \end{figure}
+
 It can be seen that the difference between male subjects on the alone and combined drug treatment becomes large (relative to their 95\% confidence limits) between 20 and 30 hours reflecting the treatment effect shown in Figure \ref{fdcoef} between 20 and 30 hours. The difference between treatments for female subjects is larger between 10 and 30 hours reflecting the effect the sex-treatment interaction whereby the treatment effect is largest for female subjects. With reference to the 95\% confidence intervals, there is good evidence to reject the hypothesis that there is no effect of sex and treatment. The $F$ test in Figure \ref{fdapermF} is a more formal evaluation of this evidence.
 
 If we look again at Figure \ref{fdfitted}, we can see that although the parasite reduction is comparable (confidence intervals almost fully overlap) between treatments for male subjects, it is clear that the profiles have very different slopes between treatments; similarly for female patients, although the actual reduction level is also different. With functional data analysis it is easy to look, not only at the effect of factors on the response variable function, but also at the effect on derivatives of the response function. Accordingly, the functional ANOVA was repeated, but this time with the first derivative of the log count-ratio cubic spline functions. This fitted model is shown in Figure \ref{fdspeed}. 

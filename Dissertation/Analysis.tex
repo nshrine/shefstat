@@ -470,10 +470,12 @@ and accordingly subtract $k$ from the clearance times for the single treatment b
 \item Calculate the statistic $T_{obs}=\mu_{s}-\mu_{c}$.\label{fstat}
 \item Permute the clearance times between treatments $N-1$ times and at each permutation calculate $T^{*}_{i}=\mu_{s}^{*}-\mu_{c}^{*}$.
 \item Calculate the $p$-value of our $T_{obs}$ statistic from step \ref{fstat} by its percentile in the set of $N$ values comprised of $T_{obs}$ and $T_{i=1,...,N-1}^{*}$ from the $N-1$ permutations.
-\item If the $p$-value is $<0.05$ and we are looking for the lower limit of the 95\% confidence interval or $p>0.05$ and we are looking for the upper limit, increase $k$ and go to step \ref{start}. If $p>0.05$ and we are looking for the lower limit or $P<0.05$ and we are looking for the upper limit, decrease $k$ and go to step \ref{start}.
+\item If the $p$-value is $<0.05$ and we are looking for the lower limit of the 95\% confidence interval or $p>0.05$ and we are looking for the upper limit, increase $k$ and go to step \ref{start}. If $p>0.05$ and we are looking for the lower limit or $p<0.05$ and we are looking for the upper limit, decrease $k$ and go to step \ref{start}.
 \item At $p\approx 0.05$ we have estimates of our 95\% confidence limits.
 \end{enumerate}
-This algorithm was implemented in \emph{R}, giving a 95\% confidence interval for the improvement in mean clearance time of the combined treatment over the single treatment for female subjects of (6.5, 22.5) hours, corresponding to $p$-values of 0.0510 and 0.0496 respectively, achieved by repeated samples of 10,000. This gives reasonable agreement with the interval of (5.0, 22.7) hours obtained by the parametric ANOVA method.
+This algorithm was implemented in \emph{R}\footnote{Listing \ref{R:resampCI} in Appendix \ref{R:resamp}, page \pageref{R:resampCI}.}, giving a 95\% confidence interval for the improvement in mean clearance time of the combined treatment over the single treatment for female subjects of (6.5, 22.5) hours, corresponding to $p$-values of 0.0510 and 0.0496 respectively, achieved by repeated samples of 10,000. Note that 0.05 gives a 95\% interval, not 0.025 as we are using absolute values of $T$. The code and algorithm were checked by calculating confidence intervals for samples from known distributions.
+
+The interval of (6.5, 22.5) hours gives reasonable agreement with the interval of (5.0, 22.7) hours obtained by the parametric ANOVA method.
 
 \section{Key results}
 The log-linear method was identified in chapter \ref{ch:derivation} as the most suitable estimate of PC90, the time for 90\% of parasites present before treatment to be cleared from the blood. Accordingly, these PC90 values, one for each of the 43 subjects were analysed primarily for their dependence on experimental factors centre, sex and treatment. The key findings of this analysis were:
