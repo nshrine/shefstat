@@ -22,12 +22,12 @@ preaov <- function() {
 
 preaovres <- function() {
 	fit <- aov(parct ~ CENTREID * SEX * trttxt, data=malaria, subset=plantm=="PRE-DOSE")
-	plotresids.lm(fit)	
+	plotresids.lm(fit, xlab="Fitted pre-dose count (hours)")	
 }
 
 logpreaovres <- function() {
 	fit <- aov(log(parct) ~ CENTREID * SEX * trttxt, data=malaria, subset=plantm=="PRE-DOSE")
-	plotresids.lm(fit)	
+	plotresids.lm(fit, xlab="Fitted log pre-dose count")	
 }
 
 allaov <- function() {
@@ -227,27 +227,17 @@ Araw2F <- function() {
 }
 
 Afits1M <- function() {
-	q1 <- comparePC90(subset(malaria, subset=SUBJID %in% subjs.fit & CENTREID=='Centre 1' & SEX=='Female'), PC90.reshape)
-	q1 <- q1 + opts(title="Centre 1, Female")
-
-	q2 <- comparePC90(subset(malaria, subset=SUBJID %in% c(subjs.nofit,183) & CENTREID=='Centre 1' & SEX=='Female'), PC90.reshape, F)
-	q2 <- comparePC90(subset(malaria, subset=SUBJID %in% subjs.nofit & CENTREID=='Centre 1' & SEX=='Female'), PC90.reshape, F)
-	q2 <- q2 + opts(legend.position="none") + facet_wrap(~SUBJID, ncol=1)
-	q2 <- q2 + opts(title="No logistic fit")
-	print(q1, vp=vp1)
-	q1 <- q1 + facet_wrap(~SUBJID, ncol=3)
-	print(q1, vp=vp1)
-	print(q2, vp=vp2)
+	allfits('Centre 1', 'Male', ncol=4, width=0.78, height=0.33, start=list(A=10, L=0, U=20, B=2))
 }
 
 Afits1F <- function() {
-
+	allfits('Centre 1', 'Female', width=0.75, height=0.67)
 }
 
 Afits2M <- function() {
-
+	allfits('Centre 2', 'Male', ncol=2, width=0.67, height=0.67)
 }
 
 Afits2F <- function() {
-
+	allfits('Centre 2', 'Female', width=0.75, height=1)
 }
