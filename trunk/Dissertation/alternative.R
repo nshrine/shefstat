@@ -405,6 +405,56 @@ getfdpred <- function(t, fit, conf=0.95) {
 		dimnames=list(NULL, c("t", "pred", "lwr", "upr")))
 }
 
+# Get data for plotting predictions and CIs over time range
+getfdpreddata2 <- function(fit, nt=201, level.names=c("Male, alone", "Female, alone", "Male, combi", "Female, combi")) {
+	rngt <- fit$yfdPar$fd$basis$range
+	t <- seq(rngt[1], rngt[2], length=nt)
+	data.df <- data.frame(getfdpred2(t[1], fit))
+	for (i in 2:nt)
+		data.df <- rbind(data.df, getfdpred(t[i], fit))
+	data.df$level <- rep(level.names, nt)
+	data.df
+}
+
+# Calculate confidence intervals for fitted fda mean function
+getfdpred2 <- function(t, fit, conf=0.95) {
+	require(fda)
+
+	values <- list()
+
+	# Get matrix of factor levels for each sex/treatment group
+	x <- t(sapply(getPredxfdlist(), function(x) x$coef))
+	values$x <- x
+	# Get vector of coefficients
+	Beta <- as.matrix(sapply(fit$betaestlist, function(x) eval.fd(t, x$fd)))
+	values$beta <- Beta
+	# Get fitted values
+	pred <- t(x) %*% Beta
+	values$pred <- pred
+
+	# Calculate residuals and residual variance
+	yobs <- eval.fd(fit$yfdPar$fd, t)
+	yfit <- eval.fd(fit$yhatfdobj$fd, t)
+	e <- yobs - yfit
+	values$e <- e
+	n <- length(e)
+	p <- length(Beta)
+	s2 <- e %*% t(e) / (n - p)
+	values$s2 <- s2
+
+	# Calculate variance of predictions
+	X <- model.matrix(fit)
+	varpred <- as.numeric(s2) * t(x) %*% solve(t(X) %*% X) %*% x
+	values$varpred <- varpred
+	print(values)
+
+	# Return predictions at times specified with CIs specified
+	pval <- (1 - conf) / 2
+	limit <- sqrt(diag(varpred)) * abs(qt(pval, n - p))
+	matrix(c(rep(t, p), pred, pred-limit, pred+limit), p, p,
+		dimnames=list(NULL, c("t", "pred", "lwr", "upr")))
+}
+
 # Plot fitted function with CIs
 plotfdpred <- function(data) {
 	require(ggplot2)

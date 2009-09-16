@@ -40,7 +40,7 @@ It can be seen that they are normally distributed and show no obvious correlatio
 \subsubsection*{Determining PC90 from the fitted model}
 The value of PC90 i.e.\  the time t at which the parasite count has fallen to 10\% was found by finding the positive root of the cubic equation
 $$\hat{\beta_0}-\hat{\beta_1}t-\hat{\beta_2}t^2-\hat{\beta}_3t^3-0.1{P_{0}}=0$$
-that lies within our time period, where $P_0$ is the pre-treatment parasite count, $t$ is the time from first dose and $\hat{\beta_i}$ are the fitted coefficients for the cubic model. This root was found numerically using the \emph{R} \texttt{uniroot} function, which takes as an argument the interval over which to search for the root \cite{R}.
+that lies within our time period, where $P_0$ is the pre-treatment parasite count, $t$ is the time from first dose and $\hat{\beta_i}$ are the fitted coefficients for the cubic model. This root was found numerically using the \emph{R} \texttt{uniroot} function\footnote{Listing \ref{R:cubics} in Appendix \ref{R:PC90}, page \pageref{R:cubics}}, which takes as an argument the interval over which to search for the root \cite{R}.
 
 \subsection{Non-linear logistic regression}
 The logistic model that GSK specified had been used for this data and also used by Wootton \textit{et al}. \cite{wootton}, is
@@ -62,7 +62,7 @@ If we look at the standardized residuals from the logistic fitting in Figure \re
 \end{figure}
 
 \subsubsection*{Determining PC90 from the fitted model}
-As before the \emph{R} \texttt{uniroot} function was used to find $t$ lying within our time period satisfying the equation
+As before the \emph{R} \texttt{uniroot} function was used\footnote{Listing \ref{R:logistics} in Appendix \ref{R:PC90}, page \pageref{R:logistics}} to find $t$ lying within our time period satisfying the equation
 $$\log(1+P_t)=\hat{\alpha}+\frac{\hat{\lambda}}{1+\exp[-\hat{\beta}(t-\hat{\mu})]}-0.1{P_{0}}=0$$
 where $\hat{\alpha}$, $\hat{\lambda}$, $\hat{\beta}$ and $\hat{\mu}$ are the fitted coefficients of the model.
 \subsubsection*{Choosing starting values for the parameters}
@@ -93,7 +93,7 @@ It is interesting to note that all subjects for which logistic fitting fails are
 In addition to parasite count profiles that simply do not conform to a logistic shape, there were subjects where insufficient data in the region between the upper and lower asymptotes meant that logistic fitting was inappropriate. For example, subjects 526 and 101 in Figure \ref{failures} where choice of different starting parameters for $\mu$ and $\beta$ would result in different logistic fits being obtained: one possible fit having a steep transition (large absolute $\beta$), whereby the data at the upper and lower levels is closely modelled; another possible fit having a shallower transition (smaller $\beta$) that models the slope of a line passing through the ends of the runs of points at the upper and lower levels and the point in the middle, but with less severe curvature such that the corners at the upper and lower levels are poorly modelled. In summary the fit is free to rotate about the single point between the upper and lower levels and thus cannot be suitably defined.
 
 \subsection{Log-linear interpolation}
-The datum immediately above the PC90 level is joined with a straight line to the datum immediately below the PC90 level in on a plot of $\log(1+P_{t})$ against time. The horizontal co-ordinate where this line crosses the PC90 level determines the PC90 time.
+The datum immediately above the PC90 level is joined with a straight line to the datum immediately below the PC90 level in on a plot of $\log(1+P_{t})$ against time. The horizontal co-ordinate where this line crosses the PC90 level determines the PC90 time\footnote{Listing \ref{R:loglinear} in Appendix \ref{R:PC90}, page \pageref{R:loglinear}}.
 
 \section{Comparison of estimation methods}
 Table \ref{PC90} shows a comparison of the PC90 estimates obtained by the 3 different methods utilised. It can be seen that the 3 methods give reasonably good agreement to within about an hour for all but a few subjects. We will now look more closely at the level of agreement, both graphically and statistically.

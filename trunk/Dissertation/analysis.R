@@ -269,7 +269,12 @@ stillwhite2.resid <- function(row, data) {
 	Xstar
 }
 
+# Find CIs by resampling
+resample.ci <- function(k, R=1000) {
+	with(PC90.df[PC90.df$Sex=='Female',], t.resample(PC90.loglin[Treatment=='alone'] - k, PC90.loglin[Treatment=='combi'], R))
+}
 
+# Resample t statistic
 t.resample <- function(x1, x2, R=1000, bootstrap=F) {
 	Tobs <- mean(x1) - mean(x2)
 	n1 <- length(x1)
@@ -286,4 +291,21 @@ permute.f.ci <- function(data, k, R=1000, bootstrap=F) {
 	data$PC90.loglin[data$Treatment=='alone'] <- data$PC90.loglin[data$Treatment=='alone'] - k
 	fit <- aov(PC90.loglin ~ Centre*Sex*Treatment, data)
 	pf.restricted.resample(fit, c("Centre", "Sex"), R, bootstrap)
+}
+
+# Find CIs by resampling
+#resample.ci <- function(data, k, n=1000, bootstrap=F) {
+#	l1 <- length(data$Treatment=='alone')
+#	l2 <- length(data$Treatment=='combi')
+#
+#	data$PC90.loglin[data$Treatment=='alone'] <- data$PC90.loglin[data$Treatment=='alone'] - k
+#	Tobs <- T.stat(data)
+#	Tstar <- 
+#	
+#	T.samples <- resample.t(data, n, bootstrap)
+#	mean(abs(T.samples) > abs(T.obs))
+#}
+
+T.stat <- function(data) {
+	with(data, mean(PC90.loglin[Treatment=='alone']) -  mean(PC90.loglin[Treatment=='combi']))
 }
