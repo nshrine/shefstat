@@ -211,7 +211,7 @@ Ramsay \textit{et al.} have written a \emph{R} package, \texttt{fda} for functio
 \subsection{Functional ANOVA}
 Once we have suitably represented our dependent data as a functional response we can perform ANOVA by sex and treatment in an analogous way to the previous analysis (it is assumed that centre has no effect over the whole time period). The model now becomes
 \begin{equation}
-y_{jkl}(t)=\mu(t)+S_{j}(t)+T_{k}(t)+(ST)_{jk}(t)+\epsilon_{jkl}(t)\quad\quad\epsilon\sim N(0, \sigma^{2}(t))\label{aovfda}
+y_{jkl}(t)=\mu(t)+S_{j}(t)+T_{k}(t)+(ST)_{jk}(t)+\epsilon_{jkl}(t)\quad\quad\epsilon_{jkl}(t)\sim N(0, \sigma^{2}(t))\label{aovfda}
 \end{equation}
 where each part of the model is now a function of time. Hence, we will have 43 residual functions, a mean function for the overall mean with time, $\mu(t)$, a function for the effect of sex, $S(t)$, and for the effect of treatment, $T(t)$.
 
@@ -270,7 +270,7 @@ This algorithm was implemented in \emph{R}\footnote{Listing \ref{R:fdaresid} in 
 \label{fdfitted}
 \end{figure}
 
-It can be seen that the difference between male subjects on the alone and combined drug treatment becomes large (relative to their 95\% confidence limits) between 20 and 30 hours reflecting the treatment effect shown in Figure \ref{fdcoef} between 20 and 30 hours. The difference between treatments for female subjects is larger between 10 and 30 hours reflecting the effect the sex-treatment interaction whereby the treatment effect is largest for female subjects. With reference to the 95\% confidence intervals, there is good evidence to reject the hypothesis that there is no effect of sex and treatment. The $F$ test in Figure \ref{fdapermF} is a more formal evaluation of this evidence.
+It can be seen that the difference between male subjects on the alone and combined drug treatment becomes large (relative to their 95\% confidence limits) between 20 and 30 hours reflecting the treatment effect shown in Figure \ref{fdcoef} between 20 and 30 hours. The difference between treatments for female subjects is larger between 10 and 30 hours reflecting the effect the sex-treatment interaction whereby the treatment effect is largest for female subjects. With reference to the 95\% confidence intervals, there is good evidence to reject the hypothesis that there is no effect of sex and treatment. The $F$ test in Figure \ref{fdapermF} is a more formal evaluation of this evidence. It would be useful to plot the difference between treatments, but calculation of the appropriate confidence intervals would require investigation of the correlation structure of the functional estimates, which has not been possible due to time constraints.
 
 If we look again at Figure \ref{fdfitted}, we can see that although the parasite reduction is comparable (confidence intervals almost fully overlap) between treatments for male subjects, it is clear that the profiles have very different slopes between treatments; similarly for female patients, although the actual reduction level is also different. With functional data analysis it is easy to look, not only at the effect of factors on the response variable function, but also at the effect on derivatives of the response function. Accordingly, the functional ANOVA was repeated, but this time with the first derivative of the log count-ratio cubic spline functions. This fitted model is shown in Figure \ref{fdspeed}. 
 \begin{figure}[p]
