@@ -195,11 +195,11 @@ fdcoef <- function() {
 }
 
 fdfitted <- function() {
-	plotfdpred(lprr2i.plot.df)
+	plotfdpred(lprr2i.plot2.df)
 }
 
 fdspeed <- function() {
-	plotfdpred(lprr2i.speed.pred) + opts(title="1st derivative with 95% confidence intervals")
+	plotfdpred(lprr2i.plotspeed2.df) + opts(title="1st derivative with 95% confidence intervals")
 }
 
 #

@@ -265,7 +265,7 @@ $$\hat{\mat{y}}(t)\pm t_{0.025,n-p}\sqrt{\mathrm{diag}\{\mathrm{var}\ \hat{\mat{
 
 This algorithm was implemented in \emph{R}\footnote{Listing \ref{R:fdaresid} in Appendix \ref{R:fda}, page \pageref{R:fdaresid}.} giving the 95\% confidence intervals shown plotted with the fitted count-ratio functions in Figure \ref{fdfitted}.
 \begin{figure}[p]
-\includegraphics[width=150mm]{lprr2i.eps} 
+\includegraphics[width=150mm]{fdfitted.eps} 
 \caption{Fitted count-ratio functions with confidence intervals}
 \label{fdfitted}
 \end{figure}
@@ -274,7 +274,7 @@ It can be seen that the difference between male subjects on the alone and combin
 
 If we look again at Figure \ref{fdfitted}, we can see that although the parasite reduction is comparable (confidence intervals almost fully overlap) between treatments for male subjects, it is clear that the profiles have very different slopes between treatments; similarly for female patients, although the actual reduction level is also different. With functional data analysis it is easy to look, not only at the effect of factors on the response variable function, but also at the effect on derivatives of the response function. Accordingly, the functional ANOVA was repeated, but this time with the first derivative of the log count-ratio cubic spline functions. This fitted model is shown in Figure \ref{fdspeed}. 
 \begin{figure}[p]
-\includegraphics[width=150mm]{lprr2ispeed.eps} 
+\includegraphics[width=150mm]{fdspeed.eps} 
 \caption{Fitted functional model for 1st derivative of count ratio showing the effect of treatment on the instantaneous \emph{speed} of parasite clearance}
 \label{fdspeed}
 \end{figure}
