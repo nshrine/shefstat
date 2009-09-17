@@ -47,7 +47,7 @@ A variation of this type has the parasite count increasing after the first dose 
 \end{itemize}
 There are some profiles that we might suspect contain anomalous data such as subject 500 in Figure \ref{raw2} where there are two unusually high values compared to the main trend. We might suspect that some inconsistency in the counting procedure explains this behaviour rather than the subject's parasite count jumping by a large amount on these occasions. Looking at how the parasite count was obtained should give an insight into potential sources of inconsistency.
 
-\subsection{Implications for modeling}
+\subsection{Implications for modelling}
 It can be seen from the parasite count profiles in Figures \ref{raw1} and \ref{raw2} that no simple model will closely approximate the behaviour of all subjects' counts over the whole time range. However, as we are primarily interested in estimating the time to reduction of the parasite count by 90\% it is really only in this region that it is critical to find a good model. It may be that the erratic behaviour of some parasite counts at short times after first dose is of little relevance. With this in mind, one possible approach may be to use a logarithmic transform of the parasite count thereby emphasising the behaviour at low counts.
 
 \section{Properties of the Parasite Count}
@@ -61,7 +61,7 @@ One of the first questions to be addressed is whether the parasite count is a tr
 \end{enumerate}
 Accordingly the number of parasites in a \micro\liter\ of blood (\texttt{parct}) is given by:
 $$\mathtt{parct}=\frac{N_p}{N_w}\rho_w$$
-and thus we cannot treat this derived measurement as a count for modeling purposes.
+and thus we cannot treat this derived measurement as a count for modelling purposes.
 \begin{description}
 \item[Note]--- Whenever the term ``count'' or ``parasite count'' is used in this dissertation, in the text or in plot axes, it should always be interpreted as a derived count rate per \micro\liter; it is never an actual raw count.
 \end{description}

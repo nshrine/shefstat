@@ -304,11 +304,25 @@ It can be seen that there is evidence to reject the hypothesis of no difference 
 \newpage
 Therefore, we can summarize the relative effects of the single and combined treatments:
 \begin{description}
-\item[Male subjects] - There is no evidence of a difference in mean clearance times between the two treatments for male subjects.
-\item[Female subjects] - The mean clearance time for female subjects on the combined treatment is 13.1 hours shorter than for those on the single treatment with a 95\% confidence interval of (5.0, 22.7) hours.
+%> median(rnorm(1000000, 3.297668, 0.4625680)^2 - rnorm(1000000, 3.268677, 0.2455219)^2)
+%[1] 0.1926644
+%> mean(rnorm(1000000, 3.297668, 0.4625680)^2 - rnorm(1000000, 3.268677, 0.2455219)^2)
+%[1] 0.34226
+%> quantile(rnorm(1000000, 3.297668, 0.4625680)^2 - rnorm(1000000, 3.268677, 0.2455219)^2, probs=c(0.025,0.975))
+%    2.5%    97.5% 
+%-5.99823  7.56040 
+\item[Male subjects] - There is no evidence of a difference in mean clearance times between the two treatments for male subjects. The mean difference in clearance times for male subjects on the combined treatment is 0.3 hours shorter (median 0.2 hours) than for those on the single treatment with a 95\% confidence interval of (-6.0, 7.6) hours shorter.
+%> median(rnorm(1000000, 4.490531, 0.4831365)^2 - rnorm(1000000, 2.662371, 0.2455219)^2)
+%[1] 13.03766
+%> mean(rnorm(1000000, 4.490531, 0.4831365)^2 - rnorm(1000000, 2.662371, 0.2455219)^2)
+%[1] 13.25602
+%> quantile(rnorm(1000000, 4.490531, 0.4831365)^2 - rnorm(1000000, 2.662371, 0.2455219)^2, probs=c(0.025,0.975))
+%     2.5%     97.5% 
+% 4.960203 22.749181
+\item[Female subjects] - The mean difference in clearance times for female subjects on the combined treatment is 13.2 hours shorter (median 13.0 hours) than for those on the single treatment with a 95\% confidence interval of (5.0, 22.7) hours shorter.
 \end{description}
 
-The confidence intervals for the difference between groups in hours (i.e. the original scale before the square-root transformation used for the regression) are obtained by sampling 10,000 values from each of $[N(m_{a},s_{a}^{2})]^{2}$ and $[N(m_{b},s_{b}^{2})]^{2}$, where $a$ and $b$ specify the groups and $m$ and $s$ are the estimated mean and standard error of the groups. The percentiles of the distribution of the differences between these two samples are then taken.
+The confidence intervals for the difference between groups in hours (i.e. the original scale before the square-root transformation used for the regression) are obtained by sampling 10,000 values from each of $[N(m_{a},s_{a}^{2})]^{2}$ and $[N(m_{b},s_{b}^{2})]^{2}$, where $a$ and $b$ specify the groups and $m$ and $s$ are the estimated mean and standard error of $\sqrt{\mathrm{PC}90}$ in the groups. The percentiles of the distribution of the differences between these two samples are then taken. The median is given as the distribution will be right-skew when transformed back to hours, although not by much; we see above that medians and means are fairly close.
 
 \subsection{Comparison with other PC90 estimation methods}
 The graphical investigation and model fitting procedure was repeated with the PC90 estimates obtained using the cubic polynomial and logistic regression techniques. The same overall trend and patterns of residuals were observed, leading to selection of the same optimal model (Equation \ref{reduced} on page \pageref{reduced}). The fitted coefficients are compared in Table \ref{compmeth}. 
@@ -378,11 +392,11 @@ The clearance time is plotted against the time before first dose at which the pr
 %\end{figure}
 \clearpage
 \section{Non-parametric methods}
-As an additional verification of the analysis so far based on parametric methods, we can compare the results with analysis of clearance times using non-paramteric, distribution-free methods.
+As an additional verification of the analysis so far based on parametric methods, we can compare the results with analysis of clearance times using non-parametric, distribution-free methods.
 
 \subsection{Non-parametric statistics}
 \subsubsection*{ANOVA using ranks}
-One non-paramteric alternative to two-way ANOVA is to calculate the $F$ statistics using the ranks of the data instead of the actual values of the dependent variable \cite{conover}. The results of ANOVA using ranks are shown in Table \ref{aovranks} with the $p$-values from the parametric analysis (Table \ref{aovreduced} on page \pageref{aovreduced}) shown for comparison.
+One non-parametric alternative to two-way ANOVA is to calculate the $F$ statistics using the ranks of the data instead of the actual values of the dependent variable \cite{conover}. The results of ANOVA using ranks are shown in Table \ref{aovranks} with the $p$-values from the parametric analysis (Table \ref{aovreduced} on page \pageref{aovreduced}) shown for comparison.
 %> summary(PC90.loglinr.rank.aov)
 %              Df Sum Sq Mean Sq F value  Pr(>F)  
 %Sex            1   78.3    78.3  0.5562 0.46025  
@@ -437,7 +451,7 @@ $F_{1}$ - Unrestricted permutation; $F_{2}$ - Permutation of residuals; $F_{3t}$
 10,000 samples for each method
 \end{table}
 \begin{description}
-\item[Note]\label{resampnote} --- The $p$-values not relevant to test in each row are in small italics. As discussed above, some of the resampling methods are desgined for testing specific main effects and some for interactions. In a resampling method geared for testing an interaction or a specfic main effect, the $p$-value returned for other main effects is not correct. Although they are incorrect (e.g. test for treatment main effect returns $P=0.008$ for centre and sex effects), they are shown to demonstrate what sort of spurious conclusions can arise if these methods are used for inappropriate tests.
+\item[Note]\label{resampnote} --- The $p$-values not relevant to test in each row are in small italics. As discussed above, some of the resampling methods are designed for testing specific main effects and some for interactions. In a resampling method geared for testing an interaction or a specific main effect, the $p$-value returned for other main effects is not correct. Although they are incorrect (e.g. test for treatment main effect returns $P=0.008$ for centre and sex effects), they are shown to demonstrate what sort of spurious conclusions can arise if these methods are used for inappropriate tests.
 \end{description}
 
 It can be seen that the $p$-values obtained by resampling lead to the same conclusions as the parametric test. In particular that there is no evidence to reject the hypothesis that the effect of centre is negligible. Accordingly, the results for the reduced 2-way model are shown in Table \ref{aovresampr}.
@@ -486,8 +500,8 @@ The log-linear method was identified in chapter \ref{ch:derivation} as the most 
 \item Fitting by weighted least-squares is required to stabilise the variance of the ANOVA residuals between treatment groups. Accordingly, the least-squares fitting is weighted by the variance of the two treatment groups. 
 \item 3-way ANOVA by centre, sex and treatment, with the appropriate variance stabilising measures, gives no evidence to reject the hypothesis that centre has no effect on PC90.
 \item 2-way ANOVA by sex and treatment shows good evidence to reject the hypothesis that there is no interaction of sex and treatment that effects PC90 ($P<0.05$).
-\item There is no evidence to reject the hypothesis that there is no difference in mean PC90 clearance times between treatments for male subjects.
-\item There is good evidence ($P<0.05$) to reject the hypothesis that there is no difference in PC90 clearance times between treatments for female subjects. The mean difference is 13.1 hours shorter for the combined treatment with a 95\% confidence interval of (5.0, 22.7) hours.
+\item There is no evidence to reject the hypothesis that there is no difference in mean PC90 clearance times between treatments for male subjects. The mean difference is 0.3 hours shorter for the combined treatment with a 95\% confidence interval of (-6.0, 7.6) hours.
+\item There is good evidence ($P<0.05$) to reject the hypothesis that there is no difference in PC90 clearance times between treatments for female subjects. The mean difference is 13.2 hours shorter for the combined treatment with a 95\% confidence interval of (5.0, 22.7) hours.
 \item PC90 estimates using the cubic polynomial regression method lead to the same conclusions regarding treatment effect as the log-linear interpolated estimates. The logistic regression estimates are generally compatible with observed discrepancies most likely due to missing data for the logistic method.
 \item There is no evidence to reject the hypotheses that the PC90 clearance time is independent of the pre-dose parasite count and independent of the time at which the pre-dose count was taken.
 \item Non-parametric methods support the findings of the parametric analysis in that only the difference between treatments for female subjects is significant. An appropriate resampling method estimates a 95\% confidence interval for the decrease in PC90 clearance time for female subjects on the combined treatment of (6.5, 22.5) hours.
